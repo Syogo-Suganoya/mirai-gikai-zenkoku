@@ -7,7 +7,7 @@ import {
   type ModerationStatus,
 } from "@mirai-gikai/shared/moderation/status";
 import { generateObject, type LanguageModel } from "ai";
-import { DEFAULT_MODERATION_MODEL } from "@/lib/ai/models";
+import { DEFAULT_MODERATION_MODEL, geminiModel } from "@/lib/ai/models";
 
 /** テスト時にモック注入するための外部依存 */
 export type ModerationDeps = {
@@ -35,7 +35,7 @@ export async function evaluateModerationScore(
   deps?: ModerationDeps
 ): Promise<ModerationOutput> {
   const { system, user } = buildModerationPrompt(input);
-  const model = deps?.model ?? DEFAULT_MODERATION_MODEL;
+  const model = deps?.model ?? geminiModel(DEFAULT_MODERATION_MODEL);
 
   const { object } = await generateObject({
     model,

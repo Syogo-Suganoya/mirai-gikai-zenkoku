@@ -5,50 +5,15 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1791785590194,
+      "when": 1791831275285,
       "tag": "0000_init",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "7",
-      "when": 1791785608004,
+      "when": 1791831295102,
       "tag": "0001_functions",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1791787178705,
-      "tag": "0002_acoustic_satana",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1791807851281,
-      "tag": "0003_fix_regex_escapes",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1791811111239,
-      "tag": "0004_fix_topic_parent_fk",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1791811166787,
-      "tag": "0005_fix_empty_array_defaults",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "7",
-      "when": 1791830384268,
-      "tag": "0006_remove_assembly_roles",
       "breakpoints": true
     }
   ]

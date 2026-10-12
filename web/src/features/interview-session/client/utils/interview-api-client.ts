@@ -1,7 +1,6 @@
 interface CompleteInterviewParams {
   sessionId: string;
   isPublic: boolean;
-  isDataReuseConsented: boolean;
 }
 
 interface CompleteInterviewResult {

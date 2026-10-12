@@ -15,7 +15,6 @@ type BuildCompletedInterviewReportInsertParams = {
   moderationScore: number | null;
   moderationReasoning: string | null;
   isPublicByUser?: boolean;
-  isDataReuseConsented?: boolean;
 };
 
 export function buildCompletedInterviewReportInsert({
@@ -25,7 +24,6 @@ export function buildCompletedInterviewReportInsert({
   moderationScore,
   moderationReasoning,
   isPublicByUser,
-  isDataReuseConsented,
 }: BuildCompletedInterviewReportInsertParams): InterviewReportInsert {
   const enrichedOpinions = enrichOpinionsWithSourceContent(
     reportData.opinions,
@@ -55,9 +53,6 @@ export function buildCompletedInterviewReportInsert({
     moderation_reasoning: moderationReasoning,
     ...(typeof isPublicByUser === "boolean"
       ? { is_public_by_user: isPublicByUser }
-      : {}),
-    ...(typeof isDataReuseConsented === "boolean"
-      ? { is_data_reuse_consented: isDataReuseConsented }
       : {}),
     ...(shouldAutoPublish ? { is_public_by_admin: true } : {}),
   };

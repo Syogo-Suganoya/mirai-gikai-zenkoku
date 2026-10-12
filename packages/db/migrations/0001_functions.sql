@@ -123,51 +123,6 @@ BEGIN
 END;
 $$;
 --> statement-breakpoint
-CREATE OR REPLACE FUNCTION public.find_open_data_interview_reports(p_min_public_reports integer, p_limit integer, p_cursor_created_at timestamp with time zone DEFAULT NULL::timestamp with time zone, p_cursor_id uuid DEFAULT NULL::uuid) RETURNS TABLE(report_id uuid, bill_id uuid, bill_name text, stance text, role text, role_title text, role_description text, summary text, opinions jsonb, interview_session_id uuid, created_at timestamp with time zone)
-    LANGUAGE sql STABLE
-    SET search_path TO 'public'
-    AS $$
-  WITH eligible_bills AS (
-    SELECT c.bill_id
-    FROM interview_report r
-    JOIN interview_sessions s ON s.id = r.interview_session_id
-    JOIN interview_configs c ON c.id = s.interview_config_id
-    JOIN bills b ON b.id = c.bill_id
-    WHERE r.is_public_by_admin
-      AND r.is_public_by_user
-      AND b.publish_status = 'published'
-      AND NOT b.is_dummy
-    GROUP BY c.bill_id
-    HAVING COUNT(*) >= p_min_public_reports
-  )
-  SELECT
-    r.id AS report_id,
-    c.bill_id,
-    b.name AS bill_name,
-    r.stance::TEXT,
-    r.role::TEXT,
-    r.role_title,
-    r.role_description,
-    r.summary,
-    r.opinions,
-    r.interview_session_id,
-    r.created_at
-  FROM interview_report r
-  JOIN interview_sessions s ON s.id = r.interview_session_id
-  JOIN interview_configs c ON c.id = s.interview_config_id
-  JOIN bills b ON b.id = c.bill_id
-  WHERE c.bill_id IN (SELECT eligible_bills.bill_id FROM eligible_bills)
-    AND r.is_public_by_admin
-    AND r.is_public_by_user
-    AND r.is_data_reuse_consented
-    AND (
-      p_cursor_created_at IS NULL
-      OR (r.created_at, r.id) < (p_cursor_created_at, p_cursor_id)
-    )
-  ORDER BY r.created_at DESC, r.id DESC
-  LIMIT p_limit;
-$$;
---> statement-breakpoint
 CREATE OR REPLACE FUNCTION public.find_public_reports_by_bill_id_ordered_by_reactions(p_bill_id uuid, p_limit integer DEFAULT 1000, p_offset integer DEFAULT 0, p_stance text DEFAULT NULL::text, p_sort_order text DEFAULT 'recommended'::text) RETURNS TABLE(id uuid, stance public.stance_type_enum, role public.interview_report_role_enum, role_title text, summary text, total_content_richness integer, created_at timestamp with time zone)
     LANGUAGE plpgsql STABLE
     AS $$
@@ -537,36 +492,6 @@ BEGIN
   WHERE q.interview_config_id = p_config_id
   GROUP BY q.id, q.question, q.question_order
   ORDER BY q.question_order;
-END;
-$$;
---> statement-breakpoint
-CREATE OR REPLACE FUNCTION public.increment_api_rate_limit(p_key text, p_window_start timestamp with time zone, p_limit integer) RETURNS boolean
-    LANGUAGE plpgsql
-    SET search_path TO 'public'
-    AS $$
-DECLARE
-  v_count INTEGER;
-BEGIN
-  INSERT INTO api_rate_limits (key, window_start, request_count)
-  VALUES (p_key, p_window_start, 1)
-  ON CONFLICT (key, window_start)
-  DO UPDATE SET request_count = api_rate_limits.request_count + 1
-  RETURNING request_count INTO v_count;
-
-  -- 過去ウィンドウを掃除（テーブル肥大を防ぐ）。
-  -- 新しいウィンドウ行を作った最初の呼び出しのみ実行し、同一ウィンドウ内の
-  -- 残り N-1 回の呼び出しで無駄な索引スキャンを繰り返さない
-  IF v_count = 1 THEN
-    -- 同一キーの過去ウィンドウ
-    DELETE FROM api_rate_limits
-    WHERE key = p_key AND window_start < p_window_start;
-    -- 二度と現れないキー（IPローテーション等）の行が永久に残らないよう、
-    -- 全キー横断で1時間より古いウィンドウも併せて掃除する
-    DELETE FROM api_rate_limits
-    WHERE window_start < p_window_start - INTERVAL '1 hour';
-  END IF;
-
-  RETURN v_count <= p_limit;
 END;
 $$;
 --> statement-breakpoint

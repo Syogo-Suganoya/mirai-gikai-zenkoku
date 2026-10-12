@@ -13,7 +13,7 @@ describe("shouldApplyDifficultyCookie", () => {
   });
 
   it("APIパスではfalseを返す（レスポンスにSet-Cookieを乗せない）", () => {
-    expect(shouldApplyDifficultyCookie("/api/open-data/bills")).toBe(false);
+    expect(shouldApplyDifficultyCookie("/api/interview/complete")).toBe(false);
     expect(shouldApplyDifficultyCookie("/api/chat")).toBe(false);
   });
 });
@@ -74,7 +74,7 @@ describe("isDevRoute", () => {
 
   it("/developers など /dev で始まる通常ページは対象外", () => {
     expect(isDevRoute("/developers")).toBe(false);
-    expect(isDevRoute("/developers/open-data-api")).toBe(false);
+    expect(isDevRoute("/developers/docs")).toBe(false);
   });
 
   it("その他のパスは対象外", () => {

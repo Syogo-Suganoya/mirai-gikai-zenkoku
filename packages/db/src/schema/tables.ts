@@ -74,17 +74,6 @@ export const user_sessions = pgTable("user_sessions", {
 	unique("user_sessions_token_hash_key").on(table.token_hash),
 ]);
 
-export const login_attempts = pgTable("login_attempts", {
-	id: uuid().defaultRandom().primaryKey().notNull(),
-	email: text().notNull(),
-	ip: text().notNull(),
-	succeeded: boolean().notNull(),
-	attempted_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
-}, (table) => [
-	index("login_attempts_email_idx").using("btree", sql`lower(email)`, sql`attempted_at`),
-	index("login_attempts_ip_idx").using("btree", table.ip.asc().nullsLast(), table.attempted_at.asc().nullsLast()),
-]);
-
 export const assemblies = pgTable("assemblies", {
 	id: uuid().defaultRandom().primaryKey().notNull(),
 	slug: text().notNull(),
@@ -688,7 +677,6 @@ END`),
 	moderation_reasoning: text(),
 	is_public_by_admin: boolean().default(false).notNull(),
 	is_public_by_user: boolean().default(false).notNull(),
-	is_data_reuse_consented: boolean().default(false).notNull(),
 	admin_unpublished_at: timestamp({ withTimezone: true, mode: 'string' }),
 	opinions_reextracted_at: timestamp({ withTimezone: true, mode: 'string' }),
 	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
@@ -902,15 +890,6 @@ export const bills_tags = pgTable("bills_tags", {
 			name: "bills_tags_tag_id_fkey"
 		}).onDelete("cascade"),
 	primaryKey({ columns: [table.bill_id, table.tag_id], name: "bills_tags_pkey"}),
-]);
-
-export const api_rate_limits = pgTable("api_rate_limits", {
-	key: text().notNull(),
-	window_start: timestamp({ withTimezone: true, mode: 'string' }).notNull(),
-	request_count: integer().default(0).notNull(),
-}, (table) => [
-	index("idx_api_rate_limits_window_start").using("btree", table.window_start.asc().nullsLast()),
-	primaryKey({ columns: [table.key, table.window_start], name: "api_rate_limits_pkey"}),
 ]);
 
 export const topic_opinion = pgTable("topic_opinion", {

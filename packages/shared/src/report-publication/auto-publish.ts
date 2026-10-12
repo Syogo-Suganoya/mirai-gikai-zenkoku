@@ -3,16 +3,6 @@ import { MODERATION_THRESHOLDS } from "../moderation/moderation";
 export const AUTO_PUBLISH_MAX_MODERATION_SCORE =
   MODERATION_THRESHOLDS.WARNING - 1;
 export const AUTO_PUBLISH_MIN_CONTENT_RICHNESS = 50;
-/**
- * オープンデータAPIが議案を配布対象に含める下限。
- *
- * かつては公開ページの表示ゲート（k-匿名性）としてサイト全体で使っていたが、
- * 「偏ったインタビューが悪目立ちする」懸念が実際には起きなかったため表示側からは
- * 撤去した。バルクエクスポートは第三者が他データと突き合わせられる経路で、
- * 表示するかどうかとは別の判断なのでこちらには残す。
- */
-export const MIN_PUBLIC_REPORTS_FOR_OPEN_DATA = 20;
-
 export type AutoPublishReportInput = {
   isPublicByUser: boolean;
   moderationScore: number | null;

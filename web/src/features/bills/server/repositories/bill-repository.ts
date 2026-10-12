@@ -65,7 +65,7 @@ export type PublishedBillFilter = {
   explainedOnly?: boolean;
   /** タグで絞る */
   tagId?: string;
-  /** ダミーを除く（サイトマップ・オープンデータなど） */
+  /** ダミーを除く（サイトマップなど） */
   excludeDummy?: boolean;
   limit?: number;
 };

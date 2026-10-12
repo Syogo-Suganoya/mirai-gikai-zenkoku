@@ -21,13 +21,7 @@ export function useInterviewCompletion({
     setIsCompleting(true);
     setCompleteError(null);
     try {
-      // オープンデータとしての第三者提供の告知を表示した上で
-      // 得た公開同意なので、二次利用同意もこのクライアントが明示的に送る
-      const result = await callCompleteApi({
-        sessionId,
-        isPublic,
-        isDataReuseConsented: isPublic,
-      });
+      const result = await callCompleteApi({ sessionId, isPublic });
       const reportId = result.report?.id;
       if (reportId) {
         window.location.href = getInterviewReportCompleteLink(reportId);

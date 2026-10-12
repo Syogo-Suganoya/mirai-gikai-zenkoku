@@ -21,14 +21,6 @@ function renderModal() {
 }
 
 describe("InterviewConsentModal", () => {
-  it("開始前モーダルにはオープンデータ提供の告知を表示しない", () => {
-    renderModal();
-
-    expect(
-      screen.queryByText(/第三者にオープンデータとして提供されることがあります/)
-    ).toBeNull();
-  });
-
   it("同意のチェックを入れるまで開始ボタンが無効", async () => {
     const user = userEvent.setup();
     renderModal();

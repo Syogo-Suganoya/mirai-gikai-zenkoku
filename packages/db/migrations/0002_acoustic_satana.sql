@@ -1,1 +1,0 @@
-ALTER TABLE "chat_usage_events" ALTER COLUMN "cost_usd" SET DEFAULT 0;

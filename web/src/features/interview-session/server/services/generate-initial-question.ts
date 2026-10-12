@@ -8,7 +8,7 @@ import {
 } from "@/features/chat/server/services/cost-tracker";
 import { getInterviewConfigAdmin } from "@/features/interview-config/server/loaders/get-interview-config-admin";
 import { getInterviewQuestions } from "@/features/interview-config/server/loaders/get-interview-questions";
-import { DEFAULT_INTERVIEW_CHAT_MODEL } from "@/lib/ai/models";
+import { DEFAULT_INTERVIEW_CHAT_MODEL, geminiModel } from "@/lib/ai/models";
 import { env } from "@/lib/env";
 import { interviewChatTextSchema } from "../../shared/schemas";
 import type { InterviewMessage } from "../../shared/types";
@@ -84,7 +84,8 @@ export async function generateInitialQuestion({
     // メッセージ履歴なしで最初の質問を生成（構造化出力）
     const occurredAt = new Date().toISOString();
     const model =
-      deps?.model ?? interviewConfig.chat_model ?? DEFAULT_INTERVIEW_CHAT_MODEL;
+      deps?.model ??
+      geminiModel(interviewConfig.chat_model ?? DEFAULT_INTERVIEW_CHAT_MODEL);
     const result = await generateText({
       model,
       prompt: enhancedSystemPrompt,

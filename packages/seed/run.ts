@@ -31,8 +31,7 @@ async function main() {
   await db.transaction(async (tx) => {
     await tx.execute(sql`
       truncate table
-        assemblies, tags, anonymous_visitors, chat_usage_events, api_rate_limits,
-        csv_import_jobs, login_attempts
+        assemblies, tags, anonymous_visitors, chat_usage_events, csv_import_jobs
       restart identity cascade
     `);
 

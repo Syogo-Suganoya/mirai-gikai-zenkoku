@@ -7,9 +7,8 @@ import {
 } from "@/features/interview-session/shared/utils/optional-boolean";
 
 export async function POST(req: Request) {
-  const { sessionId, isPublic, isDataReuseConsented } = await req.json();
+  const { sessionId, isPublic } = await req.json();
   const isPublicByUser = parseOptionalBoolean(isPublic);
-  const dataReuseConsented = parseOptionalBoolean(isDataReuseConsented);
 
   if (!sessionId) {
     return NextResponse.json({ error: "Missing sessionId" }, { status: 400 });
@@ -18,13 +17,6 @@ export async function POST(req: Request) {
   if (isInvalidOptionalBooleanInput(isPublic)) {
     return NextResponse.json(
       { error: "Invalid isPublic value" },
-      { status: 400 }
-    );
-  }
-
-  if (isInvalidOptionalBooleanInput(isDataReuseConsented)) {
-    return NextResponse.json(
-      { error: "Invalid isDataReuseConsented value" },
       { status: 400 }
     );
   }
@@ -38,7 +30,6 @@ export async function POST(req: Request) {
     const report = await completeInterviewSession({
       sessionId,
       isPublicByUser,
-      isDataReuseConsented: dataReuseConsented,
     });
 
     return NextResponse.json({ report });

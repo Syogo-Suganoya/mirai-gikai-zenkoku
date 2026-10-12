@@ -5,7 +5,6 @@ describe("updatePublicSetting", () => {
   it("未認証の場合は success: false を返す", async () => {
     const result = await updatePublicSetting(
       "00000000-0000-0000-0000-000000000000",
-      true,
       true
     );
 

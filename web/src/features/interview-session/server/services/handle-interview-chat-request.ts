@@ -33,7 +33,7 @@ import type {
   InterviewSession,
 } from "@/features/interview-session/shared/types";
 import { resolveInterviewChatLoaders } from "@/features/interview-session/shared/utils/resolve-interview-chat-loaders";
-import { DEFAULT_INTERVIEW_CHAT_MODEL } from "@/lib/ai/models";
+import { DEFAULT_INTERVIEW_CHAT_MODEL, geminiModel } from "@/lib/ai/models";
 import { env } from "@/lib/env";
 import { logger } from "@/lib/logger";
 import { buildSummaryModelMessages } from "../../shared/utils/build-summary-model-messages";
@@ -262,9 +262,10 @@ async function generateStreamingResponse({
   };
 }) {
   // summaryフェーズもchatフェーズと同じモデルを使用（インタビューAIとモデルを揃える）
-  const model = isSummaryPhase
-    ? (summaryModel ?? configChatModel ?? DEFAULT_INTERVIEW_CHAT_MODEL)
-    : (chatModel ?? configChatModel ?? DEFAULT_INTERVIEW_CHAT_MODEL);
+  const injectedModel = isSummaryPhase ? summaryModel : chatModel;
+  const model =
+    injectedModel ??
+    geminiModel(configChatModel ?? DEFAULT_INTERVIEW_CHAT_MODEL);
 
   const modelName =
     typeof model === "string" ? model : (model.modelId ?? "unknown");

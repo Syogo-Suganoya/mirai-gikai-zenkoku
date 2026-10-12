@@ -1,4 +1,3 @@
-CREATE TYPE "public"."assembly_member_role_enum" AS ENUM('reviewer', 'editor');--> statement-breakpoint
 CREATE TYPE "public"."assembly_status_enum" AS ENUM('master_only', 'preparing', 'public');--> statement-breakpoint
 CREATE TYPE "public"."assembly_type_enum" AS ENUM('prefecture', 'city', 'special_ward', 'town', 'village');--> statement-breakpoint
 CREATE TYPE "public"."bill_category_enum" AS ENUM('budget', 'ordinance', 'personnel', 'contract', 'petition', 'report', 'other');--> statement-breakpoint
@@ -36,13 +35,6 @@ CREATE TABLE "anonymous_visitors" (
 	"last_seen_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "api_rate_limits" (
-	"key" text NOT NULL,
-	"window_start" timestamp with time zone NOT NULL,
-	"request_count" integer DEFAULT 0 NOT NULL,
-	CONSTRAINT "api_rate_limits_pkey" PRIMARY KEY("key","window_start")
-);
---> statement-breakpoint
 CREATE TABLE "assemblies" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"slug" text NOT NULL,
@@ -70,17 +62,6 @@ CREATE TABLE "assembly_factions" (
 	"is_dummy" boolean DEFAULT false NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "assembly_factions_name_unique" UNIQUE("assembly_id","name","valid_from")
-);
---> statement-breakpoint
-CREATE TABLE "assembly_members" (
-	"assembly_id" uuid NOT NULL,
-	"user_id" uuid NOT NULL,
-	"role" "assembly_member_role_enum" NOT NULL,
-	"display_name" text NOT NULL,
-	"affiliation" text NOT NULL,
-	"invited_by" uuid,
-	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
-	CONSTRAINT "assembly_members_pkey" PRIMARY KEY("assembly_id","user_id")
 );
 --> statement-breakpoint
 CREATE TABLE "assembly_settings" (
@@ -266,7 +247,7 @@ CREATE TABLE "chat_usage_events" (
 	"input_tokens" integer DEFAULT 0 NOT NULL,
 	"output_tokens" integer DEFAULT 0 NOT NULL,
 	"total_tokens" integer DEFAULT 0 NOT NULL,
-	"cost_usd" numeric(12, 6) DEFAULT '0' NOT NULL,
+	"cost_usd" numeric(12, 6) DEFAULT 0 NOT NULL,
 	"metadata" jsonb,
 	"occurred_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL
@@ -348,7 +329,7 @@ CREATE TABLE "interview_opinion" (
 	"richness" integer,
 	"concern" text,
 	"proposal" text,
-	"reasoning_types" text[] DEFAULT '{""}' NOT NULL,
+	"reasoning_types" text[] DEFAULT '{}'::text[] NOT NULL,
 	"topic_extracted_at" timestamp with time zone,
 	"tags_extracted_at" timestamp with time zone,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
@@ -387,7 +368,7 @@ CREATE TABLE "interview_report" (
 	"content_richness" jsonb,
 	"total_content_richness" integer GENERATED ALWAYS AS (
 CASE
-    WHEN ((content_richness IS NOT NULL) AND ((content_richness ->> 'total'::text) IS NOT NULL) AND ((content_richness ->> 'total'::text) ~ '^d+$'::text)) THEN ((content_richness ->> 'total'::text))::integer
+    WHEN ((content_richness IS NOT NULL) AND ((content_richness ->> 'total'::text) IS NOT NULL) AND ((content_richness ->> 'total'::text) ~ '^\d+$'::text)) THEN ((content_richness ->> 'total'::text))::integer
     ELSE NULL::integer
 END) STORED,
 	"moderation_score" integer,
@@ -401,7 +382,6 @@ END) STORED,
 	"moderation_reasoning" text,
 	"is_public_by_admin" boolean DEFAULT false NOT NULL,
 	"is_public_by_user" boolean DEFAULT false NOT NULL,
-	"is_data_reuse_consented" boolean DEFAULT false NOT NULL,
 	"admin_unpublished_at" timestamp with time zone,
 	"opinions_reextracted_at" timestamp with time zone,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
@@ -424,14 +404,6 @@ CREATE TABLE "interview_sessions" (
 	CONSTRAINT "interview_sessions_rating_check" CHECK ((rating >= 1) AND (rating <= 5))
 );
 --> statement-breakpoint
-CREATE TABLE "login_attempts" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"email" text NOT NULL,
-	"ip" text NOT NULL,
-	"succeeded" boolean NOT NULL,
-	"attempted_at" timestamp with time zone DEFAULT now() NOT NULL
-);
---> statement-breakpoint
 CREATE TABLE "mirai_stances" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"bill_id" uuid NOT NULL,
@@ -439,7 +411,7 @@ CREATE TABLE "mirai_stances" (
 	"comment" text,
 	"publish_at" timestamp with time zone,
 	"reason_summary" text,
-	"reason_points" text[] DEFAULT '{""}' NOT NULL,
+	"reason_points" text[] DEFAULT '{}'::text[] NOT NULL,
 	"supplements" jsonb DEFAULT '[]'::jsonb NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
@@ -582,17 +554,13 @@ CREATE TABLE "users" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"email" text NOT NULL,
 	"password_hash" text NOT NULL,
-	"is_super_admin" boolean DEFAULT false NOT NULL,
 	"must_change_password" boolean DEFAULT true NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"last_login_at" timestamp with time zone,
-	CONSTRAINT "users_email_check" CHECK (email ~ '^[^@s]+@[^@s]+$'::text)
+	CONSTRAINT "users_email_check" CHECK (email ~ '^[^@\s]+@[^@\s]+$'::text)
 );
 --> statement-breakpoint
 ALTER TABLE "assembly_factions" ADD CONSTRAINT "assembly_factions_assembly_id_fkey" FOREIGN KEY ("assembly_id") REFERENCES "public"."assemblies"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "assembly_members" ADD CONSTRAINT "assembly_members_assembly_id_fkey" FOREIGN KEY ("assembly_id") REFERENCES "public"."assemblies"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "assembly_members" ADD CONSTRAINT "assembly_members_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "assembly_members" ADD CONSTRAINT "assembly_members_invited_by_fkey" FOREIGN KEY ("invited_by") REFERENCES "public"."users"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "assembly_settings" ADD CONSTRAINT "assembly_settings_assembly_id_fkey" FOREIGN KEY ("assembly_id") REFERENCES "public"."assemblies"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "assembly_settings" ADD CONSTRAINT "assembly_settings_updated_by_fkey" FOREIGN KEY ("updated_by") REFERENCES "public"."users"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "assembly_source_documents" ADD CONSTRAINT "assembly_source_documents_source_id_fkey" FOREIGN KEY ("source_id") REFERENCES "public"."assembly_sources"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
@@ -633,7 +601,7 @@ ALTER TABLE "report_reactions" ADD CONSTRAINT "report_reactions_interview_report
 ALTER TABLE "report_reactions" ADD CONSTRAINT "report_reactions_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."anonymous_visitors"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "sessions" ADD CONSTRAINT "sessions_assembly_id_fkey" FOREIGN KEY ("assembly_id") REFERENCES "public"."assemblies"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "topic" ADD CONSTRAINT "topic_version_id_fkey" FOREIGN KEY ("version_id") REFERENCES "public"."topic_analysis_version"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "topic" ADD CONSTRAINT "topic_parent_same_version_fkey" FOREIGN KEY ("version_id","parent_topic_id") REFERENCES "public"."topic"("id","version_id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "topic" ADD CONSTRAINT "topic_parent_same_version_fkey" FOREIGN KEY ("version_id","parent_topic_id") REFERENCES "public"."topic"("version_id","id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "topic_analysis_classifications" ADD CONSTRAINT "topic_analysis_classifications_version_id_fkey" FOREIGN KEY ("version_id") REFERENCES "public"."topic_analysis_versions"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "topic_analysis_classifications" ADD CONSTRAINT "topic_analysis_classifications_interview_report_id_fkey" FOREIGN KEY ("interview_report_id") REFERENCES "public"."interview_report"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "topic_analysis_classifications" ADD CONSTRAINT "topic_analysis_classifications_topic_id_fkey" FOREIGN KEY ("topic_id") REFERENCES "public"."topic_analysis_topics"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
@@ -644,9 +612,7 @@ ALTER TABLE "topic_opinion" ADD CONSTRAINT "topic_opinion_opinion_id_fkey" FOREI
 ALTER TABLE "topic_opinion" ADD CONSTRAINT "topic_opinion_version_id_fkey" FOREIGN KEY ("version_id") REFERENCES "public"."topic_analysis_version"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "topic_opinion" ADD CONSTRAINT "topic_opinion_topic_fk" FOREIGN KEY ("topic_id","version_id") REFERENCES "public"."topic"("id","version_id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "user_sessions" ADD CONSTRAINT "user_sessions_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-CREATE INDEX "idx_api_rate_limits_window_start" ON "api_rate_limits" USING btree ("window_start");--> statement-breakpoint
 CREATE INDEX "idx_assemblies_prefecture_code" ON "assemblies" USING btree ("prefecture_code");--> statement-breakpoint
-CREATE INDEX "idx_assembly_members_user_id" ON "assembly_members" USING btree ("user_id");--> statement-breakpoint
 CREATE INDEX "idx_assembly_source_documents_logical_key" ON "assembly_source_documents" USING btree ("source_id","logical_key");--> statement-breakpoint
 CREATE INDEX "idx_bill_contents_bill_id" ON "bill_contents" USING btree ("bill_id");--> statement-breakpoint
 CREATE INDEX "idx_bill_objections_bill_id" ON "bill_objections" USING btree ("bill_id");--> statement-breakpoint
@@ -676,8 +642,6 @@ CREATE INDEX "idx_interview_report_total_content_richness" ON "interview_report"
 CREATE INDEX "idx_interview_sessions_config_user" ON "interview_sessions" USING btree ("interview_config_id","user_id");--> statement-breakpoint
 CREATE INDEX "idx_interview_sessions_started_at" ON "interview_sessions" USING btree ("started_at");--> statement-breakpoint
 CREATE INDEX "idx_interview_sessions_user_id" ON "interview_sessions" USING btree ("user_id");--> statement-breakpoint
-CREATE INDEX "login_attempts_email_idx" ON "login_attempts" USING btree (lower(email),attempted_at);--> statement-breakpoint
-CREATE INDEX "login_attempts_ip_idx" ON "login_attempts" USING btree ("ip","attempted_at");--> statement-breakpoint
 CREATE INDEX "idx_preview_tokens_bill_id" ON "preview_tokens" USING btree ("bill_id");--> statement-breakpoint
 CREATE INDEX "idx_preview_tokens_expires_at" ON "preview_tokens" USING btree ("expires_at");--> statement-breakpoint
 CREATE INDEX "idx_report_reactions_user_id" ON "report_reactions" USING btree ("user_id");--> statement-breakpoint

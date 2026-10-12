@@ -22,7 +22,6 @@ describe("callCompleteApi", () => {
     const result = await callCompleteApi({
       sessionId: "session-1",
       isPublic: true,
-      isDataReuseConsented: true,
     });
 
     expect(result).toEqual({ report: { id: "report-123" } });
@@ -39,7 +38,6 @@ describe("callCompleteApi", () => {
       callCompleteApi({
         sessionId: "invalid",
         isPublic: false,
-        isDataReuseConsented: false,
       })
     ).rejects.toThrow("Session not found");
   });
@@ -56,7 +54,6 @@ describe("callCompleteApi", () => {
       callCompleteApi({
         sessionId: "session-1",
         isPublic: true,
-        isDataReuseConsented: true,
       })
     ).rejects.toThrow("Failed to complete interview");
   });
@@ -69,7 +66,6 @@ describe("callCompleteApi", () => {
     await callCompleteApi({
       sessionId: "session-42",
       isPublic: false,
-      isDataReuseConsented: false,
     });
 
     expect(globalThis.fetch).toHaveBeenCalledWith("/api/interview/complete", {
@@ -78,7 +74,6 @@ describe("callCompleteApi", () => {
       body: JSON.stringify({
         sessionId: "session-42",
         isPublic: false,
-        isDataReuseConsented: false,
       }),
     });
   });

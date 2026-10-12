@@ -65,8 +65,7 @@ export function isValidDifficultyLevel(
 
 /**
  * difficulty Cookie の付与対象パスか判定する。
- * オープンデータAPI等も difficulty クエリを受け取るため、APIレスポンスに
- * Set-Cookie が乗ってUIの表示設定を書き換えてしまわないよう除外する
+ * API のレスポンスに Set-Cookie が乗って UI の表示設定を書き換えてしまわないよう除外する
  */
 export function shouldApplyDifficultyCookie(pathname: string): boolean {
   return !pathname.startsWith("/api/");

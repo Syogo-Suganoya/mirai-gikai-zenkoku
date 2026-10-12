@@ -1,5 +1,5 @@
 {
-  "id": "8f6cb242-84c4-45d4-a8c0-5d7fa29358d2",
+  "id": "7a54fffb-93e7-4d57-9d75-809e01067a9a",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -33,62 +33,6 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.api_rate_limits": {
-      "name": "api_rate_limits",
-      "schema": "",
-      "columns": {
-        "key": {
-          "name": "key",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "window_start": {
-          "name": "window_start",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "request_count": {
-          "name": "request_count",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "default": 0
-        }
-      },
-      "indexes": {
-        "idx_api_rate_limits_window_start": {
-          "name": "idx_api_rate_limits_window_start",
-          "columns": [
-            {
-              "expression": "window_start",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {},
-      "compositePrimaryKeys": {
-        "api_rate_limits_pkey": {
-          "name": "api_rate_limits_pkey",
-          "columns": [
-            "key",
-            "window_start"
-          ]
-        }
-      },
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
@@ -301,127 +245,6 @@
           ]
         }
       },
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.assembly_members": {
-      "name": "assembly_members",
-      "schema": "",
-      "columns": {
-        "assembly_id": {
-          "name": "assembly_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "user_id": {
-          "name": "user_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "role": {
-          "name": "role",
-          "type": "assembly_member_role_enum",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "display_name": {
-          "name": "display_name",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "affiliation": {
-          "name": "affiliation",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "invited_by": {
-          "name": "invited_by",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {
-        "idx_assembly_members_user_id": {
-          "name": "idx_assembly_members_user_id",
-          "columns": [
-            {
-              "expression": "user_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {
-        "assembly_members_assembly_id_fkey": {
-          "name": "assembly_members_assembly_id_fkey",
-          "tableFrom": "assembly_members",
-          "tableTo": "assemblies",
-          "columnsFrom": [
-            "assembly_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "assembly_members_user_id_fkey": {
-          "name": "assembly_members_user_id_fkey",
-          "tableFrom": "assembly_members",
-          "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "assembly_members_invited_by_fkey": {
-          "name": "assembly_members_invited_by_fkey",
-          "tableFrom": "assembly_members",
-          "tableTo": "users",
-          "columnsFrom": [
-            "invited_by"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "set null",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {
-        "assembly_members_pkey": {
-          "name": "assembly_members_pkey",
-          "columns": [
-            "assembly_id",
-            "user_id"
-          ]
-        }
-      },
-      "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -1999,7 +1822,7 @@
           "type": "numeric(12, 6)",
           "primaryKey": false,
           "notNull": true,
-          "default": "'0'"
+          "default": 0
         },
         "metadata": {
           "name": "metadata",
@@ -2741,7 +2564,7 @@
           "type": "text[]",
           "primaryKey": false,
           "notNull": true,
-          "default": "'{\"\"}'"
+          "default": "'{}'::text[]"
         },
         "topic_extracted_at": {
           "name": "topic_extracted_at",
@@ -3030,7 +2853,7 @@
           "primaryKey": false,
           "notNull": false,
           "generated": {
-            "as": "\nCASE\n    WHEN ((content_richness IS NOT NULL) AND ((content_richness ->> 'total'::text) IS NOT NULL) AND ((content_richness ->> 'total'::text) ~ '^d+$'::text)) THEN ((content_richness ->> 'total'::text))::integer\n    ELSE NULL::integer\nEND",
+            "as": "\nCASE\n    WHEN ((content_richness IS NOT NULL) AND ((content_richness ->> 'total'::text) IS NOT NULL) AND ((content_richness ->> 'total'::text) ~ '^\\d+$'::text)) THEN ((content_richness ->> 'total'::text))::integer\n    ELSE NULL::integer\nEND",
             "type": "stored"
           }
         },
@@ -3066,13 +2889,6 @@
         },
         "is_public_by_user": {
           "name": "is_public_by_user",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "default": false
-        },
-        "is_data_reuse_consented": {
-          "name": "is_data_reuse_consented",
           "type": "boolean",
           "primaryKey": false,
           "notNull": true,
@@ -3332,94 +3148,6 @@
       },
       "isRLSEnabled": false
     },
-    "public.login_attempts": {
-      "name": "login_attempts",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "email": {
-          "name": "email",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "ip": {
-          "name": "ip",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "succeeded": {
-          "name": "succeeded",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "attempted_at": {
-          "name": "attempted_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {
-        "login_attempts_email_idx": {
-          "name": "login_attempts_email_idx",
-          "columns": [
-            {
-              "expression": "lower(email)",
-              "asc": true,
-              "isExpression": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "attempted_at",
-              "asc": true,
-              "isExpression": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "login_attempts_ip_idx": {
-          "name": "login_attempts_ip_idx",
-          "columns": [
-            {
-              "expression": "ip",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "attempted_at",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
     "public.mirai_stances": {
       "name": "mirai_stances",
       "schema": "",
@@ -3467,7 +3195,7 @@
           "type": "text[]",
           "primaryKey": false,
           "notNull": true,
-          "default": "'{\"\"}'"
+          "default": "'{}'::text[]"
         },
         "supplements": {
           "name": "supplements",
@@ -4056,8 +3784,8 @@
             "parent_topic_id"
           ],
           "columnsTo": [
-            "id",
-            "version_id"
+            "version_id",
+            "id"
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
@@ -4752,13 +4480,6 @@
           "primaryKey": false,
           "notNull": true
         },
-        "is_super_admin": {
-          "name": "is_super_admin",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "default": false
-        },
         "must_change_password": {
           "name": "must_change_password",
           "type": "boolean",
@@ -4804,21 +4525,13 @@
       "checkConstraints": {
         "users_email_check": {
           "name": "users_email_check",
-          "value": "email ~ '^[^@s]+@[^@s]+$'::text"
+          "value": "email ~ '^[^@\\s]+@[^@\\s]+$'::text"
         }
       },
       "isRLSEnabled": false
     }
   },
   "enums": {
-    "public.assembly_member_role_enum": {
-      "name": "assembly_member_role_enum",
-      "schema": "public",
-      "values": [
-        "reviewer",
-        "editor"
-      ]
-    },
     "public.assembly_status_enum": {
       "name": "assembly_status_enum",
       "schema": "public",
