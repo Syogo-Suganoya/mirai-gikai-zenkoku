@@ -22,6 +22,7 @@ export const routes = {
   assemblyBills: (assembly: string) => `/${assembly}/bills` as const,
   assemblyBillNew: (assembly: string) => `/${assembly}/bills/new` as const,
   assemblySessions: (assembly: string) => `/${assembly}/sessions` as const,
+  assemblyImport: (assembly: string) => `/${assembly}/import` as const,
 
   // ── 議案配下 ──────────────────────────────────────
   billEdit: (billId: string) => `/bills/${billId}/edit` as const,

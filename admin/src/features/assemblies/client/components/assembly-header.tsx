@@ -13,6 +13,7 @@ export function AssemblyHeader({ slug, name }: { slug: string; name: string }) {
   const tabs = [
     { href: routes.assemblyBills(slug), label: "議案" },
     { href: routes.assemblySessions(slug), label: "会期" },
+    { href: routes.assemblyImport(slug), label: "CSV 取り込み" },
   ];
 
   return (

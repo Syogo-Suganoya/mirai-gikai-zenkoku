@@ -1,9 +1,10 @@
 import "server-only";
 
-import { mkdir, rm, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import {
   DeleteObjectCommand,
+  GetObjectCommand,
   PutObjectCommand,
   S3Client,
 } from "@aws-sdk/client-s3";
@@ -18,6 +19,7 @@ type PublicFileStorage = {
   baseUrl: string;
   put: (key: string, body: Uint8Array, contentType: string) => Promise<void>;
   remove: (key: string) => Promise<void>;
+  get: (key: string) => Promise<Uint8Array>;
 };
 
 function r2Storage(): PublicFileStorage | null {
@@ -46,6 +48,13 @@ function r2Storage(): PublicFileStorage | null {
     remove: async (key) => {
       await client.send(new DeleteObjectCommand({ Bucket: bucket, Key: key }));
     },
+    get: async (key) => {
+      const result = await client.send(
+        new GetObjectCommand({ Bucket: bucket, Key: key })
+      );
+      if (!result.Body) throw new Error(`${key} がありません`);
+      return result.Body.transformToByteArray();
+    },
   };
 }
 
@@ -63,6 +72,8 @@ function localStorage(): PublicFileStorage {
     remove: async (key) => {
       await rm(path.join(LOCAL_DIR, key), { force: true });
     },
+    get: async (key) =>
+      new Uint8Array(await readFile(path.join(LOCAL_DIR, key))),
   };
 }
 
