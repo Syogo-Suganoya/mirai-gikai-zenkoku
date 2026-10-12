@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>議会一覧画面</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="mock-bar">
+      <a href="index.html">← モック目次</a>
+      <span>議会一覧画面（全体管理者） ／ URL: admin /assemblies</span>
+    </div>
+    <div class="admin">
+      <nav class="admin-side">
+        <div class="brand">みらい議会 admin</div>
+        <div class="ctx">ログイン中<strong>全体管理者</strong></div>
+        <div class="group">全体</div>
+        <a class="active" href="admin-01-assemblies.html">議会一覧</a>
+        <a href="admin-06-members.html">担当者と権限</a>
+        <div class="group">国会</div>
+        <a href="#">議案（既存の画面）</a>
+      </nav>
+      <main class="admin-main">
+        <div class="row between">
+          <h1>議会一覧</h1>
+          <a class="btn primary sm" href="#">＋ 議会を追加</a>
+        </div>
+
+        <div class="kpi">
+          <div>公開中の議会<strong>19</strong></div>
+          <div>準備中の議会<strong>6</strong></div>
+          <div>確認待ちの下書き<strong>34</strong></div>
+          <div>URLの読み込み失敗<strong>2</strong></div>
+        </div>
+
+        <div class="panel">
+          <div class="row" style="margin-bottom: 8px">
+            <input type="text" placeholder="議会名で検索" style="max-width: 260px" />
+            <select style="max-width: 160px">
+              <option>すべての状態</option>
+              <option>公開中</option>
+              <option>準備中</option>
+              <option>マスタのみ</option>
+            </select>
+          </div>
+          <table>
+            <tr>
+              <th>議会</th>
+              <th>種類</th>
+              <th>状態</th>
+              <th>今の会期</th>
+              <th>議案（公開／下書き）</th>
+              <th>担当者</th>
+              <th>URL登録</th>
+              <th>待っている人</th>
+            </tr>
+            <tr>
+              <td><a href="admin-02-dashboard.html">あおば市議会</a></td>
+              <td>市</td>
+              <td><span class="chip green">公開中</span></td>
+              <td>9月定例会（〜9/26）</td>
+              <td>14 ／ 4</td>
+              <td>3人</td>
+              <td><span class="chip green">議案書・議事録</span></td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td><a href="#">みなと県議会</a></td>
+              <td>都道府県</td>
+              <td><span class="chip green">公開中</span></td>
+              <td>9月定例会（〜10/14）</td>
+              <td>30 ／ 12</td>
+              <td>2人</td>
+              <td><span class="chip red">読み込み失敗</span></td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td><a href="#">ひがし区議会</a></td>
+              <td>特別区</td>
+              <td><span class="chip orange">準備中</span></td>
+              <td>-</td>
+              <td>0 ／ 6</td>
+              <td>1人</td>
+              <td><span class="chip orange">議案書のみ</span></td>
+              <td>41</td>
+            </tr>
+            <tr>
+              <td><a href="#">かわせ町議会</a></td>
+              <td>町</td>
+              <td><span class="chip">マスタのみ</span></td>
+              <td>-</td>
+              <td>0 ／ 0</td>
+              <td><span style="color: var(--danger)">未設定</span></td>
+              <td>未登録</td>
+              <td>23</td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="note">
+          議会マスタ（全国の都道府県・市区町村議会）は総務省の全国地方公共団体コードから一括投入しておき、
+          状態は「マスタのみ → 準備中（担当者あり・非公開） → 公開中」と進める。
+          国会もこのテーブルの1件（種類: 国会）として扱い、既存の議案画面はそのまま使う。
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

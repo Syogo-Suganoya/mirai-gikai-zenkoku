@@ -1,0 +1,11 @@
+{
+  "name": "local-gikai-design",
+  "private": true,
+  "description": "地方版みらい議会の設計資料。使い方ガイドに載せる画面の写しを撮る",
+  "scripts": {
+    "shots": "node shots.js"
+  },
+  "devDependencies": {
+    "puppeteer-core": "24.10.0"
+  }
+}

@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>アップロード画面</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="mock-bar">
+      <a href="index.html">← モック目次</a>
+      <span>アップロード画面 ／ URL: admin /assemblies/aoba-city/bills/import</span>
+    </div>
+    <div class="admin">
+      <nav class="admin-side">
+        <div class="brand">みらい議会 admin</div>
+        <div class="ctx">担当議会<strong>あおば市議会 ▾</strong></div>
+        <div class="group">あおば市議会</div>
+        <a href="admin-02-dashboard.html">ダッシュボード</a>
+        <a class="active" href="admin-03-upload.html">議案を登録</a>
+        <a href="admin-04-review.html">下書きの確認 <span class="chip orange">4</span></a>
+        <a href="admin-05-sources.html">URL登録</a>
+        <a href="#">会期（定例会）</a>
+        <a href="#">インタビュー結果</a>
+        <a href="admin-06-members.html">担当者</a>
+      </nav>
+      <main class="admin-main">
+        <h1>議案を登録</h1>
+        <div class="diff-flag" id="auto-banner">
+          📥 この議案書は、登録した議案書の一覧ページから自動で読み込みました（9/26 06:00）。
+          URLを登録していない議会や、一覧に載らない議案書は、左のPDFを差し替えて手動で登録できます。
+        </div>
+        <div class="steps" style="max-width: 640px">
+          <span class="done">1. 議案書を読み込む</span>
+          <span class="on">2. 議案に分ける</span>
+          <span>3. 解説の下書きを作る</span>
+        </div>
+
+        <div class="split">
+          <div class="panel" id="import-files">
+            <h2 style="font-size: 16px">1. 議案書を読み込む</h2>
+            <label class="req" id="session-label">会期</label>
+            <select id="session-select">
+              <option>令和8年9月定例会（9/2〜9/26）</option>
+              <option>＋ 新しい会期を作る</option>
+            </select>
+            <label class="req">議案書</label>
+            <div class="dropzone">
+              ✅ 令和8年9月定例会_提出議案.pdf（84ページ）<br />
+              <small>別のPDFを追加する</small>
+            </div>
+            <label>議会サイトのURL（出典として表示）</label>
+            <input type="url" value="https://www.city.aoba.example.lg.jp/gikai/r8-9/" />
+            <label>補足資料（任意）</label>
+            <div class="dropzone" style="padding: 12px">委員会資料・予算説明書など</div>
+            <p class="help" id="import-files-end">
+              補足資料はAIチャットの参照資料（knowledge_source）にも使われます。
+            </p>
+          </div>
+
+          <div class="panel" id="import-split">
+            <div class="row between">
+              <h2 style="font-size: 16px">2. 議案に分ける</h2>
+              <span class="chip blue">AIが18件を検出</span>
+            </div>
+            <p class="help">
+              1つのPDFに複数の議案がまとまっているので、AIが議案ごとに区切りました。解説が不要な議案は外してください。
+            </p>
+            <table>
+              <tr>
+                <th></th>
+                <th>番号</th>
+                <th>議案名（AIが抽出）</th>
+                <th>種類</th>
+                <th>ページ</th>
+              </tr>
+              <tr>
+                <td><input type="checkbox" checked /></td>
+                <td>第48号</td>
+                <td>令和8年度あおば市一般会計補正予算（第3号）</td>
+                <td>予算</td>
+                <td>1-22</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" checked /></td>
+                <td>第50号</td>
+                <td>あおば市公民館条例の一部を改正する条例</td>
+                <td>条例</td>
+                <td>27-29</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" checked /></td>
+                <td>第52号</td>
+                <td>あおば市学校給食費の保護者負担の軽減に関する条例</td>
+                <td>条例</td>
+                <td>33-36</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" checked /></td>
+                <td>第55号</td>
+                <td>指定管理者の指定について（市民体育館）</td>
+                <td>人事・契約</td>
+                <td>51-52</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" /></td>
+                <td>第57号</td>
+                <td>人権擁護委員の推薦につき意見を求めることについて</td>
+                <td>人事・契約</td>
+                <td>60</td>
+              </tr>
+              <tr>
+                <td colspan="5" class="help">… ほか13件</td>
+              </tr>
+            </table>
+            <p style="margin-top: 16px; text-align: right">
+              <a class="btn primary" href="admin-04-review.html">選んだ17件の解説を下書きする →</a>
+            </p>
+          </div>
+        </div>
+
+        <div class="note">
+          地方議会の議案書は「1会期分を1つのPDF」で出すことが多い。1件ずつフォームで登録させず、
+          PDFを丸ごと読み込んで AI が議案ごとに分割 → 解説（ふつう／くわしく）・タイトル・種類・knowledge_source
+          を下書きする。人事案件などは解説不要として外せるようにする。下書きはバックグラウンドで生成し、
+          できたものから 下書き確認画面の確認待ちに並ぶ。
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

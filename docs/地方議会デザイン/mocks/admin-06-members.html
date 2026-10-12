@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>担当者管理画面</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="mock-bar">
+      <a href="index.html">← モック目次</a>
+      <span>担当者管理画面 ／ URL: admin /members</span>
+    </div>
+    <div class="admin">
+      <nav class="admin-side">
+        <div class="brand">みらい議会 admin</div>
+        <div class="ctx">ログイン中<strong>全体管理者</strong></div>
+        <div class="group">全体</div>
+        <a href="admin-01-assemblies.html">議会一覧</a>
+        <a class="active" href="admin-06-members.html">担当者と権限</a>
+      </nav>
+      <main class="admin-main">
+        <div class="row between" id="members-head">
+          <h1>担当者と権限</h1>
+          <a class="btn primary sm" href="#">＋ 担当者を招待</a>
+        </div>
+
+        <div class="panel">
+          <h2 style="font-size: 16px">役割</h2>
+          <table>
+            <tr>
+              <th>役割</th>
+              <th>できること</th>
+              <th>想定する人</th>
+            </tr>
+            <tr>
+              <td><span class="chip red">全体管理者</span></td>
+              <td>すべての議会の操作、議会の追加、担当者の任命</td>
+              <td>運営チーム（既存の admin ユーザー）</td>
+            </tr>
+            <tr>
+              <td><span class="chip green">確認者</span></td>
+              <td>担当議会の議案の登録・編集・<strong>公開</strong>、URLの登録、賛否の入力</td>
+              <td>チームみらいの地方議員・各地域のリーダー</td>
+            </tr>
+            <tr>
+              <td><span class="chip blue">編集者</span></td>
+              <td>担当議会の議案の登録・編集（公開はできない）</td>
+              <td>サポーター・ボランティア</td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="panel" id="members-list">
+          <h2 style="font-size: 16px">担当者</h2>
+          <table>
+            <tr>
+              <th>名前</th>
+              <th>メール</th>
+              <th>担当議会と役割</th>
+              <th>最終ログイン</th>
+              <th></th>
+            </tr>
+            <tr>
+              <td>山田 太郎</td>
+              <td>yamada@example.com</td>
+              <td>
+                あおば市議会 <span class="chip green">確認者</span><br />
+                みなと県議会 <span class="chip blue">編集者</span>
+              </td>
+              <td>今日</td>
+              <td><a class="btn ghost sm" href="#">編集</a></td>
+            </tr>
+            <tr>
+              <td>佐藤 花子</td>
+              <td>sato@example.com</td>
+              <td>ひがし区議会 <span class="chip green">確認者</span></td>
+              <td>3日前</td>
+              <td><a class="btn ghost sm" href="#">編集</a></td>
+            </tr>
+            <tr>
+              <td>鈴木 一郎</td>
+              <td>suzuki@example.com</td>
+              <td>あおば市議会 <span class="chip blue">編集者</span></td>
+              <td><span class="chip orange">招待中</span></td>
+              <td><a class="btn ghost sm" href="#">再送</a></td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="note">
+          いまの admin は「Google Workspace のユーザーは自動で管理者」という全か無かの権限。
+          地方版では外部のボランティアを招待するため、メール招待 ＋ 議会ごとの役割（assembly_members）を追加する。
+          全体管理者は既存の仕組みのまま。
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

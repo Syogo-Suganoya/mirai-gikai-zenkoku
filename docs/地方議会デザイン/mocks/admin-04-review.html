@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>下書き確認画面</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="mock-bar">
+      <a href="index.html">← モック目次</a>
+      <span>下書き確認画面 ／ URL: admin /assemblies/aoba-city/bills/[id]/review</span>
+    </div>
+    <div class="admin">
+      <nav class="admin-side">
+        <div class="brand">みらい議会 admin</div>
+        <div class="ctx">担当議会<strong>あおば市議会 ▾</strong></div>
+        <div class="group">あおば市議会</div>
+        <a href="admin-02-dashboard.html">ダッシュボード</a>
+        <a href="admin-03-upload.html">議案を登録</a>
+        <a class="active" href="admin-04-review.html">下書きの確認 <span class="chip orange">4</span></a>
+        <a href="admin-05-sources.html">URL登録</a>
+        <a href="#">会期（定例会）</a>
+        <a href="#">インタビュー結果</a>
+        <a href="admin-06-members.html">担当者</a>
+      </nav>
+      <main class="admin-main">
+        <div class="row between">
+          <div>
+            <p class="help">確認待ち 1 / 4 ・ 9月定例会 ・ 議案第52号</p>
+            <h1>市立小中学校の給食費を無償にする条例</h1>
+          </div>
+          <div class="row">
+            <a class="btn ghost sm" href="#">← 前</a>
+            <a class="btn ghost sm" href="#">次 →</a>
+          </div>
+        </div>
+
+        <div class="split">
+          <div>
+            <div class="pdf">
+              <div class="pdf-page">
+                <p style="text-align: center">議案第52号</p>
+                <p style="text-align: center">
+                  あおば市学校給食費の保護者負担の軽減に関する条例の制定について
+                </p>
+                <p>
+                  （目的）第1条 この条例は、<mark>市立の小学校及び中学校に在籍する児童及び生徒</mark>の保護者の経済的負担の軽減を図り…
+                </p>
+                <p>
+                  （負担の軽減）第2条 市は、前条の保護者が負担すべき学校給食費の<mark>全額</mark>を負担するものとする。
+                </p>
+                <p>（財源）第3条 …<mark>あおば市子ども未来基金</mark>を充てることができる。</p>
+                <p>附則 この条例は、<mark>令和9年4月1日</mark>から施行する。</p>
+                <p>提案理由 …</p>
+              </div>
+            </div>
+            <p class="help">原文 p.33-36 ・ 黄色はAIが解説の根拠にした箇所</p>
+          </div>
+
+          <div>
+            <div class="panel">
+              <label>表示タイトル <span class="ai">AI</span></label>
+              <input type="text" value="市立小中学校の給食費を無償にする条例" />
+              <p class="help">正式名称は議案書から自動で入ります</p>
+
+              <div class="row" style="margin-top: 8px">
+                <div style="flex: 1">
+                  <label>種類</label>
+                  <select><option>条例</option></select>
+                </div>
+                <div style="flex: 1">
+                  <label>審議の状態</label>
+                  <select><option>委員会で審査中</option></select>
+                </div>
+                <div style="flex: 1">
+                  <label>付託委員会</label>
+                  <input type="text" value="文教委員会" />
+                </div>
+              </div>
+
+              <label>ひとことで言うと（ふつう） <span class="ai">AI</span></label>
+              <textarea>来年4月から、市立の小中学校に通う子ども（約9,800人）の給食費を、市が全額負担します。保護者の負担は1人あたり年間およそ5万円減ります。市の負担は年間およそ12億円で、ふるさと納税の基金などから出します。</textarea>
+              <div class="diff-flag">
+                ⚠ 「約9,800人」「年間およそ12億円」は議案書に記載がなく、AIが補足資料から引用しました。出典を確認してください。
+              </div>
+
+              <label>くわしく <span class="ai">AI</span></label>
+              <textarea>（くわしい解説の下書き…）</textarea>
+
+              <label>AIチャットの参照資料 <span class="ai">AI</span></label>
+              <p class="help">議案本文 p.33-36、委員会資料「給食費無償化の試算」</p>
+
+              <label>チームみらいの賛否（任意）</label>
+              <select>
+                <option>あとで入力</option>
+                <option>賛成</option>
+                <option>反対</option>
+              </select>
+            </div>
+
+            <div class="row" id="review-actions" style="justify-content: flex-end">
+              <a class="btn ghost" href="#">AIに書き直させる</a>
+              <a class="btn outline" href="#">下書き保存</a>
+              <a class="btn primary" href="#">確認済みにして公開</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="note">
+          公開できるのは「確認者」権限を持つ人だけ（編集者は下書き保存まで）。
+          数値・日付・金額のように誤りが致命的な箇所は、AIが原文での根拠位置を返し、原文にない数値には警告を出す。
+          公開時に既存の is_review_completed を true にし、公開ページに「◯◯が確認」の表記を出す。
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

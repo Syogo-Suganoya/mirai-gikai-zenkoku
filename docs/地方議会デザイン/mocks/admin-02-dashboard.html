@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ダッシュボード画面</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="mock-bar">
+      <a href="index.html">← モック目次</a>
+      <span>ダッシュボード画面 ／ URL: admin /assemblies/aoba-city</span>
+    </div>
+    <div class="admin">
+      <nav class="admin-side">
+        <div class="brand">みらい議会 admin</div>
+        <div class="ctx">担当議会<strong>あおば市議会 ▾</strong></div>
+        <div class="group">あおば市議会</div>
+        <a class="active" href="admin-02-dashboard.html">ダッシュボード</a>
+        <a href="admin-03-upload.html">議案を登録</a>
+        <a href="admin-04-review.html">下書きの確認 <span class="chip orange">4</span></a>
+        <a href="admin-05-sources.html">URL登録</a>
+        <a href="#">会期（定例会）</a>
+        <a href="#">インタビュー結果</a>
+        <a href="admin-06-members.html">担当者</a>
+      </nav>
+      <main class="admin-main">
+        <div class="row between" id="dash-head">
+          <h1>あおば市議会</h1>
+          <div class="row">
+            <a class="btn ghost sm" href="web-02-assembly.html">公開ページを見る</a>
+            <a class="btn primary sm" href="admin-03-upload.html">＋ 議案書をアップロード</a>
+          </div>
+        </div>
+
+        <div class="panel" id="dash-notice">
+          <h2 style="font-size: 16px">📥 登録したURLから自動で見つけたもの</h2>
+          <table>
+            <tr>
+              <td>10/9</td>
+              <td>議事録</td>
+              <td>9月10日 文教委員会</td>
+              <td>審議の進み具合の更新候補 <strong>3件</strong>（第52号ほか）</td>
+              <td><a class="btn primary sm" href="#">確認する</a></td>
+            </tr>
+            <tr>
+              <td>9/26</td>
+              <td>議案書</td>
+              <td>令和8年9月定例会_追加議案.pdf</td>
+              <td>議案2件に分割済み。解説の要否の選択待ち</td>
+              <td><a class="btn outline sm" href="admin-03-upload.html">解説の要否を選ぶ</a></td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="kpi">
+          <div>今の会期<strong>9月定例会</strong>9/2〜9/26 ・ 採決まであと5日</div>
+          <div>公開中の議案<strong>14 / 18</strong></div>
+          <div>確認待ち<strong>4</strong>うち AI生成直後 2</div>
+          <div>集まった意見<strong>318</strong>今週 +96</div>
+        </div>
+
+        <div class="panel" id="dash-bills">
+          <div class="row between">
+            <h2 style="font-size: 16px">令和8年9月定例会の議案</h2>
+            <div class="row">
+              <a class="btn ghost sm" href="#">採決結果を一括入力</a>
+            </div>
+          </div>
+          <table>
+            <tr>
+              <th>番号</th>
+              <th>議案</th>
+              <th>種類</th>
+              <th>審議の状態</th>
+              <th>解説</th>
+              <th>チームみらいの賛否</th>
+              <th>意見</th>
+            </tr>
+            <tr>
+              <td>第52号</td>
+              <td><a href="admin-04-review.html">市立小中学校の給食費を無償にする条例</a></td>
+              <td>条例</td>
+              <td><span class="chip orange">委員会で審査中</span></td>
+              <td><span class="chip green">公開中</span></td>
+              <td>賛成</td>
+              <td>132</td>
+            </tr>
+            <tr>
+              <td>第48号</td>
+              <td><a href="admin-04-review.html">一般会計補正予算（第3号）</a></td>
+              <td>予算</td>
+              <td><span class="chip orange">委員会で審査中</span></td>
+              <td><span class="chip green">公開中</span></td>
+              <td>検討中</td>
+              <td>58</td>
+            </tr>
+            <tr>
+              <td>第55号</td>
+              <td><a href="admin-04-review.html">指定管理者の指定（市民体育館）</a></td>
+              <td>人事・契約</td>
+              <td><span class="chip">提出済み</span></td>
+              <td><span class="chip orange">確認待ち</span></td>
+              <td>-</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td>第56号</td>
+              <td><a href="admin-04-review.html">市道の路線認定</a></td>
+              <td>その他</td>
+              <td><span class="chip">提出済み</span></td>
+              <td><span class="chip blue">AI生成中…</span></td>
+              <td>-</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td>第50号</td>
+              <td>公民館の使用料を見直す条例</td>
+              <td>条例</td>
+              <td><span class="chip green">可決</span></td>
+              <td><span class="chip green">公開中</span></td>
+              <td>反対</td>
+              <td>21</td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="note">
+          登録したURL（議案書・議事録の一覧ページ）から自動で見つけたものは、上の通知欄に並ぶ。
+          担当者は自分の議会しか見えない（議会単位の権限）。地方の採決は会期末にまとめて行われるので、
+          採決結果は1件ずつではなく一括入力できるようにする。
+          「チームみらいの賛否」は議員がいる議会だけ列を出す。
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

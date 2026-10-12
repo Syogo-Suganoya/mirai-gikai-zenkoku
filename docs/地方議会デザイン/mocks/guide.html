@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>地方版みらい議会 使い方ガイド</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="mock-bar">
+      <a href="index.html">← モック目次</a>
+      <span>使い方ガイド（構想段階・画面はモック）</span>
+    </div>
+
+    <div class="guide-layout">
+      <nav class="toc">
+        <strong>目次</strong>
+        <ol>
+          <li><a href="#overview">全体の流れ</a></li>
+          <li><a href="#read">議案を見る・意見を伝える（住民）</a></li>
+          <li><a href="#sources">議案書・議事録のURLを登録する（担当者）</a></li>
+          <li><a href="#register">議案を登録して公開する（担当者）</a></li>
+          <li><a href="#minutes">議事録で審議の進み具合を更新する（担当者）</a></li>
+          <li><a href="#session-end">会期末の作業（担当者）</a></li>
+          <li><a href="#launch">新しい議会を立ち上げる（運営）</a></li>
+          <li><a href="#states">状態の移り変わり</a></li>
+          <li><a href="#faq">よくある質問</a></li>
+        </ol>
+      </nav>
+
+      <main class="guide">
+      <h1>地方版みらい議会 使い方ガイド</h1>
+      <p>
+        地方版みらい議会は、都道府県議会・市区町村議会の議案をわかりやすく解説し、住民の声を議会に届けるサービスです。
+        自治体ごとに別のサイトを作るのではなく、<strong>議会の公式サイトにある議案書・議事録の一覧ページのURLを登録すれば、その議会のページが自動でできあがります</strong>。
+        このガイドでは、見る人・運営する人それぞれの使い方を説明します。
+      </p>
+      <div class="note">
+        構想段階のガイドです。リンク先の画面は静的モックで、実際の動作はしません。
+      </div>
+
+      <!-- ========== 1. 全体の流れ ========== -->
+      <h2 id="overview">1. 全体の流れ</h2>
+      <p>
+        議案書が公開されてから、住民の声が議員に届くまでの大きな流れです。
+        担当者が要約を一から書く必要はありません。AIが議案書を見つけて下書きを作り、人はそれを確認します。
+      </p>
+      <div class="flow">
+        <div class="node start">議会が議案書を公開（開会の約1週間前）</div>
+        <div class="arrow"></div>
+        <div class="branches">
+          <div class="flow">
+            <div class="node ai">
+              <span class="who who-ai">AI</span>登録したURLから新しい議案書を自動で見つける
+              <a class="screen" href="admin-05-sources.html">URL登録画面</a>
+              <p>議案書の一覧ページを毎日確認する（→ 3章）</p>
+              <a href="admin-05-sources.html"><img class="thumb" src="shots/a5-history.png" alt="URL登録画面" loading="lazy" /></a>
+            </div>
+          </div>
+          <div class="flow">
+            <div class="node">
+              <span class="who who-editor">編集者</span>議案書PDFをアップロード
+              <a class="screen" href="admin-03-upload.html">アップロード画面</a>
+              <p>URLを登録していない議会や、一覧に載らない議案書のとき</p>
+              <a href="admin-03-upload.html"><img class="thumb" src="shots/a3-upload.png" alt="アップロード画面" loading="lazy" /></a>
+            </div>
+          </div>
+        </div>
+        <div class="arrow"></div>
+        <div class="node ai">
+          <span class="who who-ai">AI</span>議案ごとに分割し、解説の下書きを作る
+        </div>
+        <div class="arrow"></div>
+        <div class="node">
+          <span class="who who-reviewer">確認者</span>原文と照らして確認し、公開
+          <a class="screen" href="admin-04-review.html">下書き確認画面</a>
+          <a href="admin-04-review.html"><img class="thumb" src="shots/a4-review.png" alt="下書き確認画面" loading="lazy" /></a>
+        </div>
+        <div class="arrow"></div>
+        <div class="node">
+          <span class="who who-user">住民</span>解説を読む・AIに質問する・意見を伝える
+          <a class="screen" href="web-03-bill.html">議案詳細画面</a>
+          <p>議事録が公開されたら、審議の進み具合も自動で更新される（→ 5章）</p>
+          <a href="web-03-bill.html"><img class="thumb thumb-phone" src="shots/w3-bill.png" alt="議案詳細画面" loading="lazy" /></a>
+        </div>
+        <div class="arrow"></div>
+        <div class="node ai">
+          <span class="who who-ai">AI</span>集まった意見をレポート・トピック分析にまとめる
+        </div>
+        <div class="arrow"></div>
+        <div class="node end">議員に届く（委員会・本会議での質問や判断の材料に）</div>
+      </div>
+
+      <!-- ========== 2. 見る ========== -->
+      <h2 id="read">2. 議案を見る・意見を伝える（住民）</h2>
+      <div class="flow">
+        <div class="node start">みらい議会（地方議会版）を開く</div>
+        <div class="arrow"></div>
+        <div class="node">
+          <span class="who who-user">住民</span>自分のまちの議会を選ぶ
+          <a class="screen" href="web-01-select.html">議会選択画面</a>
+          <p>開会中の議会から選ぶ／都道府県から探す／市区町村名で検索</p>
+          <a href="web-01-select.html"><img class="thumb thumb-phone" src="shots/w1-select.png" alt="議会選択画面" loading="lazy" /></a>
+        </div>
+        <div class="arrow"></div>
+        <div class="node decision">その議会の議案は公開されている？</div>
+        <div class="arrow"></div>
+        <div class="branches">
+          <div class="flow">
+            <div class="node">
+              <strong>はい</strong> → いつもどおり閲覧する
+              <a class="screen" href="web-02-assembly.html">議会トップ画面</a>
+              <p>
+                議案一覧から議案を開き、解説を読む・AIに質問する・意見を伝える。国会版のみらい議会と同じ使い方
+              </p>
+              <a href="web-02-assembly.html"><img class="thumb thumb-phone" src="shots/w2-assembly.png" alt="議会トップ画面" loading="lazy" /></a>
+            </div>
+          </div>
+          <div class="flow">
+            <div class="node">
+              <strong>いいえ</strong> → 議案未掲載画面が出る
+              <a class="screen" href="web-05-not-yet.html">議案未掲載画面</a>
+              <a href="web-05-not-yet.html"><img class="thumb thumb-phone" src="shots/w5-not-yet.png" alt="議案未掲載画面" loading="lazy" /></a>
+            </div>
+            <div class="arrow"></div>
+            <div class="node">
+              「公開されたら知らせて」に登録する
+              <a href="web-05-not-yet.html"><img class="thumb" src="shots/w5-notify.png" alt="議案未掲載画面" loading="lazy" /></a>
+            </div>
+            <div class="arrow"></div>
+            <div class="node end">公開されたらメールで届く</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== 3. URL登録 ========== -->
+      <h2 id="sources">3. 議案書・議事録のURLを登録する（担当者）</h2>
+      <p>
+        議案書と議事録は、ほとんどの議会で公式サイトに一覧ページがあります。
+        そのURLを1度登録すれば、新しい議案書や議事録が載るたびに自動で取り込みます。
+        議会ごとに最初に1回だけ行う作業です。
+      </p>
+      <div class="flow">
+        <div class="node start">議会の公式サイトを開く</div>
+        <div class="arrow"></div>
+        <div class="node">
+          <span class="who who-reviewer">確認者</span>議案書の一覧ページを探す
+          <p>「提出議案」「議案書」「本会議の日程」など。会期ごとに議案書のPDFが並んでいるページ</p>
+        </div>
+        <div class="arrow"></div>
+        <div class="node">
+          議事録の一覧ページを探す
+          <p>「会議録」「会議録検索システム」など。委員会の議事録もあれば、審議の内容まで読み取れる</p>
+        </div>
+        <div class="arrow"></div>
+        <div class="node">
+          2つのURLを貼り付ける
+          <a class="screen" href="admin-05-sources.html">URL登録画面</a>
+          <p>確認の頻度（会期中は毎日など）と、見つけたときの通知先も選ぶ</p>
+          <a href="admin-05-sources.html"><img class="thumb" src="shots/a5-urls.png" alt="URL登録画面" loading="lazy" /></a>
+        </div>
+        <div class="arrow"></div>
+        <div class="node">
+          「試しに読み込む」で、見つかるファイルを確かめる
+          <a href="admin-05-sources.html"><img class="thumb" src="shots/a5-test.png" alt="URL登録画面" loading="lazy" /></a>
+        </div>
+        <div class="arrow"></div>
+        <div class="node decision">議案書・議事録が見つかった？</div>
+        <div class="arrow"></div>
+        <div class="branches">
+          <div class="flow">
+            <div class="node">
+              <strong>はい</strong> → 「保存して自動確認を始める」
+            </div>
+            <div class="arrow"></div>
+            <div class="node end">新しい議案書が載ると、下書きまで自動で作られる（→ 4章）</div>
+          </div>
+          <div class="flow">
+            <div class="node">
+              <strong>いいえ</strong> → PDFが直接並んでいるページのURLに変える
+              <p>会期ごとのページなど、一覧のもう一段奥のページ。それでも見つからなければ、議案書PDFを手動でアップロードする（→ 4章）</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <h3>読み込みに失敗したとき</h3>
+      <div class="flow">
+        <div class="node start">「読み込み失敗」の通知が届く</div>
+        <div class="arrow"></div>
+        <div class="node">
+          <span class="who who-reviewer">確認者</span>取り込みの履歴で失敗の内容を見る
+          <a class="screen" href="admin-05-sources.html">URL登録画面</a>
+          <p>議会サイトの引っ越し・ページの移動が主な原因</p>
+          <a href="admin-05-sources.html"><img class="thumb" src="shots/a5-history.png" alt="URL登録画面" loading="lazy" /></a>
+        </div>
+        <div class="arrow"></div>
+        <div class="node">新しい一覧ページのURLに直して、試しに読み込む</div>
+        <div class="arrow"></div>
+        <div class="node end">自動確認が再開される</div>
+      </div>
+
+      <!-- ========== 4. 登録 ========== -->
+      <h2 id="register">4. 議案を登録して公開する（担当者）</h2>
+      <p>
+        担当者のいちばん大事な作業です。URLを登録していれば議案書は自動で読み込まれるので、担当者は解説の要否を選んで、下書きを確認するだけです。
+      </p>
+      <div class="flow">
+        <div class="node start">議会が議案書を公開</div>
+        <div class="arrow"></div>
+        <div class="node decision">議案書の一覧ページのURLは登録済み？</div>
+        <div class="arrow"></div>
+        <div class="branches">
+          <div class="flow">
+            <div class="node ai">
+              <strong>はい</strong> → <span class="who who-ai">AI</span>新しい議案書を見つけて読み込む
+              <p>担当者に通知が届き、ダッシュボード画面に並ぶ</p>
+              <a href="admin-02-dashboard.html"><img class="thumb" src="shots/a2-notice.png" alt="ダッシュボード画面" loading="lazy" /></a>
+            </div>
+          </div>
+          <div class="flow">
+            <div class="node">
+              <strong>いいえ</strong> → <span class="who who-editor">編集者</span>ダッシュボード画面の「議案書をアップロード」を押す
+              <a href="admin-02-dashboard.html"><img class="thumb" src="shots/a2-head.png" alt="ダッシュボード画面" loading="lazy" /></a>
+            </div>
+            <div class="arrow"></div>
+            <div class="node">
+              会期を選ぶ（なければ新しく作る）
+              <a href="admin-03-upload.html"><img class="thumb" src="shots/a3-session.png" alt="アップロード画面" loading="lazy" /></a>
+            </div>
+            <div class="arrow"></div>
+            <div class="node">
+              議案書PDF・補足資料（委員会資料など）をアップロード
+              <a href="admin-03-upload.html"><img class="thumb" src="shots/a3-files.png" alt="アップロード画面" loading="lazy" /></a>
+            </div>
+          </div>
+        </div>
+        <div class="arrow"></div>
+        <div class="node ai">
+          <span class="who who-ai">AI</span>議案ごとに分割（番号・正式名称・種類・ページ）
+        </div>
+        <div class="arrow"></div>
+        <div class="node">
+          <span class="who who-editor">編集者</span>解説が不要な議案のチェックを外す
+          <a class="screen" href="admin-03-upload.html">アップロード画面</a>
+          <p>例: 人権擁護委員の推薦、市道の路線認定 など</p>
+          <a href="admin-03-upload.html"><img class="thumb" src="shots/a3-split.png" alt="アップロード画面" loading="lazy" /></a>
+        </div>
+        <div class="arrow"></div>
+        <div class="node ai">
+          <span class="who who-ai">AI</span>議案ごとに下書きを作る
+          <p>表示タイトル・解説（ふつう／くわしく）・AIチャットの参照資料</p>
+        </div>
+        <div class="arrow"></div>
+        <div class="node">
+          <span class="who who-editor">編集者</span>原文と並べて下書きを確認・修正
+          <a class="screen" href="admin-04-review.html">下書き確認画面</a>
+          <p>黄色の箇所がAIの根拠。⚠ の警告（原文にない数値など）は必ず確認する</p>
+          <a href="admin-04-review.html"><img class="thumb" src="shots/a4-review.png" alt="下書き確認画面" loading="lazy" /></a>
+        </div>
+        <div class="arrow"></div>
+        <div class="node decision">確認者の権限がある？</div>
+        <div class="arrow"></div>
+        <div class="branches">
+          <div class="flow">
+            <div class="node">
+              <strong>ある</strong> → <span class="who who-reviewer">確認者</span>「確認済みにして公開」
+              <a href="admin-04-review.html"><img class="thumb" src="shots/a4-actions.png" alt="下書き確認画面" loading="lazy" /></a>
+            </div>
+            <div class="arrow"></div>
+            <div class="node end">議案ページが公開される</div>
+          </div>
+          <div class="flow">
+            <div class="node">
+              <strong>ない</strong> → <span class="who who-editor">編集者</span>「下書き保存」
+            </div>
+            <div class="arrow"></div>
+            <div class="node">
+              <span class="who who-reviewer">確認者</span>ダッシュボード画面の確認待ちから開いて最終確認
+            </div>
+            <div class="arrow"></div>
+            <div class="node decision">内容は正しい？</div>
+            <div class="arrow"></div>
+            <div class="node">
+              正しい → 公開／直す点がある → 修正するか「AIに書き直させる」
+            </div>
+          </div>
+        </div>
+      </div>
+      <h3>確認のチェックポイント</h3>
+      <ul>
+        <li>金額・人数・日付・施行日が原文と一致しているか</li>
+        <li>「誰に」「何が」「いつから」変わるのかが書かれているか</li>
+        <li>賛成・反対どちらかに寄った書き方になっていないか（解説は中立に。意見は賛否の欄に書く）</li>
+        <li>専門用語が「ふつう」の解説に残っていないか</li>
+      </ul>
+
+      <!-- ========== 5. 議事録 ========== -->
+      <h2 id="minutes">5. 議事録で審議の進み具合を更新する（担当者）</h2>
+      <p>
+        議事録は会議の数週間後に公開されます。登録した議事録の一覧ページから自動で見つけ、議案ごとに審議の内容と結果を読み取ります。
+        担当者は、反映してよいかを確認するだけです。
+      </p>
+      <div class="flow">
+        <div class="node start">議会が議事録を公開（会議の数週間後）</div>
+        <div class="arrow"></div>
+        <div class="node ai">
+          <span class="who who-ai">AI</span>新しい議事録を見つける
+        </div>
+        <div class="arrow"></div>
+        <div class="node ai">
+          <span class="who who-ai">AI</span>議案ごとに、委員会での質疑の要点・採決結果を読み取る
+          <p>どの議案の話か、付託された委員会、可決／否決／継続審査</p>
+        </div>
+        <div class="arrow"></div>
+        <div class="node">
+          <span class="who who-reviewer">確認者</span>ダッシュボード画面の通知から更新候補を確認
+          <a class="screen" href="admin-02-dashboard.html">ダッシュボード画面</a>
+          <a href="admin-02-dashboard.html"><img class="thumb" src="shots/a2-notice.png" alt="ダッシュボード画面" loading="lazy" /></a>
+        </div>
+        <div class="arrow"></div>
+        <div class="node decision">読み取った内容は正しい？</div>
+        <div class="arrow"></div>
+        <div class="node">
+          正しい → 反映する／違う → 直してから反映するか、反映しない
+        </div>
+        <div class="arrow"></div>
+        <div class="node end">
+          議案詳細画面の「審議の進み具合」と、AIチャットの参照資料に反映される
+        </div>
+      </div>
+
+      <!-- ========== 6. 会期末 ========== -->
+      <h2 id="session-end">6. 会期末の作業（担当者）</h2>
+      <p>
+        地方議会では、議案の採決は会期の最終日の本会議でまとめて行われることがほとんどです。
+        議事録が公開されるのは数週間後なので、採決結果は会期末に手で入れます。議事録が出たら、5章の流れで内容を補います。
+      </p>
+      <div class="flow">
+        <div class="node start">最終日の本会議で採決</div>
+        <div class="arrow"></div>
+        <div class="node">
+          <span class="who who-reviewer">確認者</span>ダッシュボード画面の「採決結果を一括入力」
+          <a class="screen" href="admin-02-dashboard.html">ダッシュボード画面</a>
+          <p>可決／否決／継続審査を議案ごとに選ぶ</p>
+          <a href="admin-02-dashboard.html"><img class="thumb" src="shots/a2-bills.png" alt="ダッシュボード画面" loading="lazy" /></a>
+        </div>
+        <div class="arrow"></div>
+        <div class="node">
+          チームみらいの賛否・判断の理由を入力（議員がいる議会のみ）
+        </div>
+        <div class="arrow"></div>
+        <div class="node">
+          インタビューを締め切り、レポートを公開
+        </div>
+        <div class="arrow"></div>
+        <div class="node end">定例会が「過去の定例会」に移る</div>
+      </div>
+      <p class="help">
+        継続審査になった議案は、次の定例会の一覧にも引き継いで表示します。
+      </p>
+
+      <!-- ========== 7. 立ち上げ ========== -->
+      <h2 id="launch">7. 新しい議会を立ち上げる（運営）</h2>
+      <p>
+        全国の議会はあらかじめ「マスタのみ」の状態で登録されています。担当者が見つかった議会から順に立ち上げます。
+      </p>
+      <div class="flow">
+        <div class="node start">立ち上げる議会を決める</div>
+        <div class="arrow"></div>
+        <div class="node">
+          <span class="who who-admin">運営</span>議会一覧画面で候補を見る
+          <a class="screen" href="admin-01-assemblies.html">議会一覧画面</a>
+          <p>判断材料: チームみらいの議員がいるか／「待っている人」の数</p>
+          <a href="admin-01-assemblies.html"><img class="thumb" src="shots/a1-assemblies.png" alt="議会一覧画面" loading="lazy" /></a>
+        </div>
+        <div class="arrow"></div>
+        <div class="node">
+          担当者（確認者を最低1人）を招待
+          <a class="screen" href="admin-06-members.html">担当者管理画面</a>
+          <a href="admin-06-members.html"><img class="thumb" src="shots/a6-members.png" alt="担当者管理画面" loading="lazy" /></a>
+        </div>
+        <div class="arrow"></div>
+        <div class="node">議会の状態を「準備中」にする（非公開のまま作業できる）</div>
+        <div class="arrow"></div>
+        <div class="node">
+          <span class="who who-reviewer">確認者</span>議案書・議事録の一覧ページのURLを登録（→ 3章）
+        </div>
+        <div class="arrow"></div>
+        <div class="node">
+          次の定例会の議案を確認して公開（→ 4章）
+        </div>
+        <div class="arrow"></div>
+        <div class="node decision">公開できる議案が1件以上ある？</div>
+        <div class="arrow">はい</div>
+        <div class="node">
+          <span class="who who-admin">運営</span>議会の状態を「公開中」にする
+        </div>
+        <div class="arrow"></div>
+        <div class="node end">
+          議会ページが公開され、「待っている人」にお知らせが届く
+        </div>
+      </div>
+
+      <!-- ========== 8. 状態 ========== -->
+      <h2 id="states">8. 状態の移り変わり</h2>
+      <h3>議会</h3>
+      <div class="states">
+        <span class="st">マスタのみ</span><span class="to">→</span>
+        <span class="st">準備中（担当者あり・非公開）</span><span class="to">→</span>
+        <span class="st final">公開中</span>
+      </div>
+      <h3>URL登録（議案書・議事録の一覧ページ）</h3>
+      <div class="states">
+        <span class="st">未登録</span><span class="to">→</span>
+        <span class="st final">自動確認中</span><span class="to">⇄</span>
+        <span class="st">読み込み失敗（URLを直すと自動確認中に戻る）</span>
+      </div>
+      <h3>議案の解説</h3>
+      <div class="states">
+        <span class="st">AI生成中</span><span class="to">→</span>
+        <span class="st">確認待ち</span><span class="to">→</span>
+        <span class="st final">公開中</span>
+      </div>
+      <h3>議案の審議</h3>
+      <div class="states">
+        <span class="st">提出済み</span><span class="to">→</span>
+        <span class="st">委員会で審査中</span><span class="to">→</span>
+        <span class="st final">可決</span><span class="to">／</span>
+        <span class="st final">否決</span><span class="to">／</span>
+        <span class="st">継続審査（次の会期へ）</span>
+      </div>
+
+      <!-- ========== 9. FAQ ========== -->
+      <h2 id="faq">9. よくある質問</h2>
+      <h3>Q. AIの下書きはそのまま公開されますか？</h3>
+      <p>
+        されません。公開できるのは確認者だけで、公開ページには「AIが下書きし、担当者が確認した」ことと確認日を表示します。
+      </p>
+      <h3>Q. 住民が議案書を送ることはできますか？</h3>
+      <p>
+        できません。議案書は、担当者が登録したURLから自動で取り込むか、担当者がアップロードします。
+      </p>
+      <h3>Q. チームみらいの議員がいない議会でも使えますか？</h3>
+      <p>
+        使えます。その場合、議案ページに「チームみらいの賛否」の欄は出ません。
+        意見の届け先がない議会では、インタビューを出さずにAIチャットだけにすることもできます。
+      </p>
+      <h3>Q. 議案書がPDFではなく、議会サイトのページに直接書かれています</h3>
+      <p>
+        そのページを議案書の一覧ページとして登録してください。AIがページの内容を読み取ります。
+      </p>
+      <h3>Q. 議案書が議会サイトに載らない議会はどうすればいいですか？</h3>
+      <p>
+        紙で配られる議案書は、スキャンしたPDFや写真をアップロード画面から登録できます。
+      </p>
+      <h3>Q. 議案が多すぎて全部は確認しきれません</h3>
+      <p>
+        予算や条例など、生活に影響の大きい議案から公開してください。
+        人事案件などは分割後にチェックを外して、解説を作らないこともできます。
+      </p>
+      <h3>Q. 解説に間違いを見つけました</h3>
+      <p>
+        担当者は公開後も編集できます。修正すると、公開ページの確認日が更新されます。
+      </p>
+      </main>
+
+      <aside class="roles">
+        <strong>登場する人と役割</strong>
+        <div class="role">
+          <span class="who who-user">住民</span>
+          <p>議案を読む、AIに質問する、意見を伝える</p>
+          <p class="help">ログイン不要 ・ 公開サイトの全画面</p>
+        </div>
+        <div class="role">
+          <span class="who who-editor">編集者</span>
+          <p>担当議会の議案を登録・編集する（公開はできない）</p>
+          <p class="help">招待制 ・ ダッシュボード、アップロード、下書き確認の各画面 ・ サポーター、ボランティア</p>
+        </div>
+        <div class="role">
+          <span class="who who-reviewer">確認者</span>
+          <p>編集者の作業に加えて、<strong>公開</strong>、URLの登録、議事録からの更新の反映、チームみらいの賛否の入力</p>
+          <p class="help">招待制 ・ 編集者の画面＋URL登録画面 ・ 地方議員、地域のリーダー</p>
+        </div>
+        <div class="role">
+          <span class="who who-admin">運営</span>
+          <p>すべての議会の操作、議会の追加、担当者の招待</p>
+          <p class="help">管理画面のすべて</p>
+        </div>
+        <div class="role">
+          <span class="who who-ai">AI</span>
+          <p>新しい議案書・議事録の発見、議案書の分割、解説の下書き、議事録の読み取り、意見のまとめ。フローチャートでは点線の枠</p>
+        </div>
+      </aside>
+    </div>
+  </body>
+</html>

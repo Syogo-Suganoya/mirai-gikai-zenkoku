@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>URL登録画面</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="mock-bar">
+      <a href="index.html">← モック目次</a>
+      <span>URL登録画面 ／ URL: admin /assemblies/aoba-city/sources</span>
+    </div>
+    <div class="admin">
+      <nav class="admin-side">
+        <div class="brand">みらい議会 admin</div>
+        <div class="ctx">担当議会<strong>あおば市議会 ▾</strong></div>
+        <div class="group">あおば市議会</div>
+        <a href="admin-02-dashboard.html">ダッシュボード</a>
+        <a href="admin-03-upload.html">議案を登録</a>
+        <a href="admin-04-review.html">下書きの確認 <span class="chip orange">4</span></a>
+        <a class="active" href="admin-05-sources.html">URL登録</a>
+        <a href="#">会期（定例会）</a>
+        <a href="#">インタビュー結果</a>
+        <a href="admin-06-members.html">担当者</a>
+      </nav>
+      <main class="admin-main">
+        <h1>URL登録</h1>
+        <p class="help">
+          議会の公式サイトにある「議案書の一覧」と「議事録の一覧」のページを登録すると、新しく載ったものを自動で見つけて取り込みます。
+        </p>
+
+        <div class="panel" id="source-urls">
+          <h2 style="font-size: 16px">取り込み元</h2>
+
+          <label class="req">議案書の一覧ページ</label>
+          <div class="row">
+            <input
+              type="url"
+              value="https://www.city.aoba.example.lg.jp/gikai/teireikai/gian.html"
+              style="flex: 1"
+            />
+            <a class="btn outline sm" href="#">試しに読み込む</a>
+          </div>
+          <p class="help">
+            「提出議案」「議案書」「本会議の日程」など、会期ごとの議案書PDFが並んでいるページ
+          </p>
+
+          <label>議事録の一覧ページ</label>
+          <div class="row">
+            <input
+              type="url"
+              value="https://www.city.aoba.example.lg.jp/gikai/kaigiroku/"
+              style="flex: 1"
+            />
+            <a class="btn outline sm" href="#">試しに読み込む</a>
+          </div>
+          <p class="help">
+            「会議録」「会議録検索システム」など。本会議だけでなく委員会の議事録があれば審議の内容も読み取れます
+          </p>
+
+          <div class="row" style="margin-top: 8px">
+            <div style="flex: 1">
+              <label>確認の頻度</label>
+              <select>
+                <option>会期中は毎日、閉会中は週1回</option>
+                <option>毎日</option>
+                <option>週1回</option>
+              </select>
+            </div>
+            <div style="flex: 1">
+              <label>見つけたときの通知先</label>
+              <select>
+                <option>この議会の確認者・編集者全員</option>
+                <option>確認者のみ</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" id="source-test">
+          <div class="row between">
+            <h2 style="font-size: 16px">試しに読み込んだ結果</h2>
+            <span class="chip green">議案書の一覧ページ</span>
+          </div>
+          <table>
+            <tr>
+              <th>見つけたファイル</th>
+              <th>AIの判定</th>
+              <th>状態</th>
+            </tr>
+            <tr>
+              <td>📄 令和8年9月定例会_提出議案.pdf</td>
+              <td><span class="chip green">議案書</span> 9月定例会・議案18件</td>
+              <td>取り込み済み</td>
+            </tr>
+            <tr>
+              <td>📄 令和8年9月定例会_追加議案.pdf</td>
+              <td><span class="chip green">議案書</span> 9月定例会・議案2件</td>
+              <td><span class="chip blue">新しく見つけた</span></td>
+            </tr>
+            <tr>
+              <td>📄 令和8年9月定例会_会期日程.pdf</td>
+              <td><span class="chip">議案書ではない</span> 日程表</td>
+              <td>取り込まない</td>
+            </tr>
+          </table>
+          <p style="margin-top: 12px; text-align: right">
+            <a class="btn primary" href="#">保存して自動確認を始める</a>
+          </p>
+        </div>
+
+        <div class="panel" id="source-history">
+          <h2 style="font-size: 16px">取り込みの履歴</h2>
+          <table>
+            <tr>
+              <th>確認日時</th>
+              <th>種類</th>
+              <th>見つけたもの</th>
+              <th>結果</th>
+            </tr>
+            <tr>
+              <td>10/9 06:00</td>
+              <td>議事録</td>
+              <td>9月10日 文教委員会</td>
+              <td>
+                <span class="chip orange">確認待ち</span>
+                審議の進み具合の更新候補 3件
+              </td>
+            </tr>
+            <tr>
+              <td>9/26 06:00</td>
+              <td>議案書</td>
+              <td>令和8年9月定例会_追加議案.pdf</td>
+              <td><span class="chip orange">分割済み</span> 議案2件・解説の要否の選択待ち</td>
+            </tr>
+            <tr>
+              <td>8/26 06:00</td>
+              <td>議案書</td>
+              <td>令和8年9月定例会_提出議案.pdf</td>
+              <td><span class="chip green">公開済み</span> 議案18件</td>
+            </tr>
+            <tr>
+              <td>8/19 06:00</td>
+              <td>議案書</td>
+              <td>-</td>
+              <td><span class="chip red">読み込み失敗</span> ページが見つからない（404）</td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="note">
+          自治体ごとの専用の読み取りプログラムは作らない。登録された一覧ページに載っているリンクを毎回集め、
+          前回との差分（新しいPDF・ページ）だけをAIに渡して、議案書か議事録か・どの会期か・どの議案かを判定させる。
+          議案書はアップロード画面と同じ流れで議案ごとに分割・下書きし、議事録は審議の進み具合と採決結果の更新候補にする。
+          読み込みに失敗したら（サイトの引っ越しなど）担当者に通知して、URLを直してもらう。
+          住民からの投稿は受け付けない。
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

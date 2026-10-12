@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>地方版みらい議会 画面モック</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="index-wrap">
+      <h1>地方版みらい議会 画面モック</h1>
+      <p>
+        設計メモ
+        <code>地方議会デザイン/地方版みらい議会設計.md</code>
+        の画面イメージ。静的HTMLで、ボタンやリンクは画面遷移のイメージのみ。
+        議会名・議案はすべて架空です。
+      </p>
+
+      <a class="card" href="guide.html">
+        <h3>📘 使い方ガイド（フローチャート付き）</h3>
+        <p>住民・担当者・運営それぞれの操作の流れを、画面へのリンク付きで説明</p>
+      </a>
+
+      <h2 class="section-title">公開サイト（web）</h2>
+      <div class="index-grid">
+        <a class="card" href="web-01-select.html">
+          <h3>議会選択画面</h3>
+          <p>都道府県 → 議会を選ぶ。議案が公開済みの議会だけ選べる</p>
+        </a>
+        <a class="card" href="web-02-assembly.html">
+          <h3>議会トップ画面</h3>
+          <p>開会中の定例会と議案一覧、過去の定例会</p>
+        </a>
+        <a class="card" href="web-03-bill.html">
+          <h3>議案詳細画面</h3>
+          <p>概要（ふつう／くわしく）、審議の進み具合、AIチャット、インタビュー</p>
+        </a>
+        <a class="card" href="web-05-not-yet.html">
+          <h3>議案未掲載画面</h3>
+          <p>空のページは出さず、公開の通知の登録を呼びかける</p>
+        </a>
+      </div>
+
+      <h2 class="section-title">管理画面（admin）</h2>
+      <div class="index-grid">
+        <a class="card" href="admin-01-assemblies.html">
+          <h3>議会一覧画面（全体管理者）</h3>
+          <p>議会の追加・公開設定・担当者の状況</p>
+        </a>
+        <a class="card" href="admin-02-dashboard.html">
+          <h3>ダッシュボード画面</h3>
+          <p>担当議会の定例会と議案、確認待ちの件数</p>
+        </a>
+        <a class="card" href="admin-03-upload.html">
+          <h3>アップロード画面</h3>
+          <p>議案書PDFをアップロード → AIが議案ごとに分割・下書き</p>
+        </a>
+        <a class="card" href="admin-04-review.html">
+          <h3>下書き確認画面</h3>
+          <p>原文PDFと下書きを並べて確認・修正 → 公開</p>
+        </a>
+        <a class="card" href="admin-05-sources.html">
+          <h3>URL登録画面</h3>
+          <p>議案書・議事録の一覧ページを登録し、新しいものを自動で取り込む</p>
+        </a>
+        <a class="card" href="admin-06-members.html">
+          <h3>担当者管理画面</h3>
+          <p>議会ごとの編集者・確認者を招待する</p>
+        </a>
+      </div>
+    </div>
+  </body>
+</html>
