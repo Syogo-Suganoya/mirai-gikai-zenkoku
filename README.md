@@ -12,7 +12,7 @@
 | ディレクトリ | 内容 |
 |---|---|
 | `web/` | 公開サイト（Next.js）。議会の選択・議会トップ・議案一覧／詳細・AI チャット・AI インタビュー |
-| `admin/` | 管理画面（Next.js、ポート 3001）。議会ごとの議案・会期・CSV 取り込み・議会設定・担当者 |
+| `admin/` | 管理画面（Next.js、ポート 3001）。議会ごとの議案・会期・CSV 取り込み・議会設定 |
 | `packages/db/` | Drizzle のスキーマとマイグレーション（PostgreSQL） |
 | `packages/shared/` | web と admin で共有する処理（AI モデル、CSV 取り込み、ふりがな、ラベルなど） |
 | `packages/topic-analysis-core/` | インタビュー意見のトピック分析 |
@@ -32,7 +32,7 @@ cp .env.example .env    # GOOGLE_GENERATIVE_AI_API_KEY などを必要に応じ�
 pnpm db:up              # Docker の PostgreSQL（ポート 54322）を起動
 pnpm db:migrate         # マイグレーションを適用
 pnpm seed               # 愛知県議会のデータとダミー議会を投入
-pnpm admin:create you@example.com   # 最初の全体管理者を作る（初期パスワードが表示される）
+pnpm admin:create you@example.com   # 最初の管理者を作る（初期パスワードが表示される）
 pnpm dev                # web（3000）と admin（3001）を起動
 ```
 

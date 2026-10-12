@@ -125,7 +125,7 @@ export async function BillDetailLayout({
           </div>
         )}
 
-        {/* 出典と確認者 */}
+        {/* 出典と解説の確認 */}
         <div className="my-8">
           <BillSourceSection bill={bill} />
         </div>

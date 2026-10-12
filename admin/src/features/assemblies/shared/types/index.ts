@@ -3,8 +3,6 @@ import type { Database } from "@mirai-gikai/db";
 export type Assembly = Database["public"]["Tables"]["assemblies"]["Row"];
 export type AssemblySettings =
   Database["public"]["Tables"]["assembly_settings"]["Row"];
-export type AssemblyMemberRole =
-  Database["public"]["Enums"]["assembly_member_role_enum"];
 
 /** 議会一覧の1行 */
 export type AssemblyListItem = Pick<
@@ -16,13 +14,9 @@ export type AssemblyListItem = Pick<
   dummyBillCount: number;
 };
 
-/** ログイン中のユーザーがこの議会で持つ役割（全体管理者は "super_admin"） */
-export type AssemblyAccessRole = AssemblyMemberRole | "super_admin";
-
 export type AssemblyContext = {
   assembly: Assembly;
   settings: AssemblySettings;
-  role: AssemblyAccessRole;
 };
 
 export type VoteGranularity = AssemblySettings["vote_granularity"];
@@ -44,24 +38,4 @@ export type AssemblySettingsDataCounts = {
   publishedBills: number;
   publicInterviews: number;
   publishedStances: number;
-};
-
-/** 議会の担当者（確認者・編集者）の1行 */
-export type AssemblyMember = {
-  user_id: string;
-  email: string;
-  role: AssemblyMemberRole;
-  display_name: string;
-  affiliation: string;
-  must_change_password: boolean;
-  last_login_at: string | null;
-  created_at: string;
-};
-
-/** 担当者を追加・変更するときの入力 */
-export type AssemblyMemberInput = {
-  email: string;
-  role: AssemblyMemberRole;
-  display_name: string;
-  affiliation: string;
 };

@@ -2,7 +2,7 @@ import { ArrowLeft } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { requireSuperAdminPage } from "@/features/auth/server/lib/auth-server";
+import { requireUserPage } from "@/features/auth/server/lib/session";
 import { getBills } from "@/features/bills/server/loaders/get-bills";
 import { requireBillPage } from "@/features/bills/server/loaders/require-bill-access";
 import { getBillById } from "@/features/bills-edit/server/loaders/get-bill-by-id";
@@ -22,8 +22,7 @@ interface InterviewListPageProps {
 export default async function InterviewListPage({
   params,
 }: InterviewListPageProps) {
-  // インタビュー・分析は全体管理者だけ（議会の担当者にはまだ開放していない）
-  await requireSuperAdminPage();
+  await requireUserPage();
   const { id } = await params;
   const { assembly } = await requireBillPage(id);
   const [bill, configs, allBillsResult] = await Promise.all([

@@ -6,7 +6,7 @@ import { applyCsvImport } from "@mirai-gikai/shared/csv-import/apply";
 import type { AssemblyRecord } from "@mirai-gikai/shared/csv-import/types";
 import { toFurigana } from "@mirai-gikai/shared/furigana/generate";
 import { revalidatePath } from "next/cache";
-import { requireAdmin } from "@/features/auth/server/lib/auth-server";
+import { requireUser } from "@/features/auth/server/lib/session";
 import { routes } from "@/lib/routes";
 import { getPublicFileStorage } from "@/lib/storage/public-file-storage";
 import {
@@ -28,14 +28,14 @@ import { validateCsvFile } from "../services/validate-csv-file";
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
 /**
- * 議会マスタの CSV を検証して、確認画面の内容を返す（全体管理者のみ。設計 v3 6.2節）。
+ * 議会マスタの CSV を検証して、確認画面の内容を返す（設計 v3 6.2節）。
  * 取り込みの記録は議会を持たない（assembly_id が null）。
  */
 export async function uploadAssemblyMasterCsv(
   formData: FormData
 ): Promise<CsvPreview | { error: string }> {
   try {
-    const user = await requireAdmin();
+    const user = await requireUser();
     const file = formData.get("file");
     if (formData.get("kind") !== "assemblies") {
       return { error: "種類を選んでください" };
@@ -96,7 +96,7 @@ export async function commitAssemblyMasterCsv(
   _options: { deleteDummyData?: boolean } = {}
 ): Promise<CommitCsvResult> {
   try {
-    await requireAdmin();
+    await requireUser();
     const job = await findValidatedJob(jobId, null);
     if (!job || job.kind !== "assemblies") {
       return {
@@ -131,7 +131,7 @@ export async function commitAssemblyMasterCsv(
 
 /** 確認画面で取り込まずにやめる */
 export async function cancelAssemblyMasterCsv(jobId: string): Promise<void> {
-  await requireAdmin();
+  await requireUser();
   const job = await findValidatedJob(jobId, null);
   if (job) await markJobStatus(job.id, "cancelled");
   revalidatePath(routes.assemblyMasterImport());

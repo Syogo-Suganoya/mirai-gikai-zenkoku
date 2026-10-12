@@ -3,7 +3,6 @@ import { ArrowLeft } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { hasAssemblyRole } from "@/features/assemblies/shared/utils/assembly-role";
 import { BillResultForm } from "@/features/bill-results/client/components/bill-result-form";
 import { loadBillResultFormData } from "@/features/bill-results/server/loaders/load-bill-result-form-data";
 import { requireBillPage } from "@/features/bills/server/loaders/require-bill-access";
@@ -25,7 +24,7 @@ interface BillEditPageProps {
 
 export default async function BillEditPage({ params }: BillEditPageProps) {
   const { id } = await params;
-  const { assembly, settings, role } = await requireBillPage(id);
+  const { assembly, settings } = await requireBillPage(id);
   const [bill, stance, allTags, selectedTagIds, sessions, resultData] =
     await Promise.all([
       getBillById(id),
@@ -74,7 +73,6 @@ export default async function BillEditPage({ params }: BillEditPageProps) {
             saved={resultData.saved}
             factions={resultData.factions}
             today={todayInJapan()}
-            canEdit={hasAssemblyRole(role, "reviewer")}
           />
         )}
         {/* チームみらいのスタンスは、議員がいる議会で設定したときだけ（設計 v3 3.2節） */}

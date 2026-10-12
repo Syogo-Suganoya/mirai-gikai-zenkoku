@@ -88,7 +88,6 @@ export function AdminItem({ admin, isCurrentUser }: AdminItemProps) {
         <div className="flex items-center gap-2">
           <span className="font-medium">{admin.email}</span>
           {isCurrentUser && <Badge variant="secondary">自分</Badge>}
-          {admin.is_super_admin && <Badge variant="outline">全体管理者</Badge>}
           {admin.must_change_password && (
             <Badge variant="outline">初期パスワードのまま</Badge>
           )}

@@ -1,6 +1,6 @@
 "use server";
 
-import { requireAdmin } from "@/features/auth/server/lib/auth-server";
+import { requireUser } from "@/features/auth/server/lib/session";
 import {
   invalidateWebCache,
   WEB_CACHE_TAGS,
@@ -12,7 +12,7 @@ import { deleteTagRecord } from "../repositories/tag-repository";
 
 export async function deleteTag(input: DeleteTagInput) {
   try {
-    await requireAdmin();
+    await requireUser();
 
     const result = await deleteTagRecord(input.id);
 

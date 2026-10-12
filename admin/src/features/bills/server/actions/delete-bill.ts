@@ -12,8 +12,7 @@ import { deleteBillById } from "../repositories/bill-repository";
 
 export async function deleteBill(id: string) {
   try {
-    // 削除は確認者以上
-    const { assembly } = await requireBillAction(id, "reviewer");
+    const { assembly } = await requireBillAction(id);
 
     // 議案を削除
     await deleteBillById(id);

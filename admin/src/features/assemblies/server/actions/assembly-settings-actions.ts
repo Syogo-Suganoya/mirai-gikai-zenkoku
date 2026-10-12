@@ -12,16 +12,14 @@ import { validateAssemblySettings } from "../../shared/utils/validate-assembly-s
 import { requireAssemblyAction } from "../loaders/require-assembly";
 import { updateAssemblySettings } from "../repositories/assembly-settings-repository";
 
-/** 議会設定を保存する（確認者以上。設計 v2 2.7節） */
+/** 議会設定を保存する（設計 v2 2.7節） */
 export async function saveAssemblySettings(
   assemblySlug: string,
   input: AssemblySettingsInput
 ): Promise<{ success: true } | { error: string }> {
   try {
-    const { assembly, settings, user } = await requireAssemblyAction(
-      assemblySlug,
-      "reviewer"
-    );
+    const { assembly, settings, user } =
+      await requireAssemblyAction(assemblySlug);
     const error = validateAssemblySettings(input, {
       hasMiraiMember: assembly.has_mirai_member,
       currentShowInterview: settings.show_interview,

@@ -22,7 +22,7 @@ export default async function LoginPage() {
         <CardContent>
           <LoginForm />
           <p className="mt-6 text-center text-xs text-muted-foreground">
-            アカウントは全体管理者が発行します。パスワードを忘れたときは全体管理者に再発行を依頼してください。
+            アカウントはほかの管理者が発行します。パスワードを忘れたときは、ほかの管理者に再発行を依頼してください。
           </p>
         </CardContent>
       </Card>

@@ -15,7 +15,6 @@ import {
 } from "@mirai-gikai/db/orm";
 import {
   assembly_factions,
-  assembly_members,
   bill_contents,
   bill_faction_votes,
   bills,
@@ -458,25 +457,4 @@ export async function findBillIdsWithPublicInterview(
     console.error("Failed to fetch interview configs:", error);
     return new Set();
   }
-}
-
-// ============================================================
-// Reviewer
-// ============================================================
-
-/** 解説を確認した人の表示名と所属（公開ページに出す。v2 2.8節） */
-export async function findReviewer(assemblyId: string, userId: string) {
-  const [row] = await createDb()
-    .select({
-      display_name: assembly_members.display_name,
-      affiliation: assembly_members.affiliation,
-    })
-    .from(assembly_members)
-    .where(
-      and(
-        eq(assembly_members.assembly_id, assemblyId),
-        eq(assembly_members.user_id, userId)
-      )
-    );
-  return row ?? null;
 }

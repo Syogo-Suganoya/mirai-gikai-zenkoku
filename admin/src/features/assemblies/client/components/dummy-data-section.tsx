@@ -22,7 +22,7 @@ import {
   hasDummyCounts,
 } from "../../shared/utils/dummy-data-counts";
 
-/** 議会設定の下に出す、ダミーデータの削除（全体管理者だけに出す。設計 v3 8.5.4節） */
+/** 議会設定の下に出す、ダミーデータの削除（設計 v3 8.5.4節） */
 export function DummyDataSection({
   assemblySlug,
   assemblyName,

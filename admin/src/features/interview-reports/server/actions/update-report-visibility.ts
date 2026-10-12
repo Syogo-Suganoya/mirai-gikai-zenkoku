@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath, revalidateTag } from "next/cache";
-import { requireAdmin } from "@/features/auth/server/lib/auth-server";
+import { requireUser } from "@/features/auth/server/lib/session";
 import {
   invalidateWebCache,
   WEB_CACHE_TAGS,
@@ -26,7 +26,7 @@ interface UpdateReportVisibilityResult {
 export async function updateReportVisibilityAction(
   params: UpdateReportVisibilityParams
 ): Promise<UpdateReportVisibilityResult> {
-  await requireAdmin();
+  await requireUser();
 
   const { reportId, isPublic, billId, sessionId } = params;
 

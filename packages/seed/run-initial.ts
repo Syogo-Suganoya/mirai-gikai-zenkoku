@@ -6,7 +6,7 @@
  * 2. 愛知県議会の初期データ（CSV インポートと同じ処理。解説付き5件の本文も入れ、公開する）
  * 3. 46都道府県議会のダミーデータ
  *
- * pnpm seed と違い、データを消さず、ローカル用の全体管理者も作らない（全体管理者は pnpm admin:create）。
+ * pnpm seed と違い、データを消さず、ローカル用の管理者も作らない（管理者は pnpm admin:create）。
  * 愛知県議会の議案を入れ直すと管理画面で直した公開状態・解説を上書きするので、
  * 議案が既にあれば止める（--force で続ける）。
  */
@@ -45,7 +45,7 @@ async function main() {
     const dummy = await seedDummy(tx);
     console.log(`✅ ダミーの議案 ${dummy.billCount} 件`);
   });
-  console.log("🎉 完了しました。全体管理者は pnpm admin:create で作ってください");
+  console.log("🎉 完了しました。管理者は pnpm admin:create で作ってください");
   process.exit(0);
 }
 

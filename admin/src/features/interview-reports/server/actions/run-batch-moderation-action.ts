@@ -1,7 +1,7 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { requireAdmin } from "@/features/auth/server/lib/auth-server";
+import { requireUser } from "@/features/auth/server/lib/session";
 import { env } from "@/lib/env";
 import {
   findAllReportIds,
@@ -29,7 +29,7 @@ export async function fetchModerationTargetIds(
   mode: "unscored" | "all"
 ): Promise<ModerationTargetResult> {
   try {
-    await requireAdmin();
+    await requireUser();
 
     const reportIds =
       mode === "unscored"
@@ -58,7 +58,7 @@ export async function runModerationChunkAction(
   reportIds: string[]
 ): Promise<ModerationChunkResult> {
   try {
-    await requireAdmin();
+    await requireUser();
     const baseUrl = env.adminUrl;
     const cookieStore = await cookies();
     const cookieHeader = cookieStore.toString();

@@ -35,15 +35,12 @@ type Tooltip = { label: string; x: number; y: number };
 
 /**
  * 都道府県議会の日本地図（議会一覧の上に出す）。都道府県を押すとその議会の議案一覧を開く。
- * 担当外の議会は押せない（全体管理者はすべて押せる）。
+ * 議会が登録されていない都道府県は押せない。
  */
 export function AssemblyMap({
   assemblies,
-  showOutOfScopeLegend,
 }: {
   assemblies: AssemblyListItem[];
-  /** 担当外の都道府県があるとき（全体管理者以外）に凡例へ出す */
-  showOutOfScopeLegend: boolean;
 }) {
   const router = useRouter();
   const figureRef = useRef<HTMLElement>(null);
@@ -89,7 +86,7 @@ export function AssemblyMap({
           const state = toAssemblyMapState(assembly);
           const label = assembly
             ? assemblyMapLabel(assembly)
-            : `${prefecture.name}（担当外）`;
+            : `${prefecture.name}（議会なし）`;
           return (
             <path
               key={prefecture.code}
@@ -120,9 +117,7 @@ export function AssemblyMap({
           {LEGENDS.map((legend) => (
             <Legend key={legend.state} {...legend} />
           ))}
-          {showOutOfScopeLegend && (
-            <Legend className="bg-gray-100 border" label="担当外" />
-          )}
+          <Legend className="bg-gray-100 border" label="議会なし" />
         </span>
         <span className="text-[11px] text-gray-400">
           地図: {JAPAN_MAP_ATTRIBUTION.author}「

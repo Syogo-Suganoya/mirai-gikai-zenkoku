@@ -20,7 +20,7 @@ export type CreateBillResult =
   | { needsDummyDeletion: true };
 
 /**
- * 議案を作る（編集者以上）。公開状態は下書きで作り、公開は議案一覧から行う。
+ * 議案を作る。公開状態は下書きで作り、公開は議案一覧から行う。
  */
 export async function createBill(
   assemblySlug: string,
@@ -28,7 +28,7 @@ export async function createBill(
   options: { deleteDummyData?: boolean } = {}
 ): Promise<CreateBillResult> {
   try {
-    const { assembly } = await requireAssemblyAction(assemblySlug, "editor");
+    const { assembly } = await requireAssemblyAction(assemblySlug);
     const validated = billCreateSchema.parse(input);
     const columns = toBillColumns(validated);
     const name = columns.name ?? validated.official_name;

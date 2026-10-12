@@ -1,22 +1,16 @@
 import { ExternalLink } from "lucide-react";
-import { formatDateWithDots } from "@/lib/utils/date";
 import type { BillWithContent } from "../../../shared/types";
-import { getBillReviewer } from "../../loaders/get-bill-reviewer";
 
 interface BillSourceSectionProps {
   bill: BillWithContent;
 }
 
 /**
- * 出典（原文へのリンク）と、解説の確認者の表示。
+ * 出典（原文へのリンク）と、解説を確認したかどうかの表示。
  * 中立性に関わる表示なので、議会の設定では消せない（v2 2.7・2.8節）。
+ * 確認したかどうかは、管理画面の「解説の確認完了」（is_review_completed）で決める。
  */
-export async function BillSourceSection({ bill }: BillSourceSectionProps) {
-  const reviewer =
-    bill.publish_level === "explained"
-      ? await getBillReviewer(bill.assembly_id, bill.reviewed_by)
-      : null;
-
+export function BillSourceSection({ bill }: BillSourceSectionProps) {
   return (
     <section className="flex flex-col gap-3 rounded-lg bg-white p-6 text-sm">
       <h2 className="font-bold">出典</h2>
@@ -43,9 +37,9 @@ export async function BillSourceSection({ bill }: BillSourceSectionProps) {
         <p className="text-xs leading-relaxed text-mirai-text-note">
           {bill.is_dummy
             ? "この解説は表示確認用の架空のものです。"
-            : reviewer
-              ? `解説は AI が下書きし、${reviewer.display_name}（${reviewer.affiliation}）が確認しました${bill.reviewed_at ? `（${formatDateWithDots(bill.reviewed_at)}）` : ""}。`
-              : "移行データ（確認者未設定）: この解説は移行元のサービスから引き継いだもので、確認者による確認がまだ済んでいません。"}
+            : bill.is_review_completed
+              ? "この解説は、運営者が議案の原文と照らし合わせて確認しています。"
+              : "この解説は、運営者による確認がまだ済んでいません。内容は議案の原文で確かめてください。"}
         </p>
       )}
     </section>

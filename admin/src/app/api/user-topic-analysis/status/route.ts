@@ -1,5 +1,5 @@
 import { getVersionStatus } from "@mirai-gikai/topic-analysis-core/repository";
-import { requireAdmin } from "@/features/auth/server/lib/auth-server";
+import { requireUser } from "@/features/auth/server/lib/session";
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), {
@@ -14,7 +14,7 @@ const json = (body: unknown, status = 200) =>
 /** version の進捗ステータス（UI ポーリング用）。 */
 export async function GET(request: Request) {
   try {
-    await requireAdmin();
+    await requireUser();
   } catch {
     return json({ error: "Unauthorized" }, 401);
   }

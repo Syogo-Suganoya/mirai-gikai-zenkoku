@@ -14,7 +14,7 @@ interface GeneratePreviewUrlResult {
 export async function generatePreviewUrl(
   billId: string
 ): Promise<GeneratePreviewUrlResult> {
-  await requireBillAction(billId, "editor");
+  await requireBillAction(billId);
 
   try {
     return { success: true, ...(await getBillPreviewUrl(billId)) };

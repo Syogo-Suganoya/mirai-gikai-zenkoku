@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { assemblyMapLabel, toAssemblyMapState } from "./assembly-map-state";
 
 describe("toAssemblyMapState", () => {
-  it("扱える議会がなければ none", () => {
+  it("議会が登録されていなければ none", () => {
     expect(toAssemblyMapState(undefined)).toBe("none");
   });
 

@@ -3,7 +3,7 @@ import {
   countAllReports,
   countPendingReextraction,
 } from "@mirai-gikai/topic-analysis-core/repository";
-import { requireAdmin } from "@/features/auth/server/lib/auth-server";
+import { requireUser } from "@/features/auth/server/lib/session";
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), {
@@ -18,7 +18,7 @@ const json = (body: unknown, status = 200) =>
 /** 進捗（未処理件数 / 全件数）を返す。UI のポーリング用。billId で議案に絞れる。 */
 export async function GET(request: Request) {
   try {
-    await requireAdmin();
+    await requireUser();
   } catch {
     return json({ error: "Unauthorized" }, 401);
   }

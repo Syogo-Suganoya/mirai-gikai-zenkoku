@@ -22,7 +22,6 @@ import {
   type CsvPreview,
 } from "../../shared/types";
 import { buildPreviewRows } from "../../shared/utils/build-csv-preview";
-import { requiredRoleForCsvKind } from "../../shared/utils/required-role";
 import {
   findValidatedJob,
   insertValidatedJob,
@@ -55,10 +54,7 @@ export async function uploadCsv(
       return { error: "ファイルは5MB以下にしてください" };
     }
 
-    const { assembly, user } = await requireAssemblyAction(
-      assemblySlug,
-      requiredRoleForCsvKind(kind)
-    );
+    const { assembly, user } = await requireAssemblyAction(assemblySlug);
     const bytes = new Uint8Array(await file.arrayBuffer());
     const result = await validateCsvFile(kind, assembly.id, bytes);
 
@@ -113,14 +109,13 @@ export async function commitCsvImport(
   options: { deleteDummyData?: boolean } = {}
 ): Promise<CommitCsvResult> {
   try {
-    const { assembly } = await requireAssemblyAction(assemblySlug, "editor");
+    const { assembly } = await requireAssemblyAction(assemblySlug);
     const job = await findValidatedJob(jobId, assembly.id);
     if (!job || !isAssemblyCsvKind(job.kind)) {
       return {
         error: "取り込みが見つかりません。もう一度ファイルを選んでください",
       };
     }
-    await requireAssemblyAction(assemblySlug, requiredRoleForCsvKind(job.kind));
 
     const records = (job.payload ?? []) as CsvRecordByKind[AssemblyCsvKind][];
     try {
@@ -156,7 +151,7 @@ export async function cancelCsvImport(
   assemblySlug: string,
   jobId: string
 ): Promise<void> {
-  const { assembly } = await requireAssemblyAction(assemblySlug, "editor");
+  const { assembly } = await requireAssemblyAction(assemblySlug);
   const job = await findValidatedJob(jobId, assembly.id);
   if (job) await markJobStatus(job.id, "cancelled");
   revalidatePath(routes.assemblyImport(assemblySlug));

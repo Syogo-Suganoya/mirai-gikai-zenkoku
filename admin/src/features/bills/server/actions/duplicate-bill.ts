@@ -20,7 +20,7 @@ import {
  * 元の議案とそのコンテンツを複製し、新しい議案として作成する
  */
 export async function duplicateBill(billId: string) {
-  const { assembly } = await requireBillAction(billId, "editor");
+  const { assembly } = await requireBillAction(billId);
 
   // 元の議案を取得
   const originalBill = await _fetchOriginalBill(billId);

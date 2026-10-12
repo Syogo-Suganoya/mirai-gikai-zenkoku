@@ -1,8 +1,8 @@
-import { requireSuperAdminPage } from "@/features/auth/server/lib/auth-server";
+import { requireUserPage } from "@/features/auth/server/lib/session";
 import { AllBillsAnalysisRunner } from "@/features/user-topic-analysis/client/components/all-bills-analysis-runner";
 
 export default async function AllBillsUserTopicAnalysisPage() {
-  await requireSuperAdminPage();
+  await requireUserPage();
 
   return (
     <div className="container mx-auto py-8">

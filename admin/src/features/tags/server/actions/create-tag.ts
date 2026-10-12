@@ -1,6 +1,6 @@
 "use server";
 
-import { requireAdmin } from "@/features/auth/server/lib/auth-server";
+import { requireUser } from "@/features/auth/server/lib/session";
 import {
   invalidateWebCache,
   WEB_CACHE_TAGS,
@@ -12,7 +12,7 @@ import { createTagRecord } from "../repositories/tag-repository";
 
 export async function createTag(input: CreateTagInput) {
   try {
-    await requireAdmin();
+    await requireUser();
 
     // バリデーション
     if (!input.label || input.label.trim().length === 0) {

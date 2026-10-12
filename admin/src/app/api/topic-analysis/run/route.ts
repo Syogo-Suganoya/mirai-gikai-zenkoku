@@ -1,5 +1,5 @@
 import { after } from "next/server";
-import { requireAdmin } from "@/features/auth/server/lib/auth-server";
+import { requireUser } from "@/features/auth/server/lib/session";
 import { createVersion } from "@/features/topic-analysis/server/repositories/topic-analysis-repository";
 import { executeAnalysisPipeline } from "@/features/topic-analysis/server/services/topic-analysis-orchestrator";
 
@@ -7,7 +7,7 @@ export const maxDuration = 300;
 
 export async function POST(request: Request) {
   try {
-    await requireAdmin();
+    await requireUser();
   } catch {
     return new Response(JSON.stringify({ error: "Unauthorized" }), {
       status: 401,

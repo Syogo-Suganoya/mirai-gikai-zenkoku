@@ -4,11 +4,9 @@ import type { SessionWithBillCount } from "../../shared/types";
 export function SessionList({
   assemblySlug,
   sessions,
-  canEdit,
 }: {
   assemblySlug: string;
   sessions: SessionWithBillCount[];
-  canEdit: boolean;
 }) {
   return (
     <div className="space-y-4">
@@ -22,7 +20,6 @@ export function SessionList({
               key={session.id}
               assemblySlug={assemblySlug}
               session={session}
-              canEdit={canEdit}
             />
           ))}
         </div>

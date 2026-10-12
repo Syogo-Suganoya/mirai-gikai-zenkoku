@@ -37,7 +37,7 @@ export default async function MainLayout({
           </div>
 
           {/* Navigation */}
-          <NavigationLinks isSuperAdmin={user.is_super_admin} />
+          <NavigationLinks />
         </div>
       </header>
 

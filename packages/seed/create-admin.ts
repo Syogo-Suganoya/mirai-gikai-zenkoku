@@ -1,5 +1,5 @@
 /**
- * 最初の全体管理者を作る（設計 v3 3.4.4節）。2人目以降は管理画面の担当者管理から作る。
+ * 最初の管理者を作る（設計 v3 3.4.4節）。2人目以降は管理画面の「アカウント」から作る。
  *   pnpm admin:create someone@example.com
  *
  * 初期パスワードを1度だけ表示する。本人は初回ログインで変更する。
@@ -35,7 +35,7 @@ async function main() {
     await db.transaction(async (tx) => {
       await tx
         .update(users)
-        .set({ password_hash: hash, must_change_password: true, is_super_admin: true })
+        .set({ password_hash: hash, must_change_password: true })
         .where(eq(users.id, existing.id));
       await tx.delete(user_sessions).where(eq(user_sessions.user_id, existing.id));
     });
@@ -44,10 +44,9 @@ async function main() {
     await db.insert(users).values({
       email,
       password_hash: hash,
-      is_super_admin: true,
       must_change_password: true,
     });
-    console.log(`✅ 全体管理者 ${email} を作りました`);
+    console.log(`✅ 管理者 ${email} を作りました`);
   }
   console.log(`   初期パスワード: ${password}`);
   console.log("   （この表示は1度だけです。初回ログインで変更してください）");

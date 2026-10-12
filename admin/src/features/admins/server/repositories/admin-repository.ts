@@ -10,7 +10,6 @@ export async function findAdminUsers() {
     .select({
       id: users.id,
       email: users.email,
-      is_super_admin: users.is_super_admin,
       must_change_password: users.must_change_password,
       created_at: users.created_at,
       last_login_at: users.last_login_at,
@@ -28,17 +27,12 @@ export async function findUserIdByEmail(email: string) {
 }
 
 /** アカウントを作る。パスワードは pgcrypto の bcrypt でハッシュ化して保存する */
-export async function insertUser(params: {
-  email: string;
-  password: string;
-  isSuperAdmin: boolean;
-}) {
+export async function insertUser(params: { email: string; password: string }) {
   const [row] = await createDb()
     .insert(users)
     .values({
       email: params.email,
       password_hash: sql`crypt(${params.password}, gen_salt('bf'))`,
-      is_super_admin: params.isSuperAdmin,
       must_change_password: true,
     })
     .returning({ id: users.id });

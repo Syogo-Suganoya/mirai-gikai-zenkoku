@@ -1,10 +1,10 @@
-import { requireAdmin } from "@/features/auth/server/lib/auth-server";
+import { requireUser } from "@/features/auth/server/lib/session";
 import { handleConfigGeneration } from "@/features/interview-config/server/services/handle-config-generation";
 import type { ConfigGenerationStage } from "@/features/interview-config/shared/schemas";
 
 export async function POST(req: Request) {
   try {
-    await requireAdmin();
+    await requireUser();
   } catch {
     return new Response("Unauthorized", { status: 401 });
   }

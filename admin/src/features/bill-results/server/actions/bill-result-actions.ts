@@ -24,13 +24,13 @@ async function afterChange(billId: string) {
   await invalidateWebCache([WEB_CACHE_TAGS.BILLS]);
 }
 
-/** 議決結果と会派ごとの賛否を保存する（確認者以上。設計 v3 6.1節） */
+/** 議決結果と会派ごとの賛否を保存する（設計 v3 6.1節） */
 export async function saveBillResult(
   billId: string,
   values: BillResultFormValues
 ): Promise<ActionResult> {
   try {
-    const { assembly, settings } = await requireBillAction(billId, "reviewer");
+    const { assembly, settings } = await requireBillAction(billId);
     const parsed = parseBillResultInput(values, {
       granularity: settings.vote_granularity,
       factions: await findAssemblyFactions(assembly.id),
@@ -49,10 +49,10 @@ export async function saveBillResult(
   }
 }
 
-/** 議決結果を消す（確認者以上） */
+/** 議決結果を消す */
 export async function removeBillResult(billId: string): Promise<ActionResult> {
   try {
-    await requireBillAction(billId, "reviewer");
+    await requireBillAction(billId);
     await deleteBillResultRecord(billId);
     await afterChange(billId);
     return { success: true };

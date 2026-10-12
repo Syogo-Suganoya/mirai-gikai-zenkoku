@@ -9,7 +9,7 @@ export function BillDisclaimer() {
         <h3 className="text-sm font-bold text-black">掲載コンテンツについて</h3>
         <p className="text-xs leading-relaxed text-mirai-text-note">
           掲載している議案の情報は、各議会が公開している議案書・議決結果などの公開情報をもとにしています。解説のある議案は、AI
-          が下書きした解説を確認者が確認したものです。件名と原文のみの議案は、議会の公開情報をそのまま並べています。
+          が下書きした解説を運営者が確認したものです（確認が済んでいない解説には、その旨を表示します）。件名と原文のみの議案は、議会の公開情報をそのまま並べています。
         </p>
       </div>
 

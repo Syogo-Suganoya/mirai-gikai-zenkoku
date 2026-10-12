@@ -1,4 +1,4 @@
-import { requireSuperAdminPage } from "@/features/auth/server/lib/auth-server";
+import { requireUserPage } from "@/features/auth/server/lib/session";
 import { TopicAnalysisPageContent } from "@/features/topic-analysis/server/components/topic-analysis-page";
 
 interface TopicAnalysisPageProps {
@@ -8,8 +8,7 @@ interface TopicAnalysisPageProps {
 export default async function TopicAnalysisPage({
   params,
 }: TopicAnalysisPageProps) {
-  // インタビュー・分析は全体管理者だけ（議会の担当者にはまだ開放していない）
-  await requireSuperAdminPage();
+  await requireUserPage();
   const { id, configId } = await params;
   return <TopicAnalysisPageContent billId={id} configId={configId} />;
 }

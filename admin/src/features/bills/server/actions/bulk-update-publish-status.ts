@@ -2,7 +2,6 @@
 
 import { revalidatePath } from "next/cache";
 import { requireAssemblyAction } from "@/features/assemblies/server/loaders/require-assembly";
-import { hasAssemblyRole } from "@/features/assemblies/shared/utils/assembly-role";
 import { routes } from "@/lib/routes";
 import {
   invalidateWebCache,
@@ -22,7 +21,6 @@ type BulkUpdateResult =
 
 /**
  * 選んだ議案の公開状態をまとめて変える（CSV で取り込んだ件名のみの議案の公開など）。
- * 件名のみの議案は編集者から、「解説あり」の議案を公開するときは確認者以上。
  */
 export async function bulkUpdatePublishStatus(
   assemblySlug: string,
@@ -30,10 +28,7 @@ export async function bulkUpdatePublishStatus(
   newStatus: BillPublishStatus
 ): Promise<BulkUpdateResult> {
   try {
-    const { assembly, role } = await requireAssemblyAction(
-      assemblySlug,
-      "editor"
-    );
+    const { assembly } = await requireAssemblyAction(assemblySlug);
     const uniqueIds = [...new Set(billIds)];
     if (uniqueIds.length === 0) return { error: "議案を選んでください" };
 
@@ -42,9 +37,6 @@ export async function bulkUpdatePublishStatus(
       return { error: "この議会の議案ではないものが含まれています" };
     }
     const plan = planBulkPublishStatus(bills, newStatus);
-    if (!hasAssemblyRole(role, plan.requiredRole)) {
-      return { error: "「解説あり」の議案を公開できるのは確認者以上です" };
-    }
 
     await updateBillsPublishStatus(assembly.id, plan.targetIds, newStatus);
     revalidatePath(routes.assemblyBills(assembly.slug));

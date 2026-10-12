@@ -6,7 +6,7 @@
  * 2. タグ・47都道府県議会の議会マスタ
  * 3. 愛知県議会の初期データ（CSV インポートと同じ処理で取り込む）
  * 4. 46都道府県議会のダミーデータ
- * 5. ローカル開発用の全体管理者
+ * 5. ローカル開発用の管理者
  *
  * データを消すので、DATABASE_URL がローカルの DB を指しているときだけ実行できる。
  */
@@ -47,7 +47,7 @@ async function main() {
     console.log(`✅ ダミーの議案 ${dummy.billCount} 件`);
 
     const email = await seedLocalAdmin(tx);
-    console.log(`✅ ローカルの全体管理者: ${email}`);
+    console.log(`✅ ローカルの管理者: ${email}`);
   });
   console.log("🎉 完了しました");
   process.exit(0);

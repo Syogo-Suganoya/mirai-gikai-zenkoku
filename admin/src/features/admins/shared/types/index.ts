@@ -1,7 +1,6 @@
 export type Admin = {
   id: string;
   email: string;
-  is_super_admin: boolean;
   /** 初期パスワードのまま（まだ変更していない） */
   must_change_password: boolean;
   created_at: string;

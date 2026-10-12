@@ -6,21 +6,17 @@ import { usePathname } from "next/navigation";
 import { routes } from "@/lib/routes";
 import { cn } from "@/lib/utils";
 
-const allLinks = [
-  { href: routes.home(), label: "議会", superAdminOnly: false },
-  { href: routes.tags(), label: "タグ管理", superAdminOnly: true },
-  { href: routes.interviews(), label: "インタビュー", superAdminOnly: true },
+const navigationLinks = [
+  { href: routes.home(), label: "議会" },
+  { href: routes.tags(), label: "タグ管理" },
+  { href: routes.interviews(), label: "インタビュー" },
   // 全議案トピック分析(/user-topic-analysis)は隠し機能のためヘッダーに出さない（URL直アクセスのみ）。
-  { href: routes.experts(), label: "有識者", superAdminOnly: true },
-  { href: routes.admins(), label: "アカウント", superAdminOnly: true },
+  { href: routes.experts(), label: "有識者" },
+  { href: routes.admins(), label: "アカウント" },
 ];
 
-/** 確認者・編集者には、担当議会の画面（「議会」）だけを出す */
-export function NavigationLinks({ isSuperAdmin }: { isSuperAdmin: boolean }) {
+export function NavigationLinks() {
   const pathname = usePathname();
-  const navigationLinks = allLinks.filter(
-    (link) => isSuperAdmin || !link.superAdminOnly
-  );
 
   return (
     <nav>

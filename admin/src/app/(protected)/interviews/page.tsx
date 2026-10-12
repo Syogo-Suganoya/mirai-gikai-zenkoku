@@ -1,4 +1,4 @@
-import { requireSuperAdminPage } from "@/features/auth/server/lib/auth-server";
+import { requireUserPage } from "@/features/auth/server/lib/session";
 import { AllInterviewConfigList } from "@/features/interviews/server/components/all-interview-config-list";
 import {
   getAllInterviewConfigs,
@@ -6,7 +6,7 @@ import {
 } from "@/features/interviews/server/loaders/get-all-interview-configs";
 
 export default async function InterviewsPage() {
-  await requireSuperAdminPage();
+  await requireUserPage();
 
   const configs = await getAllInterviewConfigs();
   const sessionCounts = await getSessionCountsForConfigs(

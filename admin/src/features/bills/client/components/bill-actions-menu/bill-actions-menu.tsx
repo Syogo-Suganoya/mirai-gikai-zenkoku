@@ -24,10 +24,6 @@ import { DuplicateBillButton } from "./duplicate-bill-button";
 interface BillActionsMenuProps {
   billId: string;
   billName: string;
-  /** 削除は確認者以上 */
-  canReview: boolean;
-  /** インタビュー・トピック分析は全体管理者だけ */
-  isSuperAdmin: boolean;
 }
 
 function BillActionMenuLink({
@@ -49,12 +45,7 @@ function BillActionMenuLink({
   );
 }
 
-export function BillActionsMenu({
-  billId,
-  billName,
-  canReview,
-  isSuperAdmin,
-}: BillActionsMenuProps) {
+export function BillActionsMenu({ billId, billName }: BillActionsMenuProps) {
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -76,27 +67,21 @@ export function BillActionsMenu({
           >
             コンテンツ
           </BillActionMenuLink>
-          {isSuperAdmin && (
-            <>
-              <BillActionMenuLink
-                href={routes.billInterview(billId) as Route}
-                icon={MessageCircle}
-              >
-                インタビュー設定
-              </BillActionMenuLink>
-              <BillActionMenuLink
-                href={routes.billUserTopicAnalysis(billId) as Route}
-                icon={ChartNetwork}
-              >
-                トピック分析
-              </BillActionMenuLink>
-            </>
-          )}
+          <BillActionMenuLink
+            href={routes.billInterview(billId) as Route}
+            icon={MessageCircle}
+          >
+            インタビュー設定
+          </BillActionMenuLink>
+          <BillActionMenuLink
+            href={routes.billUserTopicAnalysis(billId) as Route}
+            icon={ChartNetwork}
+          >
+            トピック分析
+          </BillActionMenuLink>
           <div className="my-1 border-t" />
           <DuplicateBillButton billId={billId} billName={billName} />
-          {canReview && (
-            <DeleteBillButton billId={billId} billName={billName} />
-          )}
+          <DeleteBillButton billId={billId} billName={billName} />
         </div>
       </PopoverContent>
     </Popover>

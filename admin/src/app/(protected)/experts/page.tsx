@@ -1,9 +1,9 @@
-import { requireSuperAdminPage } from "@/features/auth/server/lib/auth-server";
+import { requireUserPage } from "@/features/auth/server/lib/session";
 import { ExpertList } from "@/features/experts/server/components/expert-list";
 import { loadExperts } from "@/features/experts/server/loaders/load-experts";
 
 export default async function ExpertsPage() {
-  await requireSuperAdminPage();
+  await requireUserPage();
 
   const experts = await loadExperts();
 

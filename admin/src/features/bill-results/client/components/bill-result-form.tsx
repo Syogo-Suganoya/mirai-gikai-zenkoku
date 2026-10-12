@@ -62,8 +62,6 @@ interface BillResultFormProps {
   saved: SavedBillResult | null;
   factions: FactionOption[];
   today: string;
-  /** 確認者以上なら入力できる */
-  canEdit: boolean;
 }
 
 /** 議決結果と会派ごとの賛否（設計 v3 6.1節）。出す欄は議会設定の粒度で決める */
@@ -74,7 +72,6 @@ export function BillResultForm({
   saved,
   factions,
   today,
-  canEdit,
 }: BillResultFormProps) {
   const router = useRouter();
   const idPrefix = useId();
@@ -138,7 +135,7 @@ export function BillResultForm({
     }
   };
 
-  const disabled = !canEdit || isSaving;
+  const disabled = isSaving;
   const id = (name: string) => `${idPrefix}-${name}`;
 
   return (
@@ -152,11 +149,6 @@ export function BillResultForm({
         {granularity === "unpublished" && (
           <p className="rounded-md bg-amber-50 p-3 text-sm text-amber-800">
             議会設定で議決結果を「非公開」にしているため、公開サイトには出ません。
-          </p>
-        )}
-        {!canEdit && (
-          <p className="rounded-md bg-gray-50 p-3 text-sm text-gray-600">
-            議決結果の入力は確認者以上が行えます。
           </p>
         )}
       </CardHeader>
@@ -295,38 +287,34 @@ export function BillResultForm({
           </div>
         )}
 
-        {canEdit && (
-          <div className="flex justify-end gap-2 border-t pt-4">
-            {saved && (
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button variant="outline" disabled={isSaving}>
-                    削除
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>
-                      議決結果を削除しますか？
-                    </AlertDialogTitle>
-                    <AlertDialogDescription>
-                      結果と会派ごとの賛否を削除します。議案の状態は変わらないので、必要なら基本情報で直してください。
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>キャンセル</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleRemove}>
-                      削除する
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            )}
-            <Button onClick={handleSave} disabled={isSaving}>
-              {isSaving ? "保存中..." : "保存"}
-            </Button>
-          </div>
-        )}
+        <div className="flex justify-end gap-2 border-t pt-4">
+          {saved && (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="outline" disabled={isSaving}>
+                  削除
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>議決結果を削除しますか？</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    結果と会派ごとの賛否を削除します。議案の状態は変わらないので、必要なら基本情報で直してください。
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>キャンセル</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleRemove}>
+                    削除する
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
+          <Button onClick={handleSave} disabled={isSaving}>
+            {isSaving ? "保存中..." : "保存"}
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );

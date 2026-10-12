@@ -8,9 +8,9 @@ import {
   keyFromPublicUrl,
 } from "@/lib/storage/public-file-key";
 
-/** 議案のサムネイルはその議案の担当者（編集者以上）。議案を作る前の画像はログインだけ確かめる */
+/** 議案のサムネイルは議案があるか確かめる。議案を作る前の画像はログインだけ確かめる */
 async function requireThumbnailAccess(billId: string | null) {
-  if (billId) await requireBillAction(billId, "editor");
+  if (billId) await requireBillAction(billId);
   else await requireUser();
 }
 

@@ -261,7 +261,6 @@ export async function createTestAdminUser(
     .values({
       email,
       password_hash: sql`crypt(${password}, gen_salt('bf'))`,
-      is_super_admin: true,
       must_change_password: false,
     })
     .returning({ id: users.id });

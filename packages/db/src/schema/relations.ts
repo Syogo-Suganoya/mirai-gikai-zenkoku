@@ -3,7 +3,6 @@ import {
   anonymous_visitors,
   assemblies,
   assembly_factions,
-  assembly_members,
   assembly_settings,
   assembly_source_documents,
   assembly_sources,
@@ -45,9 +44,6 @@ import {
 
 export const usersRelations = relations(users, ({ many }) => ({
   user_sessions: many(user_sessions),
-  assembly_members: many(assembly_members, {
-    relationName: "assembly_members_user",
-  }),
 }));
 
 export const user_sessionsRelations = relations(user_sessions, ({ one }) => ({
@@ -63,7 +59,6 @@ export const assembliesRelations = relations(assemblies, ({ one, many }) => ({
     references: [assembly_settings.assembly_id],
   }),
   assembly_factions: many(assembly_factions),
-  assembly_members: many(assembly_members),
   sessions: many(sessions),
   bills: many(bills),
   csv_import_jobs: many(csv_import_jobs),
@@ -90,21 +85,6 @@ export const assembly_factionsRelations = relations(
       references: [assemblies.id],
     }),
     bill_faction_votes: many(bill_faction_votes),
-  })
-);
-
-export const assembly_membersRelations = relations(
-  assembly_members,
-  ({ one }) => ({
-    assembly: one(assemblies, {
-      fields: [assembly_members.assembly_id],
-      references: [assemblies.id],
-    }),
-    user: one(users, {
-      fields: [assembly_members.user_id],
-      references: [users.id],
-      relationName: "assembly_members_user",
-    }),
   })
 );
 

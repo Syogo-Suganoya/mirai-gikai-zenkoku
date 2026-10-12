@@ -218,7 +218,7 @@ export function BillFormFields({
           name="publish_level"
           label="掲載のしかた *"
           options={toOptions(BILL_PUBLISH_LEVEL_LABELS)}
-          description="「解説あり」にすると、解説（ふつう・くわしく）を公開サイトに出します。公開は議案一覧から確認者が行います"
+          description="「解説あり」にすると、解説（ふつう・くわしく）を公開サイトに出します。公開は議案一覧から行います"
         />
         <TextField
           control={control}

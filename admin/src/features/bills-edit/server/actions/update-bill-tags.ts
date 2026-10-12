@@ -18,7 +18,7 @@ import {
  * 既存のタグと新しいタグを比較して、差分のみを更新する
  */
 export async function updateBillTags(billId: string, tagIds: string[]) {
-  await requireBillAction(billId, "editor");
+  await requireBillAction(billId);
 
   try {
     const existingTagIds = await findBillsTagsByBillId(billId);

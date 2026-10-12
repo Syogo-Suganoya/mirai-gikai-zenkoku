@@ -3,7 +3,7 @@
 import { createDb, queryRows } from "@mirai-gikai/db";
 import { sql } from "@mirai-gikai/db/orm";
 import { revalidateTag } from "next/cache";
-import { requireAdmin } from "@/features/auth/server/lib/auth-server";
+import { requireUser } from "@/features/auth/server/lib/session";
 import {
   invalidateWebCache,
   WEB_CACHE_TAGS,
@@ -26,7 +26,7 @@ interface BulkPublishResult {
 export async function bulkPublishReportsAction(
   params: BulkPublishParams
 ): Promise<BulkPublishResult> {
-  await requireAdmin();
+  await requireUser();
 
   try {
     await verifyConfigBelongsToBill(params.configId, params.billId);
@@ -58,7 +58,7 @@ export async function bulkPublishReportsAction(
 export async function countBulkPublishTargetsAction(
   params: BulkPublishParams
 ): Promise<{ success: boolean; count?: number; error?: string }> {
-  await requireAdmin();
+  await requireUser();
 
   try {
     await verifyConfigBelongsToBill(params.configId, params.billId);

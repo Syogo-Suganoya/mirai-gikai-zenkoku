@@ -1,6 +1,6 @@
 "use server";
 
-import { requireAdmin } from "@/features/auth/server/lib/auth-server";
+import { requireUser } from "@/features/auth/server/lib/session";
 import {
   invalidateWebCache,
   WEB_CACHE_TAGS,
@@ -25,7 +25,7 @@ export async function saveInterviewQuestions(
   questions: InterviewQuestionsInput
 ): Promise<SaveInterviewQuestionsResult> {
   try {
-    await requireAdmin();
+    await requireUser();
 
     // バリデーション
     const validatedQuestions = interviewQuestionsInputSchema.parse(questions);

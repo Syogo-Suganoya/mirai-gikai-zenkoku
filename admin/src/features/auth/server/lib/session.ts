@@ -22,7 +22,6 @@ const SESSION_DAYS = 7;
 export type CurrentUser = {
   id: string;
   email: string;
-  is_super_admin: boolean;
   must_change_password: boolean;
 };
 

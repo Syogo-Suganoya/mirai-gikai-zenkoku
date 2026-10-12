@@ -37,7 +37,7 @@ interface AssemblySettingsFormProps {
   counts: AssemblySettingsDataCounts;
 }
 
-/** 議会設定（設計 v2 2.7節）。確認者以上が変更できる */
+/** 議会設定（設計 v2 2.7節） */
 export function AssemblySettingsForm({
   assemblySlug,
   settings,

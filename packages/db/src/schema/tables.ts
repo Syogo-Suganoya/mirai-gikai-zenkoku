@@ -13,7 +13,6 @@ export type Json =
 /** ふりがな表示用のセグメント。text を順に連結すると元の文章になる */
 export type FuriganaSegment = { text: string; reading?: string };
 
-export const assembly_member_role_enum = pgEnum("assembly_member_role_enum", ['reviewer', 'editor'])
 export const assembly_status_enum = pgEnum("assembly_status_enum", ['master_only', 'preparing', 'public'])
 export const assembly_type_enum = pgEnum("assembly_type_enum", ['prefecture', 'city', 'special_ward', 'town', 'village'])
 export const bill_category_enum = pgEnum("bill_category_enum", ['budget', 'ordinance', 'personnel', 'contract', 'petition', 'report', 'other'])
@@ -51,7 +50,6 @@ export const users = pgTable("users", {
 	id: uuid().defaultRandom().primaryKey().notNull(),
 	email: text().notNull(),
 	password_hash: text().notNull(),
-	is_super_admin: boolean().default(false).notNull(),
 	must_change_password: boolean().default(true).notNull(),
 	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 	last_login_at: timestamp({ withTimezone: true, mode: 'string' }),
@@ -939,30 +937,3 @@ export const topic_opinion = pgTable("topic_opinion", {
 	primaryKey({ columns: [table.opinion_id, table.version_id], name: "topic_opinion_pkey"}),
 ]);
 
-export const assembly_members = pgTable("assembly_members", {
-	assembly_id: uuid().notNull(),
-	user_id: uuid().notNull(),
-	role: assembly_member_role_enum().notNull(),
-	display_name: text().notNull(),
-	affiliation: text().notNull(),
-	invited_by: uuid(),
-	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
-}, (table) => [
-	index("idx_assembly_members_user_id").using("btree", table.user_id.asc().nullsLast()),
-	foreignKey({
-			columns: [table.assembly_id],
-			foreignColumns: [assemblies.id],
-			name: "assembly_members_assembly_id_fkey"
-		}).onDelete("cascade"),
-	foreignKey({
-			columns: [table.user_id],
-			foreignColumns: [users.id],
-			name: "assembly_members_user_id_fkey"
-		}).onDelete("cascade"),
-	foreignKey({
-			columns: [table.invited_by],
-			foreignColumns: [users.id],
-			name: "assembly_members_invited_by_fkey"
-		}).onDelete("set null"),
-	primaryKey({ columns: [table.assembly_id, table.user_id], name: "assembly_members_pkey"}),
-]);

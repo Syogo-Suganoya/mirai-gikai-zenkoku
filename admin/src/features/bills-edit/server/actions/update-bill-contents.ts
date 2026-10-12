@@ -23,8 +23,7 @@ export async function updateBillContents(
   input: BillContentsUpdateInput
 ): Promise<UpdateBillContentsResult> {
   try {
-    // 解説を書けるのは議案の議会の担当者（編集者以上）
-    await requireBillAction(billId, "editor");
+    await requireBillAction(billId);
 
     // バリデーション
     const validatedData = billContentsUpdateSchema.parse(input);

@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireAdmin } from "@/features/auth/server/lib/auth-server";
+import { requireUser } from "@/features/auth/server/lib/session";
 import { runSingleModerationScoring } from "../services/batch-moderation-scoring";
 
 interface SingleModerationResult {
@@ -15,7 +15,7 @@ export async function runSingleModerationAction(
   billId: string,
   sessionId: string
 ): Promise<SingleModerationResult> {
-  await requireAdmin();
+  await requireUser();
 
   try {
     const { score } = await runSingleModerationScoring(reportId);

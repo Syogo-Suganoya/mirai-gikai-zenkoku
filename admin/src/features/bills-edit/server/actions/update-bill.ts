@@ -7,7 +7,7 @@ import { updateBillWithSideEffects } from "../services/update-bill-with-side-eff
 
 export async function updateBill(id: string, input: BillUpdateInput) {
   try {
-    await requireBillAction(id, "editor");
+    await requireBillAction(id);
     const validatedData = billUpdateSchema.parse(input);
     await updateBillWithSideEffects(id, validatedData);
   } catch (error) {

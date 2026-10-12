@@ -8,10 +8,7 @@ import {
 } from "@/lib/utils/cache-invalidation";
 import type { BillPublishStatus } from "../../shared/types";
 import { requireBillAction } from "../loaders/require-bill-access";
-import {
-  findBillById,
-  updateBillPublishStatus,
-} from "../repositories/bill-repository";
+import { updateBillPublishStatus } from "../repositories/bill-repository";
 
 interface UpdatePublishStatusResult {
   success: boolean;
@@ -27,14 +24,7 @@ export async function updatePublishStatusAction(formData: FormData) {
     throw new Error("必要なパラメータが不足しています");
   }
 
-  // 「解説あり」の議案を公開できるのは確認者以上（設計 v2 2.8節）。件名のみの議案は編集者も公開できる
-  const bill = await findBillById(billId);
-  const { assembly } = await requireBillAction(
-    billId,
-    newStatus === "published" && bill.publish_level === "explained"
-      ? "reviewer"
-      : "editor"
-  );
+  const { assembly } = await requireBillAction(billId);
 
   const result = await _updateBillPublishStatus(billId, newStatus);
 

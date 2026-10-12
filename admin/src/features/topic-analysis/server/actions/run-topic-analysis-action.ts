@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireAdmin } from "@/features/auth/server/lib/auth-server";
+import { requireUser } from "@/features/auth/server/lib/session";
 import { env } from "@/lib/env";
 
 interface RunTopicAnalysisResult {
@@ -19,7 +19,7 @@ interface RunTopicAnalysisResult {
 export async function runTopicAnalysisAction(
   billId: string
 ): Promise<RunTopicAnalysisResult> {
-  await requireAdmin();
+  await requireUser();
 
   try {
     // API Route 経由で実行（maxDuration を活用するため）

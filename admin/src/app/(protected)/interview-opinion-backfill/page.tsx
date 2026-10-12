@@ -1,9 +1,9 @@
-import { requireSuperAdminPage } from "@/features/auth/server/lib/auth-server";
+import { requireUserPage } from "@/features/auth/server/lib/session";
 import { findAllBillOptions } from "@/features/bills/server/repositories/bill-repository";
 import { OpinionBackfillRunner } from "@/features/interview-opinion-backfill/client/components/opinion-backfill-runner";
 
 export default async function InterviewOpinionBackfillPage() {
-  await requireSuperAdminPage();
+  await requireUserPage();
 
   const bills = await findAllBillOptions();
   const billOptions = bills.map((bill) => ({

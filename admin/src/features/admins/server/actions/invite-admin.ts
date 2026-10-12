@@ -2,7 +2,7 @@
 
 import { generateInitialPassword } from "@mirai-gikai/shared/auth/initial-password";
 import { revalidatePath } from "next/cache";
-import { requireAdmin } from "@/features/auth/server/lib/auth-server";
+import { requireUser } from "@/features/auth/server/lib/session";
 import { routes } from "@/lib/routes";
 import { getErrorMessage } from "@/lib/utils/get-error-message";
 import type {
@@ -16,14 +16,14 @@ import {
 } from "../repositories/admin-repository";
 
 /**
- * 全体管理者のアカウントを作り、初期パスワードを1度だけ返す（設計 v3 3.4.4節）。
- * メールは送らない。全体管理者が本人に渡し、本人は初回ログインで変更する。
+ * 管理者のアカウントを作り、初期パスワードを1度だけ返す（設計 v3 3.4.4節）。
+ * メールは送らない。作った人が本人に渡し、本人は初回ログインで変更する。
  */
 export async function createAdmin(
   input: CreateAdminInput
 ): Promise<IssuedPasswordResult> {
   try {
-    await requireAdmin();
+    await requireUser();
 
     const email = input.email.trim().toLowerCase();
     if (!email) {
@@ -38,7 +38,7 @@ export async function createAdmin(
     }
 
     const initialPassword = generateInitialPassword();
-    await insertUser({ email, password: initialPassword, isSuperAdmin: true });
+    await insertUser({ email, password: initialPassword });
 
     revalidatePath(routes.admins());
     return { success: true, email, initialPassword };

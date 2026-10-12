@@ -1,6 +1,6 @@
 "use server";
 
-import { requireAdmin } from "@/features/auth/server/lib/auth-server";
+import { requireUser } from "@/features/auth/server/lib/session";
 import { buildInterviewTsv } from "../../shared/utils/build-interview-tsv";
 import { getInterviewSessionsForTsv } from "../loaders/get-interview-sessions-for-tsv";
 import { verifyConfigBelongsToBill } from "../services/verify-config-belongs-to-bill";
@@ -20,7 +20,7 @@ interface ExportInterviewTsvResult {
 export async function exportInterviewTsvAction(
   params: ExportInterviewTsvParams
 ): Promise<ExportInterviewTsvResult> {
-  await requireAdmin();
+  await requireUser();
 
   try {
     await verifyConfigBelongsToBill(params.configId, params.billId);

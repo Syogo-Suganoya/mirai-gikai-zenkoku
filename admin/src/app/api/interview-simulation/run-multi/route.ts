@@ -2,7 +2,7 @@ import type {
   PromptBillInput,
   InterviewQuestion as PromptInterviewQuestion,
 } from "@mirai-gikai/shared/interview-prompts/types";
-import { requireAdmin } from "@/features/auth/server/lib/auth-server";
+import { requireUser } from "@/features/auth/server/lib/session";
 import { runMultiSimulationPipeline } from "@/features/interview-simulation/server/services/run-multi-simulation-pipeline";
 import { multiSimulationRunRequestSchema } from "@/features/interview-simulation/shared/schemas";
 import type {
@@ -29,7 +29,7 @@ async function authenticate(request: Request): Promise<Response | null> {
     }
   }
   try {
-    await requireAdmin();
+    await requireUser();
     return null;
   } catch {
     return Response.json({ error: "Unauthorized" }, { status: 401 });

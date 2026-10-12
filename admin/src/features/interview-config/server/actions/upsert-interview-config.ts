@@ -2,7 +2,7 @@
 
 import { parsePromptOverridesByMode } from "@mirai-gikai/shared/interview-prompts/sections";
 import type { InterviewMode } from "@mirai-gikai/shared/interview-prompts/types";
-import { requireAdmin } from "@/features/auth/server/lib/auth-server";
+import { requireUser } from "@/features/auth/server/lib/session";
 import {
   invalidateWebCache,
   WEB_CACHE_TAGS,
@@ -43,7 +43,7 @@ export async function createInterviewConfig(
   input: InterviewConfigInput
 ): Promise<InterviewConfigResult> {
   try {
-    await requireAdmin();
+    await requireUser();
 
     // バリデーション
     const validatedData = interviewConfigSchema.parse(input);
@@ -91,7 +91,7 @@ export async function updateInterviewConfig(
   input: InterviewConfigInput
 ): Promise<InterviewConfigResult> {
   try {
-    await requireAdmin();
+    await requireUser();
 
     // バリデーション
     const validatedData = interviewConfigSchema.parse(input);
@@ -154,7 +154,7 @@ export async function duplicateInterviewConfig(
   options?: { targetBillId?: string }
 ): Promise<DuplicateInterviewConfigResult> {
   try {
-    await requireAdmin();
+    await requireUser();
 
     // 元の設定を取得
     const originalConfig = await findInterviewConfigById(configId);
@@ -235,7 +235,7 @@ export async function deleteInterviewConfig(
   configId: string
 ): Promise<InterviewConfigResult> {
   try {
-    await requireAdmin();
+    await requireUser();
 
     // 先に配下レポートを公開停止してから設定を論理削除する。
     // この順序なら、途中で失敗しても「設定は一覧に残る／レポートも公開のまま」

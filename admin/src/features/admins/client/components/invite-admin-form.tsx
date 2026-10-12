@@ -65,7 +65,7 @@ export function InviteAdminForm() {
           </div>
         </div>
         <p className="text-xs text-gray-500">
-          全体管理者として作成します。初期パスワードは作成後に1度だけ表示されます。
+          管理者として作成します（すべての議会・機能を扱えます）。初期パスワードは作成後に1度だけ表示されます。
         </p>
       </form>
       <IssuedPasswordDialog issued={issued} onClose={() => setIssued(null)} />

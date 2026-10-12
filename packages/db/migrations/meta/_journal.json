@@ -43,6 +43,13 @@
       "when": 1791811166787,
       "tag": "0005_fix_empty_array_defaults",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1791830384268,
+      "tag": "0006_remove_assembly_roles",
+      "breakpoints": true
     }
   ]
 }

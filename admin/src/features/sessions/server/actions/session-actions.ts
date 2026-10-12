@@ -40,14 +40,14 @@ async function afterChange(assemblySlug: string) {
   await invalidateWebCache([WEB_CACHE_TAGS.SESSIONS, WEB_CACHE_TAGS.BILLS]);
 }
 
-/** 会期を追加する（確認者以上） */
+/** 会期を追加する */
 export async function createSession(
   assemblySlug: string,
   input: SessionInput,
   options: { deleteDummyData?: boolean } = {}
 ): Promise<CreateResult> {
   try {
-    const { assembly } = await requireAssemblyAction(assemblySlug, "reviewer");
+    const { assembly } = await requireAssemblyAction(assemblySlug);
     const data = normalize(input);
     const error = validateSessionInput(data);
     if (error) return { error };
@@ -67,14 +67,14 @@ export async function createSession(
   }
 }
 
-/** 会期を更新する（確認者以上） */
+/** 会期を更新する */
 export async function editSession(
   assemblySlug: string,
   id: string,
   input: SessionInput
 ): Promise<ActionResult> {
   try {
-    const { assembly } = await requireAssemblyAction(assemblySlug, "reviewer");
+    const { assembly } = await requireAssemblyAction(assemblySlug);
     const data = normalize(input);
     const error = validateSessionInput(data);
     if (error) return { error };
@@ -92,13 +92,13 @@ export async function editSession(
   }
 }
 
-/** 会期を削除する（確認者以上）。議案がある会期は消せない */
+/** 会期を削除する。議案がある会期は消せない */
 export async function removeSession(
   assemblySlug: string,
   id: string
 ): Promise<ActionResult> {
   try {
-    const { assembly } = await requireAssemblyAction(assemblySlug, "reviewer");
+    const { assembly } = await requireAssemblyAction(assemblySlug);
     const deleted = await deleteSessionWithoutBills(assembly.id, id);
     if (!deleted) {
       return {

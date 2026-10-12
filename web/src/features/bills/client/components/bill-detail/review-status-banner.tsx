@@ -46,7 +46,7 @@ export function ReviewInProgressBanner() {
     <div className="flex gap-2 items-center rounded-2xl bg-mirai-surface-gray px-4 py-2">
       <Info className="size-5 shrink-0 text-mirai-text" />
       <p className="text-[13px] font-medium leading-[1.5] text-mirai-text">
-        この解説は現在、確認者による確認中です。今後内容が変更されることがあります。
+        この解説は現在、運営者による確認中です。今後内容が変更されることがあります。
       </p>
     </div>
   );
@@ -118,7 +118,7 @@ export function ReviewCompleteBadge({
         align="start"
         className="bg-mirai-surface-gray text-mirai-text font-medium text-xs rounded-lg px-4 py-2"
       >
-        この解説は確認者による確認が
+        この解説は運営者による確認が
         <br />
         完了しています
       </TooltipContent>

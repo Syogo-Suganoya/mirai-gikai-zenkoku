@@ -1,4 +1,3 @@
-import type { AssemblyAccessRole } from "@/features/assemblies/shared/types";
 import type { Bill, BillPublishStatus } from "../types";
 
 export type BulkPublishPlan = {
@@ -6,22 +5,16 @@ export type BulkPublishPlan = {
   targetIds: string[];
   /** すでにその公開状態の議案の数 */
   unchangedCount: number;
-  /** 実行に要る役割。「解説あり」の議案を公開するときだけ確認者以上（設計 v2 2.8節） */
-  requiredRole: Extract<AssemblyAccessRole, "editor" | "reviewer">;
 };
 
-/** 選んだ議案の公開状態をまとめて変えるときの、対象と必要な役割 */
+/** 選んだ議案の公開状態をまとめて変えるときの対象（すでにその状態の議案は外す） */
 export function planBulkPublishStatus(
-  bills: ReadonlyArray<Pick<Bill, "id" | "publish_status" | "publish_level">>,
+  bills: ReadonlyArray<Pick<Bill, "id" | "publish_status">>,
   newStatus: BillPublishStatus
 ): BulkPublishPlan {
   const targets = bills.filter((bill) => bill.publish_status !== newStatus);
-  const publishesExplained =
-    newStatus === "published" &&
-    targets.some((bill) => bill.publish_level === "explained");
   return {
     targetIds: targets.map((bill) => bill.id),
     unchangedCount: bills.length - targets.length,
-    requiredRole: publishesExplained ? "reviewer" : "editor",
   };
 }

@@ -18,7 +18,7 @@
 - Server Components を基本にし、状態やイベントが要るときだけ `"use client"` を付ける。
 - 複雑な feature は `server/`（repositories・loaders・actions・services・components）・`client/`（components・hooks）・`shared/`（types・utils）に分ける。server 側には `"server-only"` を付ける。
 - 外部依存（DB・API・認証）を持たない計算・変換・判定は純粋関数として `utils/` に切り出す。
-- 認可はアプリ層で行う。admin は `requireUserPage` / `requireAssemblyPage` / `requireBillPage`（Server Action は `requireUser` / `requireAssemblyAction` / `requireBillAction`）を通す。役割は 全体管理者 > 確認者 > 編集者。
+- 認可はアプリ層で行う。admin の管理者は全員同じ権限で、すべての議会・機能を扱える（役割や議会ごとの担当は持たない）。ページは `requireUserPage` / `requireAssemblyPage` / `requireBillPage`、Server Action は `requireUser` / `requireAssemblyAction` / `requireBillAction` を通す（ログインと、議会・議案があるかを確かめる）。
 
 ## コーディング規約
 - Biome（2 スペース、ダブルクォート、セミコロン、80 文字幅）。`pnpm lint:fix` で整形する。

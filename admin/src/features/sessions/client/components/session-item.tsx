@@ -45,11 +45,9 @@ const formatDate = (date: string) =>
 export function SessionItem({
   assemblySlug,
   session,
-  canEdit,
 }: {
   assemblySlug: string;
   session: SessionWithBillCount;
-  canEdit: boolean;
 }) {
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(() => toInput(session));
@@ -137,48 +135,44 @@ export function SessionItem({
         )}
       </div>
 
-      {canEdit && (
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setIsEditing(true)}
-            disabled={isSubmitting}
-          >
-            編集
-          </Button>
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button
-                variant="destructive"
-                size="sm"
-                disabled={isSubmitting || session.billCount > 0}
-                title={
-                  session.billCount > 0
-                    ? "議案が登録されている会期は削除できません"
-                    : undefined
-                }
-              >
-                削除
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>会期の削除</AlertDialogTitle>
-                <AlertDialogDescription>
-                  「{session.name}」を削除しますか？この操作は取り消せません。
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>キャンセル</AlertDialogCancel>
-                <AlertDialogAction onClick={handleDelete}>
-                  削除
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </div>
-      )}
+      <div className="flex items-center gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setIsEditing(true)}
+          disabled={isSubmitting}
+        >
+          編集
+        </Button>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button
+              variant="destructive"
+              size="sm"
+              disabled={isSubmitting || session.billCount > 0}
+              title={
+                session.billCount > 0
+                  ? "議案が登録されている会期は削除できません"
+                  : undefined
+              }
+            >
+              削除
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>会期の削除</AlertDialogTitle>
+              <AlertDialogDescription>
+                「{session.name}」を削除しますか？この操作は取り消せません。
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>キャンセル</AlertDialogCancel>
+              <AlertDialogAction onClick={handleDelete}>削除</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
     </div>
   );
 }

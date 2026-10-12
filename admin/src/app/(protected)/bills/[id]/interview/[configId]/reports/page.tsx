@@ -3,7 +3,7 @@ import type { Route } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { requireSuperAdminPage } from "@/features/auth/server/lib/auth-server";
+import { requireUserPage } from "@/features/auth/server/lib/session";
 import { getBillById } from "@/features/bills-edit/server/loaders/get-bill-by-id";
 import { BatchModerationButton } from "@/features/interview-reports/client/components/batch-moderation-button";
 import { BatchPublishButton } from "@/features/interview-reports/client/components/batch-publish-button";
@@ -42,8 +42,7 @@ export default async function ReportsPage({
   params,
   searchParams,
 }: ReportsPageProps) {
-  // インタビュー・分析は全体管理者だけ（議会の担当者にはまだ開放していない）
-  await requireSuperAdminPage();
+  await requireUserPage();
   const { id, configId } = await params;
   const { page, sort, order, status, visibility, stance, role, moderation } =
     await searchParams;

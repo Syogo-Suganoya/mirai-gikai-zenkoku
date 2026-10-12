@@ -12,7 +12,7 @@ const EXPLAINED_PATH = path.join(import.meta.dirname, "data/explained.json");
  * 解説付きの5件の本文（bill_contents）と参照資料を入れる（CSV の対象外。8.3節）。
  * 議案そのものは先に CSV で取り込んでおく。
  *
- * 確認者は未登録なので reviewed_by は空のまま（画面では「移行データ（確認者未設定）」と出す）。
+ * 移行元で確認した内容でも、ここでは確認完了（is_review_completed）にしない（公開画面に「確認がまだ」と出す）。
  */
 export async function seedAichiContents(tx: Tx, assemblyId: string) {
   const explained = JSON.parse(

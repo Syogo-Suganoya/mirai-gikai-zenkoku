@@ -17,7 +17,7 @@ export async function GET(
   try {
     ({
       assembly: { id: assemblyId },
-    } = await requireAssemblyAction((await params).assembly, "editor"));
+    } = await requireAssemblyAction((await params).assembly));
   } catch {
     return new Response("権限がありません", { status: 403 });
   }

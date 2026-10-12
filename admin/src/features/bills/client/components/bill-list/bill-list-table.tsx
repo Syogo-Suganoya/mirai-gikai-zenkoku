@@ -48,10 +48,6 @@ interface BillListTableProps {
   assemblySlug: string;
   bills: BillWithSession[];
   sortConfig: BillSortConfig;
-  /** 確認者以上か（「解説あり」の議案をまとめて公開できるか・議案を削除できるか） */
-  canReview: boolean;
-  /** 全体管理者か（インタビュー・トピック分析のメニューを出すか） */
-  isSuperAdmin: boolean;
 }
 
 const BULK_ACTION_LABELS: Record<"published" | "draft", string> = {
@@ -64,8 +60,6 @@ export function BillListTable({
   assemblySlug,
   bills,
   sortConfig,
-  canReview,
-  isSuperAdmin,
 }: BillListTableProps) {
   const router = useRouter();
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -91,7 +85,6 @@ export function BillListTable({
 
   const publishPlan = planBulkPublishStatus(selected, "published");
   const draftPlan = planBulkPublishStatus(selected, "draft");
-  const cannotPublish = publishPlan.requiredRole === "reviewer" && !canReview;
   const pendingPlan = pendingStatus === "published" ? publishPlan : draftPlan;
 
   const runBulkUpdate = async (newStatus: BillPublishStatus) => {
@@ -132,11 +125,7 @@ export function BillListTable({
             </span>
             <Button
               size="sm"
-              disabled={
-                isSubmitting ||
-                cannotPublish ||
-                publishPlan.targetIds.length === 0
-              }
+              disabled={isSubmitting || publishPlan.targetIds.length === 0}
               onClick={() => setPendingStatus("published")}
             >
               公開する
@@ -156,11 +145,6 @@ export function BillListTable({
             >
               選択を解除
             </Button>
-            {cannotPublish && (
-              <span className="text-xs text-amber-700">
-                「解説あり」の議案を公開できるのは確認者以上です。件名のみの議案だけを選んでください
-              </span>
-            )}
           </>
         )}
       </div>
@@ -224,8 +208,6 @@ export function BillListTable({
                   bill={bill}
                   checked={selectedIds.has(bill.id)}
                   onCheckedChange={(checked) => toggleOne(bill.id, checked)}
-                  canReview={canReview}
-                  isSuperAdmin={isSuperAdmin}
                 />
               ))
             )}
@@ -290,15 +272,11 @@ function BillRow({
   bill,
   checked,
   onCheckedChange,
-  canReview,
-  isSuperAdmin,
 }: {
   assemblySlug: string;
   bill: BillWithSession;
   checked: boolean;
   onCheckedChange: (checked: boolean) => void;
-  canReview: boolean;
-  isSuperAdmin: boolean;
 }) {
   return (
     <TableRow data-state={checked ? "selected" : undefined}>
@@ -359,12 +337,7 @@ function BillRow({
           : "-"}
       </TableCell>
       <TableCell>
-        <BillActionsMenu
-          billId={bill.id}
-          billName={bill.name}
-          canReview={canReview}
-          isSuperAdmin={isSuperAdmin}
-        />
+        <BillActionsMenu billId={bill.id} billName={bill.name} />
       </TableCell>
     </TableRow>
   );

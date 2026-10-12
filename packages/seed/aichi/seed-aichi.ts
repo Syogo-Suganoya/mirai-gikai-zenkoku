@@ -73,7 +73,7 @@ export async function seedAichi(tx: Tx): Promise<string> {
   const contentCount = await seedAichiContents(tx, assemblyId);
   console.log(`  解説付きの議案: ${contentCount} 件`);
 
-  // 件名と原文のみの議案は確認者の確認なしで公開してよい（v2 2.1節）
+  // 件名と原文のみの議案は解説の確認なしで公開してよい（v2 2.1節）
   await tx
     .update(bills)
     .set({ publish_status: "published", published_at: sql`now()` })

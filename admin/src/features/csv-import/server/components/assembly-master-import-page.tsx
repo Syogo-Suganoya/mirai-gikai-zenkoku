@@ -13,7 +13,7 @@ import {
 import { loadCsvImportJobs } from "../loaders/load-csv-import-jobs";
 import { CsvImportHistory } from "./csv-import-history";
 
-/** 議会マスタの CSV 取り込み（/assemblies/import。全体管理者のみ） */
+/** 議会マスタの CSV 取り込み（/assemblies/import） */
 export async function AssemblyMasterImportPage() {
   const jobs = await loadCsvImportJobs(null);
 

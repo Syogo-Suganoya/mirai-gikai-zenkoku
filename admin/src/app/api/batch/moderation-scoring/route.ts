@@ -1,4 +1,4 @@
-import { requireAdmin } from "@/features/auth/server/lib/auth-server";
+import { requireUser } from "@/features/auth/server/lib/session";
 import { runBatchModerationScoringChunk } from "@/features/interview-reports/server/services/batch-moderation-scoring";
 
 export const maxDuration = 300;
@@ -7,7 +7,7 @@ const MAX_CHUNK_SIZE = 100;
 
 export async function POST(request: Request) {
   try {
-    await requireAdmin();
+    await requireUser();
   } catch {
     return new Response(JSON.stringify({ error: "Unauthorized" }), {
       status: 401,

@@ -3,7 +3,7 @@ import {
   countPendingReextraction,
   resetReextractionForBill,
 } from "@mirai-gikai/topic-analysis-core/repository";
-import { requireAdmin } from "@/features/auth/server/lib/auth-server";
+import { requireUser } from "@/features/auth/server/lib/session";
 import { executeTopicAnalysisJob } from "@/lib/cloud-run-job";
 
 export const maxDuration = 60;
@@ -21,7 +21,7 @@ const json = (body: unknown, status = 200) =>
  */
 export async function POST(request: Request) {
   try {
-    await requireAdmin();
+    await requireUser();
   } catch {
     return json({ error: "Unauthorized" }, 401);
   }

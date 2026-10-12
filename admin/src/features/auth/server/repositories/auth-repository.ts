@@ -7,7 +7,6 @@ import { user_sessions, users } from "@mirai-gikai/db/schema";
 const userColumns = {
   id: users.id,
   email: users.email,
-  is_super_admin: users.is_super_admin,
   must_change_password: users.must_change_password,
 };
 

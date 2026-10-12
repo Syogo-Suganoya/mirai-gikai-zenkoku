@@ -14,15 +14,12 @@ import {
 import { requireAssemblyAction } from "../loaders/require-assembly";
 import { deleteAssemblyDummyData } from "../repositories/dummy-data-repository";
 
-/** 議会のダミーデータを消す（全体管理者のみ。設計 v3 8.5.4節） */
+/** 議会のダミーデータを消す（設計 v3 8.5.4節） */
 export async function removeAssemblyDummyData(
   assemblySlug: string
 ): Promise<{ success: true; message: string } | { error: string }> {
   try {
-    const { assembly } = await requireAssemblyAction(
-      assemblySlug,
-      "super_admin"
-    );
+    const { assembly } = await requireAssemblyAction(assemblySlug);
     const deleted = await deleteAssemblyDummyData(assembly.id);
     const counts: DummyDataCounts = {
       sessions: deleted.sessionCount,

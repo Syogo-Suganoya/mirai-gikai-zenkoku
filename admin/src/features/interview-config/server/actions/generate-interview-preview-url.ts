@@ -1,6 +1,6 @@
 "use server";
 
-import { requireAdmin } from "@/features/auth/server/lib/auth-server";
+import { requireUser } from "@/features/auth/server/lib/session";
 import { getBillPreviewUrl } from "@/features/bills/server/services/bill-preview-url";
 
 interface GenerateInterviewPreviewUrlResult {
@@ -14,7 +14,7 @@ interface GenerateInterviewPreviewUrlResult {
 export async function generateInterviewPreviewUrl(
   billId: string
 ): Promise<GenerateInterviewPreviewUrlResult> {
-  await requireAdmin();
+  await requireUser();
 
   try {
     return {

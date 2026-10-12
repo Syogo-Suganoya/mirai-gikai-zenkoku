@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireAdmin } from "@/features/auth/server/lib/auth-server";
+import { requireUser } from "@/features/auth/server/lib/session";
 import { routes } from "@/lib/routes";
 import { getErrorMessage } from "@/lib/utils/get-error-message";
 import type { AdminIdInput } from "../../shared/types";
@@ -9,7 +9,7 @@ import { deleteUser } from "../repositories/admin-repository";
 
 export async function deleteAdmin(input: AdminIdInput) {
   try {
-    const currentAdmin = await requireAdmin();
+    const currentAdmin = await requireUser();
 
     if (currentAdmin.id === input.id) {
       return { error: "自分自身を削除することはできません" };

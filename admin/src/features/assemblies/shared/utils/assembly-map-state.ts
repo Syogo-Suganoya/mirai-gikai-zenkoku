@@ -5,7 +5,7 @@ import type { AssemblyListItem } from "../types";
  * - real: 実データの議案がある
  * - dummy: 議案はダミーだけ
  * - empty: 議会はあるが議案がない
- * - none: 扱える議会がない（担当外を含む。押せない）
+ * - none: 議会が登録されていない（押せない）
  */
 export type AssemblyMapState = "real" | "dummy" | "empty" | "none";
 

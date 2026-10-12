@@ -2,7 +2,7 @@
 
 import { generateInitialPassword } from "@mirai-gikai/shared/auth/initial-password";
 import { revalidatePath } from "next/cache";
-import { requireAdmin } from "@/features/auth/server/lib/auth-server";
+import { requireUser } from "@/features/auth/server/lib/session";
 import { routes } from "@/lib/routes";
 import { getErrorMessage } from "@/lib/utils/get-error-message";
 import type { AdminIdInput, IssuedPasswordResult } from "../../shared/types";
@@ -11,12 +11,12 @@ import {
   resetUserPassword,
 } from "../repositories/admin-repository";
 
-/** パスワードを忘れたときに、全体管理者が初期パスワードを発行し直す */
+/** パスワードを忘れたときに、ほかの管理者が初期パスワードを発行し直す */
 export async function reissuePassword(
   input: AdminIdInput
 ): Promise<IssuedPasswordResult> {
   try {
-    const currentAdmin = await requireAdmin();
+    const currentAdmin = await requireUser();
     if (currentAdmin.id === input.id) {
       return {
         error: "自分のパスワードは「パスワードの変更」から変更してください",

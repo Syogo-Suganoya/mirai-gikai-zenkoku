@@ -9,10 +9,10 @@ export default async function AssemblyLayout({
   children: ReactNode;
   params: Promise<{ assembly: string }>;
 }) {
-  const { assembly, role } = await requireAssemblyPage((await params).assembly);
+  const { assembly } = await requireAssemblyPage((await params).assembly);
   return (
     <div className="space-y-6">
-      <AssemblyHeader slug={assembly.slug} name={assembly.name} role={role} />
+      <AssemblyHeader slug={assembly.slug} name={assembly.name} />
       {children}
     </div>
   );
