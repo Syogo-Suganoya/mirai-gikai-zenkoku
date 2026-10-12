@@ -1,9 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { AssemblySummary } from "../types";
-import {
-  prefectureAssemblyByCode,
-  sortAssembliesForSelect,
-} from "./sort-assemblies";
+import { sortAssembliesForSelect } from "./sort-assemblies";
 
 const item = (
   overrides: Partial<AssemblySummary> & Pick<AssemblySummary, "slug">
@@ -32,23 +29,5 @@ describe("sortAssembliesForSelect", () => {
       "hokkaido",
       "okinawa",
     ]);
-  });
-});
-
-describe("prefectureAssemblyByCode", () => {
-  it("都道府県コードごとに都道府県議会を1件ずつ対応させる", () => {
-    const map = prefectureAssemblyByCode([
-      item({ slug: "aichi", prefecture_code: "23" }),
-      item({ slug: "hokkaido", prefecture_code: "01" }),
-    ]);
-    expect(map["23"]?.slug).toBe("aichi");
-    expect(map["01"]?.slug).toBe("hokkaido");
-  });
-
-  it("市区町村議会は含めない", () => {
-    const map = prefectureAssemblyByCode([
-      item({ slug: "nagoya", prefecture_code: "23", type: "city" }),
-    ]);
-    expect(map["23"]).toBeUndefined();
   });
 });

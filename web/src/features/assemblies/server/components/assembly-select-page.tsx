@@ -1,5 +1,6 @@
 import "server-only";
 
+import { prefectureAssemblyByCode } from "@mirai-gikai/shared/prefectures";
 import { ChevronRight } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
@@ -8,7 +9,6 @@ import { SITE_NAME } from "@/config/site";
 import { DummyBadge } from "@/features/bills/client/components/bill-list/dummy-badge";
 import { routes } from "@/lib/routes";
 import { JapanMapSelector } from "../../client/components/japan-map-selector";
-import { prefectureAssemblyByCode } from "../../shared/utils/sort-assemblies";
 import { getAssemblySummaries } from "../loaders/get-assembly-summaries";
 
 /**

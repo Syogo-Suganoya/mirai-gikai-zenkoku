@@ -117,3 +117,16 @@ export function prefectureAssemblySlug(prefecture: Prefecture): string {
 export function prefectureAssemblyName(prefecture: Prefecture): string {
   return `${prefecture.name}議会`;
 }
+
+/**
+ * 都道府県コード → 都道府県議会。地図・地方ボタンは都道府県議会だけを扱う（市区町村議会は含めない）。
+ */
+export function prefectureAssemblyByCode<
+  T extends { type: string; prefecture_code: string },
+>(items: readonly T[]): Record<string, T> {
+  return Object.fromEntries(
+    items
+      .filter((item) => item.type === "prefecture")
+      .map((item) => [item.prefecture_code, item])
+  );
+}

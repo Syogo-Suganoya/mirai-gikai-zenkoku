@@ -3,6 +3,7 @@ import {
   findPrefectureByCode,
   findPrefectureByRomaji,
   PREFECTURES,
+  prefectureAssemblyByCode,
   prefectureAssemblySlug,
   prefectureLocalGovCode,
   shortPrefectureName,
@@ -57,5 +58,17 @@ describe("名前とスラッグ", () => {
     expect(shortPrefectureName("北海道")).toBe("北海道");
     const aichi = findPrefectureByCode("23");
     expect(aichi && prefectureAssemblySlug(aichi)).toBe("aichi-pref");
+  });
+});
+
+describe("prefectureAssemblyByCode", () => {
+  it("都道府県コードごとに都道府県議会を1件ずつ対応させ、市区町村議会は含めない", () => {
+    const map = prefectureAssemblyByCode([
+      { slug: "aichi", type: "prefecture", prefecture_code: "23" },
+      { slug: "nagoya", type: "city", prefecture_code: "23" },
+      { slug: "tokyo", type: "prefecture", prefecture_code: "13" },
+    ]);
+    expect(Object.keys(map).sort()).toEqual(["13", "23"]);
+    expect(map["23"].slug).toBe("aichi");
   });
 });

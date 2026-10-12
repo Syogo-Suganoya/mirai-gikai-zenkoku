@@ -1,11 +1,11 @@
 "use client";
 
+import { PREFECTURES, REGIONS } from "@mirai-gikai/shared/prefectures";
 import {
-  findPrefectureByRomaji,
-  PREFECTURES,
-  REGIONS,
-} from "@mirai-gikai/shared/prefectures";
-import japanMapData from "@svg-maps/japan";
+  JAPAN_MAP_ATTRIBUTION,
+  JAPAN_MAP_SHAPES,
+  JAPAN_MAP_VIEWBOX,
+} from "@mirai-gikai/shared/prefectures/japan-map";
 import type { Route } from "next";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -17,13 +17,6 @@ import {
   type PrefectureMapState,
   toPrefectureMapState,
 } from "../../shared/utils/prefecture-map-state";
-
-/** @svg-maps/japan の形（型定義が参照する svg-maps__common が公開されていないため自前で書く） */
-type SvgMap = {
-  viewBox: string;
-  locations: { id: string; name: string; path: string }[];
-};
-const japanMap = japanMapData as unknown as SvgMap;
 
 /** 地図の塗り */
 const FILL_CLASSES: Record<PrefectureMapState, string> = {
@@ -74,23 +67,21 @@ export function JapanMapSelector({ assemblyByPrefecture }: Props) {
     <div className="flex flex-col gap-6">
       <figure ref={figureRef} className="relative flex flex-col gap-2">
         <svg
-          viewBox={japanMap.viewBox}
+          viewBox={JAPAN_MAP_VIEWBOX}
           role="group"
           aria-label="日本地図（議案のある都道府県を押すと、その議会のページを開きます）"
           className="h-auto w-full max-h-[560px]"
           onMouseLeave={() => setTooltip(null)}
         >
-          {japanMap.locations.map((location) => {
-            const prefecture = findPrefectureByRomaji(location.id);
-            if (!prefecture) return null;
+          {JAPAN_MAP_SHAPES.map((prefecture) => {
             const state = toPrefectureMapState(
               assemblyByPrefecture[prefecture.code]
             );
             const openable = state !== "none";
             return (
               <path
-                key={location.id}
-                d={location.path}
+                key={prefecture.code}
+                d={prefecture.path}
                 role="link"
                 tabIndex={openable ? 0 : -1}
                 aria-label={
@@ -168,23 +159,23 @@ export function JapanMapSelector({ assemblyByPrefecture }: Props) {
       </div>
 
       <p className="text-[11px] text-mirai-text-muted">
-        地図: Victor Cazanave「
+        地図: {JAPAN_MAP_ATTRIBUTION.author}「
         <a
-          href="https://github.com/VictorCazanave/svg-maps/tree/master/packages/japan"
+          href={JAPAN_MAP_ATTRIBUTION.url}
           target="_blank"
           rel="noopener noreferrer"
           className="underline"
         >
-          svg-maps/japan
+          {JAPAN_MAP_ATTRIBUTION.title}
         </a>
         」（
         <a
-          href="https://creativecommons.org/licenses/by/4.0/deed.ja"
+          href={JAPAN_MAP_ATTRIBUTION.licenseUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="underline"
         >
-          CC BY 4.0
+          {JAPAN_MAP_ATTRIBUTION.license}
         </a>
         ）。色分けを加えて使用しています。
       </p>

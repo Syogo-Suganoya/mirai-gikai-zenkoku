@@ -17,17 +17,3 @@ export function sortAssembliesForSelect(
       a.name.localeCompare(b.name, "ja")
   );
 }
-
-/**
- * 都道府県コード → 都道府県議会。議会選択画面（地図・地方ボタン）は都道府県議会だけを扱う。
- * 市区町村議会は含めない。
- */
-export function prefectureAssemblyByCode(
-  items: readonly AssemblySummary[]
-): Record<string, AssemblySummary> {
-  return Object.fromEntries(
-    items
-      .filter((item) => item.type === "prefecture")
-      .map((item) => [item.prefecture_code, item])
-  );
-}

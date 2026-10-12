@@ -1,5 +1,6 @@
 import type { Route } from "next";
 import { redirect } from "next/navigation";
+import { AssemblyMap } from "@/features/assemblies/client/components/assembly-map";
 import { AssemblyList } from "@/features/assemblies/server/components/assembly-list";
 import { loadAssemblies } from "@/features/assemblies/server/loaders/load-assemblies";
 import { requireUserPage } from "@/features/auth/server/lib/session";
@@ -29,7 +30,16 @@ export default async function AssembliesPage() {
           担当している議会がありません。全体管理者に担当の設定を依頼してください
         </p>
       ) : (
-        <AssemblyList assemblies={assemblies} />
+        <div className="space-y-6">
+          {/* 都道府県議会は地図からも開ける（細かい県は下の一覧から） */}
+          {assemblies.some((a) => a.type === "prefecture") && (
+            <AssemblyMap
+              assemblies={assemblies}
+              showOutOfScopeLegend={!user.is_super_admin}
+            />
+          )}
+          <AssemblyList assemblies={assemblies} />
+        </div>
       )}
     </div>
   );

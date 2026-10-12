@@ -128,6 +128,10 @@
       "types": "./src/prefectures/prefectures.ts",
       "default": "./src/prefectures/prefectures.ts"
     },
+    "./prefectures/japan-map": {
+      "types": "./src/prefectures/japan-map.ts",
+      "default": "./src/prefectures/japan-map.ts"
+    },
     "./bill-results/*": {
       "types": "./src/bill-results/*.ts",
       "default": "./src/bill-results/*.ts"
@@ -150,21 +154,22 @@
     }
   },
   "dependencies": {
-    "server-only": "^0.0.1",
-    "@mirai-gikai/db": "workspace:*",
     "@ai-sdk/google": "^3.0.129",
+    "@mirai-gikai/db": "workspace:*",
+    "@svg-maps/japan": "^2.0.0",
     "ai": "^6.0.3",
     "csv-parse": "^6.1.0",
-    "kuromoji": "^0.1.2"
+    "kuromoji": "^0.1.2",
+    "server-only": "^0.0.1"
   },
   "peerDependencies": {
     "zod": "^4.0.0"
   },
   "devDependencies": {
+    "@types/kuromoji": "^0.1.3",
+    "@types/node": "^22.5.5",
     "typescript": "^5.6.2",
     "vitest": "^3.2.4",
-    "zod": "^4.1.12",
-    "@types/kuromoji": "^0.1.3",
-    "@types/node": "^22.5.5"
+    "zod": "^4.1.12"
   }
 }
