@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { SiteLogo } from "@/components/brand/site-logo";
 import { SITE_NAME } from "@/config/site";
+import { AssemblyKindNav } from "@/features/assemblies/client/components/assembly-kind-nav";
 import { DifficultySelector } from "@/features/bill-difficulty/client/components/difficulty-selector";
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
 import { InterviewHeaderActions } from "@/features/interview-session/client/components/interview-header-actions";
@@ -41,6 +42,8 @@ export function HeaderClient({ difficultyLevel }: HeaderClientProps) {
             >
               <SiteLogo compact />
             </Link>
+            {/* 狭い画面ではメニューの中に出す */}
+            <AssemblyKindNav className="ml-4 hidden sm:flex" />
           </div>
 
           {/* Navigation */}

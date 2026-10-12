@@ -1,6 +1,6 @@
 import "server-only";
 
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 import { Container } from "@/components/layouts/container";
@@ -117,7 +117,7 @@ export async function AssemblyTopPage({
     <>
       {/* ヘッダーは fixed で main-layout の上余白は md 以上にしか効かないため、
           モバイルではここで余白を確保する（パンくずを持つページと同じ規約） */}
-      <Container className="pt-24 md:pt-5">
+      <Container className="flex flex-wrap items-center justify-between gap-2 pt-24 md:pt-5">
         <Link
           href={routes.home() as Route}
           className="inline-flex items-center gap-1 text-[13px] font-bold text-mirai-text-secondary hover:text-mirai-text hover:underline"
@@ -125,6 +125,17 @@ export async function AssemblyTopPage({
           <ChevronLeft className="h-4 w-4" aria-hidden />
           日本地図に戻る
         </Link>
+        {assembly.official_url && (
+          <Link
+            href={assembly.official_url as Route}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 text-[13px] font-bold text-mirai-text-secondary hover:text-mirai-text hover:underline"
+          >
+            {assembly.name}の公式サイト
+            <ExternalLink className="h-3.5 w-3.5" aria-hidden />
+          </Link>
+        )}
       </Container>
 
       <CurrentSessionCard

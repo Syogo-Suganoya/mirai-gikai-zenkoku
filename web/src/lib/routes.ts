@@ -14,6 +14,10 @@ const enc = encodeURIComponent;
 export const routes = {
   // ── 静的ルート ──────────────────────────────────────
   home: () => "/" as const,
+  /** 市議会の一覧（現在作成中） */
+  cityAssemblies: () => "/cities" as const,
+  /** 区町村議会の一覧（現在作成中） */
+  townAssemblies: () => "/towns" as const,
 
   // ── 議会 ──────────────────────────────────────────
   assemblyTop: (assembly: string) => `/${assembly}` as const,
@@ -69,10 +73,12 @@ export const routes = {
  */
 export const RESERVED_ASSEMBLY_SLUGS = [
   "api",
+  "cities",
   "dev",
   "developers",
   "preview",
   "privacy",
   "report",
   "terms",
+  "towns",
 ] as const;
