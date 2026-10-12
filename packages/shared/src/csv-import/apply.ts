@@ -16,6 +16,7 @@ import {
   sessions,
   tags,
 } from "@mirai-gikai/db/schema";
+import { isFactionActiveOn, todayInJapan } from "../bill-results/factions";
 import {
   DummyDataExistsError,
   decideDummyHandling,
@@ -34,11 +35,6 @@ import type {
 import { billKey, type ValidationContext } from "./validate";
 
 type DbLike = Db | Tx;
-
-/** 今日の日付（日本時間、YYYY-MM-DD） */
-function todayInJapan(): string {
-  return new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().slice(0, 10);
-}
 
 /** 種類ごとの検証に使う DB の情報を集める */
 export async function loadValidationContext(
@@ -471,10 +467,7 @@ async function applyResults(
   const today = todayInJapan();
   const findFactionId = (vote: FactionVoteRecord, on: string) =>
     factionRows.find(
-      (f) =>
-        f.name === vote.faction_name &&
-        f.valid_from <= on &&
-        (f.valid_to === null || on <= f.valid_to)
+      (f) => f.name === vote.faction_name && isFactionActiveOn(f, on)
     )?.id;
 
   let insertCount = 0;

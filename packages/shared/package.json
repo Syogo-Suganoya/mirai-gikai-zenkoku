@@ -128,6 +128,10 @@
       "types": "./src/prefectures/prefectures.ts",
       "default": "./src/prefectures/prefectures.ts"
     },
+    "./bill-results/*": {
+      "types": "./src/bill-results/*.ts",
+      "default": "./src/bill-results/*.ts"
+    },
     "./csv-import/*": {
       "types": "./src/csv-import/*.ts",
       "default": "./src/csv-import/*.ts"

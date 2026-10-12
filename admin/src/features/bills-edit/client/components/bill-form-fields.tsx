@@ -161,8 +161,8 @@ export function BillFormFields({
                 </SelectContent>
               </Select>
               <FormDescription>
-                議決結果を CSV
-                で取り込むと、状態は自動で「議決済み」などに変わります
+                議決結果を保存する（議案編集の「議決結果」か CSV
+                取り込み）と、状態は自動で「議決済み」などに変わります
               </FormDescription>
               {shouldAutoCloseInterviewOnBillStatus(field.value) && (
                 <p className="flex items-start gap-2 rounded bg-amber-50 p-3 text-sm text-amber-700">

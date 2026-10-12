@@ -1,7 +1,11 @@
+import { todayInJapan } from "@mirai-gikai/shared/bill-results/factions";
 import { ArrowLeft } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { hasAssemblyRole } from "@/features/assemblies/shared/utils/assembly-role";
+import { BillResultForm } from "@/features/bill-results/client/components/bill-result-form";
+import { loadBillResultFormData } from "@/features/bill-results/server/loaders/load-bill-result-form-data";
 import { requireBillPage } from "@/features/bills/server/loaders/require-bill-access";
 import { BillEditForm } from "@/features/bills-edit/client/components/bill-edit-form";
 import { BillTagsForm } from "@/features/bills-edit/client/components/bill-tags-form";
@@ -21,14 +25,16 @@ interface BillEditPageProps {
 
 export default async function BillEditPage({ params }: BillEditPageProps) {
   const { id } = await params;
-  const { assembly, settings } = await requireBillPage(id);
-  const [bill, stance, allTags, selectedTagIds, sessions] = await Promise.all([
-    getBillById(id),
-    getStanceByBillId(id),
-    loadTags(),
-    getBillTagIds(id),
-    loadSessions(assembly.id),
-  ]);
+  const { assembly, settings, role } = await requireBillPage(id);
+  const [bill, stance, allTags, selectedTagIds, sessions, resultData] =
+    await Promise.all([
+      getBillById(id),
+      getStanceByBillId(id),
+      loadTags(),
+      getBillTagIds(id),
+      loadSessions(assembly.id),
+      loadBillResultFormData(id, assembly.id),
+    ]);
 
   if (!bill) {
     notFound();
@@ -52,11 +58,25 @@ export default async function BillEditPage({ params }: BillEditPageProps) {
       </div>
 
       <div className="space-y-6">
+        {/* 議決結果の保存で状態が変わるので、状態が変われば入力し直す */}
         <BillEditForm
+          key={bill.status}
           assemblySlug={assembly.slug}
           bill={bill}
           sessions={sessions}
         />
+        {/* 報告は議決されないので結果を持たない（設計 v3 5.2節） */}
+        {bill.category !== "report" && (
+          <BillResultForm
+            billId={bill.id}
+            assemblySlug={assembly.slug}
+            granularity={settings.vote_granularity}
+            saved={resultData.saved}
+            factions={resultData.factions}
+            today={todayInJapan()}
+            canEdit={hasAssemblyRole(role, "reviewer")}
+          />
+        )}
         {/* チームみらいのスタンスは、議員がいる議会で設定したときだけ（設計 v3 3.2節） */}
         {settings.show_mirai_stance && (
           <StanceForm

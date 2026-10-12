@@ -1,3 +1,4 @@
+import { isFactionActiveOn } from "../bill-results/factions";
 import { findPrefectureByCode } from "../prefectures/prefectures";
 import {
   normalizeAssemblyType,
@@ -334,8 +335,7 @@ function findFaction(
     (f) =>
       (f.name.replace(/[\s　]/g, "") === h ||
         f.short_name?.replace(/[\s　]/g, "") === h) &&
-      f.valid_from <= on &&
-      (f.valid_to === null || on <= f.valid_to)
+      isFactionActiveOn(f, on)
   );
 }
 
