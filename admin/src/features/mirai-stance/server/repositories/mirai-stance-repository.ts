@@ -16,6 +16,17 @@ export async function findStanceByBillId(
   return row ?? null;
 }
 
+/** スタンスの議案（権限の確認に使う） */
+export async function findStanceBillId(
+  stanceId: string
+): Promise<string | null> {
+  const [row] = await createDb()
+    .select({ bill_id: mirai_stances.bill_id })
+    .from(mirai_stances)
+    .where(eq(mirai_stances.id, stanceId));
+  return row?.bill_id ?? null;
+}
+
 export async function createMiraiStance(billId: string, input: StanceInput) {
   await createDb()
     .insert(mirai_stances)

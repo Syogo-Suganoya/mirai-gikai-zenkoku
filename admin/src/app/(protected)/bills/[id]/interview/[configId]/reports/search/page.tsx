@@ -2,6 +2,7 @@ import { ArrowLeft } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { requireSuperAdminPage } from "@/features/auth/server/lib/auth-server";
 
 import { getBillById } from "@/features/bills-edit/server/loaders/get-bill-by-id";
 import { MessageSearchForm } from "@/features/interview-reports/client/components/message-search-form";
@@ -28,6 +29,8 @@ export default async function ReportsSearchPage({
   params,
   searchParams,
 }: ReportsSearchPageProps) {
+  // インタビュー・分析は全体管理者だけ（議会の担当者にはまだ開放していない）
+  await requireSuperAdminPage();
   const { id, configId } = await params;
   const { q, page, stance, role, roleTitle } = await searchParams;
   const query = (q ?? "").trim();

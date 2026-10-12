@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { buildThumbnailKey, keyFromPublicUrl } from "./public-file-key";
+import {
+  billIdFromThumbnailKey,
+  buildThumbnailKey,
+  keyFromPublicUrl,
+} from "./public-file-key";
 
 describe("buildThumbnailKey", () => {
   it("接頭辞・議案 id・時刻・拡張子からキーを作る", () => {
@@ -44,6 +48,27 @@ describe("keyFromPublicUrl", () => {
         "https://files.example.com/bill-thumbnails/../secret.png",
         base
       )
+    ).toBeNull();
+  });
+});
+
+describe("billIdFromThumbnailKey", () => {
+  const billId = "e90b8a63-5ee8-47fc-9584-d16b99bdd748";
+
+  it("議案 id を取り出す（接頭辞があってもよい）", () => {
+    expect(
+      billIdFromThumbnailKey(`bill-thumbnails/${billId}_1700000000000.png`)
+    ).toBe(billId);
+    expect(
+      billIdFromThumbnailKey(
+        `bill-thumbnails/share_${billId}_1700000000000.jpg`
+      )
+    ).toBe(billId);
+  });
+
+  it("議案を作る前に上げたものは null", () => {
+    expect(
+      billIdFromThumbnailKey("bill-thumbnails/new_1700000000000.png")
     ).toBeNull();
   });
 });

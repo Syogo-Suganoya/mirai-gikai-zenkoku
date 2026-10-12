@@ -48,8 +48,10 @@ interface BillListTableProps {
   assemblySlug: string;
   bills: BillWithSession[];
   sortConfig: BillSortConfig;
-  /** 確認者以上か（「解説あり」の議案をまとめて公開できるか） */
+  /** 確認者以上か（「解説あり」の議案をまとめて公開できるか・議案を削除できるか） */
   canReview: boolean;
+  /** 全体管理者か（インタビュー・トピック分析のメニューを出すか） */
+  isSuperAdmin: boolean;
 }
 
 const BULK_ACTION_LABELS: Record<"published" | "draft", string> = {
@@ -63,6 +65,7 @@ export function BillListTable({
   bills,
   sortConfig,
   canReview,
+  isSuperAdmin,
 }: BillListTableProps) {
   const router = useRouter();
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -221,6 +224,8 @@ export function BillListTable({
                   bill={bill}
                   checked={selectedIds.has(bill.id)}
                   onCheckedChange={(checked) => toggleOne(bill.id, checked)}
+                  canReview={canReview}
+                  isSuperAdmin={isSuperAdmin}
                 />
               ))
             )}
@@ -285,11 +290,15 @@ function BillRow({
   bill,
   checked,
   onCheckedChange,
+  canReview,
+  isSuperAdmin,
 }: {
   assemblySlug: string;
   bill: BillWithSession;
   checked: boolean;
   onCheckedChange: (checked: boolean) => void;
+  canReview: boolean;
+  isSuperAdmin: boolean;
 }) {
   return (
     <TableRow data-state={checked ? "selected" : undefined}>
@@ -350,7 +359,12 @@ function BillRow({
           : "-"}
       </TableCell>
       <TableCell>
-        <BillActionsMenu billId={bill.id} billName={bill.name} />
+        <BillActionsMenu
+          billId={bill.id}
+          billName={bill.name}
+          canReview={canReview}
+          isSuperAdmin={isSuperAdmin}
+        />
       </TableCell>
     </TableRow>
   );

@@ -1,15 +1,9 @@
-import { redirect } from "next/navigation";
-import { getCurrentAdmin } from "@/features/auth/server/lib/auth-server";
+import { requireSuperAdminPage } from "@/features/auth/server/lib/auth-server";
 import { findAllBillOptions } from "@/features/bills/server/repositories/bill-repository";
 import { OpinionBackfillRunner } from "@/features/interview-opinion-backfill/client/components/opinion-backfill-runner";
-import { routes } from "@/lib/routes";
 
 export default async function InterviewOpinionBackfillPage() {
-  const currentAdmin = await getCurrentAdmin();
-
-  if (!currentAdmin) {
-    redirect(routes.login());
-  }
+  await requireSuperAdminPage();
 
   const bills = await findAllBillOptions();
   const billOptions = bills.map((bill) => ({

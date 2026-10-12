@@ -19,6 +19,7 @@ export async function BillList({
   sortConfig,
   filter,
   canReview,
+  isSuperAdmin,
 }: {
   assemblySlug: string;
   assemblyId: string;
@@ -26,6 +27,8 @@ export async function BillList({
   filter: BillListFilter;
   /** 確認者以上か（「解説あり」の議案をまとめて公開できるか） */
   canReview: boolean;
+  /** 全体管理者か（インタビュー・トピック分析のメニューを出すか） */
+  isSuperAdmin: boolean;
 }) {
   const [allBills, sessions] = await Promise.all([
     getBills(assemblyId, sortConfig),
@@ -59,6 +62,7 @@ export async function BillList({
         bills={bills}
         sortConfig={sortConfig}
         canReview={canReview}
+        isSuperAdmin={isSuperAdmin}
       />
     </div>
   );

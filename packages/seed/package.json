@@ -6,6 +6,7 @@
   "scripts": {
     "seed": "tsx run.ts",
     "seed:dummy": "tsx dummy/run-dummy.ts",
+    "seed:initial": "tsx run-initial.ts",
     "seed:aichi-contents": "tsx aichi/run-contents.ts",
     "aichi:convert": "tsx aichi/convert.ts",
     "test": "vitest run",

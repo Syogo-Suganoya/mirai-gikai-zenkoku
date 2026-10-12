@@ -1,14 +1,8 @@
-import { redirect } from "next/navigation";
-import { getCurrentAdmin } from "@/features/auth/server/lib/auth-server";
+import { requireSuperAdminPage } from "@/features/auth/server/lib/auth-server";
 import { AllBillsAnalysisRunner } from "@/features/user-topic-analysis/client/components/all-bills-analysis-runner";
-import { routes } from "@/lib/routes";
 
 export default async function AllBillsUserTopicAnalysisPage() {
-  const currentAdmin = await getCurrentAdmin();
-
-  if (!currentAdmin) {
-    redirect(routes.login());
-  }
+  await requireSuperAdminPage();
 
   return (
     <div className="container mx-auto py-8">

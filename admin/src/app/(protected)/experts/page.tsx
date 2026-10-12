@@ -1,15 +1,9 @@
-import { redirect } from "next/navigation";
-import { getCurrentAdmin } from "@/features/auth/server/lib/auth-server";
+import { requireSuperAdminPage } from "@/features/auth/server/lib/auth-server";
 import { ExpertList } from "@/features/experts/server/components/expert-list";
 import { loadExperts } from "@/features/experts/server/loaders/load-experts";
-import { routes } from "@/lib/routes";
 
 export default async function ExpertsPage() {
-  const currentAdmin = await getCurrentAdmin();
-
-  if (!currentAdmin) {
-    redirect(routes.login());
-  }
+  await requireSuperAdminPage();
 
   const experts = await loadExperts();
 

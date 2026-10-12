@@ -30,6 +30,7 @@ export default async function AssemblyBillsPage({
       sortConfig={parseBillSortParams(query.sort, query.order)}
       filter={parseBillListFilter(query)}
       canReview={hasAssemblyRole(role, "reviewer")}
+      isSuperAdmin={role === "super_admin"}
     />
   );
 }

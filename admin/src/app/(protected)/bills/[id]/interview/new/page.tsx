@@ -2,7 +2,7 @@ import { ArrowLeft } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getCurrentAdmin } from "@/features/auth/server/lib/auth-server";
+import { requireSuperAdminPage } from "@/features/auth/server/lib/auth-server";
 import { getBillById } from "@/features/bills-edit/server/loaders/get-bill-by-id";
 import { InterviewConfigEditClient } from "@/features/interview-config/client/components/interview-config-edit-client";
 import { generateDefaultConfigName } from "@/features/interview-config/shared/utils/default-config-name";
@@ -18,7 +18,10 @@ export default async function InterviewNewPage({
   params,
 }: InterviewNewPageProps) {
   const { id } = await params;
-  const [bill, admin] = await Promise.all([getBillById(id), getCurrentAdmin()]);
+  const [bill, admin] = await Promise.all([
+    getBillById(id),
+    requireSuperAdminPage(),
+  ]);
 
   if (!bill) {
     notFound();

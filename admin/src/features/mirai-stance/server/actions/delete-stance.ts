@@ -5,10 +5,12 @@ import {
   WEB_CACHE_TAGS,
 } from "@/lib/utils/cache-invalidation";
 import { getErrorMessage } from "@/lib/utils/get-error-message";
+import { requireStanceAction } from "../loaders/require-stance-access";
 import { deleteMiraiStance } from "../repositories/mirai-stance-repository";
 
 export async function deleteStance(stanceId: string) {
   try {
+    await requireStanceAction({ stanceId });
     await deleteMiraiStance(stanceId);
 
     invalidateWebCache([WEB_CACHE_TAGS.BILLS]);

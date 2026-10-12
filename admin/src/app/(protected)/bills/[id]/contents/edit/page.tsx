@@ -1,3 +1,4 @@
+import { requireBillPage } from "@/features/bills/server/loaders/require-bill-access";
 import { BillContentsEditForm } from "@/features/bills-edit/client/components/bill-contents-edit-form";
 import { getBillById } from "@/features/bills-edit/server/loaders/get-bill-by-id";
 import { getBillContents } from "@/features/bills-edit/server/loaders/get-bill-contents";
@@ -10,6 +11,7 @@ export default async function BillContentsEditPage({
   params,
 }: BillContentsEditPageProps) {
   const { id } = await params;
+  await requireBillPage(id);
 
   // 議案とコンテンツを並行取得
   const [billResult, billContents] = await Promise.all([

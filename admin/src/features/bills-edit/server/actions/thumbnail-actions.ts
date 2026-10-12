@@ -1,10 +1,19 @@
 "use server";
 
-import { requireAdmin } from "@/features/auth/server/lib/auth-server";
+import { requireUser } from "@/features/auth/server/lib/session";
+import { requireBillAction } from "@/features/bills/server/loaders/require-bill-access";
 import {
+  billIdFromThumbnailKey,
   buildThumbnailKey,
   keyFromPublicUrl,
 } from "@/lib/storage/public-file-key";
+
+/** 議案のサムネイルはその議案の担当者（編集者以上）。議案を作る前の画像はログインだけ確かめる */
+async function requireThumbnailAccess(billId: string | null) {
+  if (billId) await requireBillAction(billId, "editor");
+  else await requireUser();
+}
+
 import { getPublicFileStorage } from "@/lib/storage/public-file-storage";
 
 const MAX_SIZE = 5 * 1024 * 1024;
@@ -16,7 +25,8 @@ export type DeleteResult = { success: boolean; error?: string };
 export async function uploadThumbnailAction(
   formData: FormData
 ): Promise<UploadResult> {
-  await requireAdmin();
+  const billId = String(formData.get("billId") ?? "") || null;
+  await requireThumbnailAccess(billId);
 
   const file = formData.get("file");
   if (!(file instanceof File)) return { error: "ファイルがありません" };
@@ -31,7 +41,7 @@ export async function uploadThumbnailAction(
     const storage = getPublicFileStorage();
     const key = buildThumbnailKey({
       fileName: file.name,
-      billId: String(formData.get("billId") ?? "") || undefined,
+      billId: billId ?? undefined,
       prefix: String(formData.get("prefix") ?? "") || undefined,
       now: Date.now(),
     });
@@ -47,12 +57,12 @@ export async function uploadThumbnailAction(
 export async function deleteThumbnailAction(
   url: string
 ): Promise<DeleteResult> {
-  await requireAdmin();
+  const storage = getPublicFileStorage();
+  const key = keyFromPublicUrl(url, storage.baseUrl);
+  if (!key) return { success: false, error: "削除できないファイルです" };
+  await requireThumbnailAccess(billIdFromThumbnailKey(key));
 
   try {
-    const storage = getPublicFileStorage();
-    const key = keyFromPublicUrl(url, storage.baseUrl);
-    if (!key) return { success: false, error: "削除できないファイルです" };
     await storage.remove(key);
     return { success: true };
   } catch (error) {

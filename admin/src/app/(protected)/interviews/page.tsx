@@ -1,18 +1,12 @@
-import { redirect } from "next/navigation";
-import { getCurrentAdmin } from "@/features/auth/server/lib/auth-server";
+import { requireSuperAdminPage } from "@/features/auth/server/lib/auth-server";
 import { AllInterviewConfigList } from "@/features/interviews/server/components/all-interview-config-list";
 import {
   getAllInterviewConfigs,
   getSessionCountsForConfigs,
 } from "@/features/interviews/server/loaders/get-all-interview-configs";
-import { routes } from "@/lib/routes";
 
 export default async function InterviewsPage() {
-  const currentAdmin = await getCurrentAdmin();
-
-  if (!currentAdmin) {
-    redirect(routes.login());
-  }
+  await requireSuperAdminPage();
 
   const configs = await getAllInterviewConfigs();
   const sessionCounts = await getSessionCountsForConfigs(

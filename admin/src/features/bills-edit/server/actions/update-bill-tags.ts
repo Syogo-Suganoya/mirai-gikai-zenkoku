@@ -1,6 +1,6 @@
 "use server";
 
-import { requireAdmin } from "@/features/auth/server/lib/auth-server";
+import { requireBillAction } from "@/features/bills/server/loaders/require-bill-access";
 import {
   invalidateWebCache,
   WEB_CACHE_TAGS,
@@ -18,7 +18,7 @@ import {
  * 既存のタグと新しいタグを比較して、差分のみを更新する
  */
 export async function updateBillTags(billId: string, tagIds: string[]) {
-  await requireAdmin();
+  await requireBillAction(billId, "editor");
 
   try {
     const existingTagIds = await findBillsTagsByBillId(billId);

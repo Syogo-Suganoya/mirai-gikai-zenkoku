@@ -38,3 +38,14 @@ export function keyFromPublicUrl(url: string, baseUrl: string): string | null {
   );
   return pattern.test(key) ? key : null;
 }
+
+const UUID_IN_KEY =
+  /([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})_\d+\.[a-z0-9]{1,5}$/;
+
+/**
+ * サムネイルのキーから議案 id を取り出す（消すときに、その議案を扱えるか確かめるため）。
+ * 議案を作る前に上げたもの（new）は null。
+ */
+export function billIdFromThumbnailKey(key: string): string | null {
+  return key.match(UUID_IN_KEY)?.[1] ?? null;
+}

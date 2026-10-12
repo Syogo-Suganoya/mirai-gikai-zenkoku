@@ -59,6 +59,8 @@ DB を作り直すときは `pnpm db:reset`（コンテナの削除 → 起動 �
 | AI | Google Gemini API |
 | CI | GitHub Actions（`.github/workflows`） |
 
+本番への出し方は [docs/デプロイ手順.md](docs/デプロイ手順.md) にまとめています。
+
 ## ライセンス
 
 [AGPL-3.0](LICENSE)。元にしたみらい議会のライセンスを引き継いでいます。

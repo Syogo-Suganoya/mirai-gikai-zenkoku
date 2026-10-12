@@ -1,5 +1,6 @@
 import "server-only";
 
+import { notFound } from "next/navigation";
 import { getCurrentUser } from "./session";
 
 /**
@@ -20,5 +21,15 @@ export async function requireAdmin() {
   if (!admin) {
     throw new Error("管理者権限が必要です");
   }
+  return admin;
+}
+
+/**
+ * 全体管理者だけのページの先頭で呼ぶ。全体管理者でなければ 404。
+ * インタビュー・トピック分析・タグなどは、議会の担当者（確認者・編集者）にはまだ開放していない。
+ */
+export async function requireSuperAdminPage() {
+  const admin = await getCurrentAdmin();
+  if (!admin) notFound();
   return admin;
 }
