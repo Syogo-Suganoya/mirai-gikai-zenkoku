@@ -1,7 +1,7 @@
 import "server-only";
 
 import { createDb } from "@mirai-gikai/db";
-import { and, asc, desc, eq, sql } from "@mirai-gikai/db/orm";
+import { and, asc, desc, eq, inArray, sql } from "@mirai-gikai/db/orm";
 import {
   assemblies,
   bill_contents,
@@ -103,6 +103,41 @@ export async function updateBillPublishStatus(
       updated_at: sql`now()`,
     })
     .where(eq(bills.id, billId));
+}
+
+/** 議会の議案のうち、指定した ID のもの（まとめて公開状態を変えるときに使う） */
+export async function findAssemblyBillsByIds(
+  assemblyId: string,
+  billIds: string[]
+) {
+  if (billIds.length === 0) return [];
+  return createDb()
+    .select({
+      id: bills.id,
+      publish_status: bills.publish_status,
+      publish_level: bills.publish_level,
+    })
+    .from(bills)
+    .where(and(eq(bills.assembly_id, assemblyId), inArray(bills.id, billIds)));
+}
+
+/** 議会の議案の公開状態をまとめて変える（updateBillPublishStatus と同じ規則） */
+export async function updateBillsPublishStatus(
+  assemblyId: string,
+  billIds: string[],
+  publishStatus: BillPublishStatus
+) {
+  if (billIds.length === 0) return;
+  await createDb()
+    .update(bills)
+    .set({
+      publish_status: publishStatus,
+      ...(publishStatus === "published"
+        ? { published_at: sql`coalesce(${bills.published_at}, now())` }
+        : {}),
+      updated_at: sql`now()`,
+    })
+    .where(and(eq(bills.assembly_id, assemblyId), inArray(bills.id, billIds)));
 }
 
 export async function findBillContentsByBillId(billId: string) {
