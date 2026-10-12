@@ -14,6 +14,22 @@ export const ASSEMBLY_CSV_KINDS = [
 ] as const satisfies readonly CsvImportKind[];
 export type AssemblyCsvKind = (typeof ASSEMBLY_CSV_KINDS)[number];
 
+/** 取り込み画面の操作（議会の取り込みと議会マスタの取り込みで、Server Action を差し替える） */
+export type CsvImportActions = {
+  upload: (formData: FormData) => Promise<CsvPreview | { error: string }>;
+  commit: (
+    jobId: string,
+    options: { deleteDummyData?: boolean }
+  ) => Promise<CommitCsvResult>;
+  cancel: (jobId: string) => Promise<void>;
+};
+
+export type CommitCsvResult =
+  | { success: true; insertCount: number; updateCount: number }
+  | { error: string }
+  /** 議会にダミーデータが残っている。消してよいか確認してから deleteDummyData: true で送り直す */
+  | { needsDummyDeletion: true };
+
 /** 確認画面の1行 */
 export type CsvPreviewRow = {
   row: number;

@@ -1,5 +1,8 @@
+import { Upload } from "lucide-react";
 import type { Route } from "next";
+import Link from "next/link";
 import { redirect } from "next/navigation";
+import { Button } from "@/components/ui/button";
 import { AssemblyMap } from "@/features/assemblies/client/components/assembly-map";
 import { AssemblyList } from "@/features/assemblies/server/components/assembly-list";
 import { loadAssemblies } from "@/features/assemblies/server/loaders/load-assemblies";
@@ -17,13 +20,23 @@ export default async function AssembliesPage() {
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">議会一覧</h1>
-        <p className="mt-1 text-gray-600">
-          {user.is_super_admin
-            ? "すべての議会です。議会を選ぶと議案・会期を管理できます"
-            : "担当している議会です"}
-        </p>
+      <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">議会一覧</h1>
+          <p className="mt-1 text-gray-600">
+            {user.is_super_admin
+              ? "すべての議会です。議会を選ぶと議案・会期を管理できます"
+              : "担当している議会です"}
+          </p>
+        </div>
+        {user.is_super_admin && (
+          <Button variant="outline" asChild>
+            <Link href={routes.assemblyMasterImport() as Route}>
+              <Upload className="mr-1 h-4 w-4" />
+              議会マスタを CSV で取り込む
+            </Link>
+          </Button>
+        )}
       </div>
       {assemblies.length === 0 ? (
         <p className="text-gray-500">

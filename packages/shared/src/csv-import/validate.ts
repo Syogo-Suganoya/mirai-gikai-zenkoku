@@ -1,3 +1,4 @@
+import { isReservedAssemblySlug } from "../assemblies/reserved-slugs";
 import { isFactionActiveOn } from "../bill-results/factions";
 import { findPrefectureByCode } from "../prefectures/prefectures";
 import {
@@ -212,6 +213,9 @@ function readAssembly(
   const slug = r.text("slug");
   if (slug && !SLUG_RE.test(slug)) {
     r.error("slug", "スラッグは半角英小文字・数字・ハイフンで書いてください");
+  }
+  if (slug && isReservedAssemblySlug(slug)) {
+    r.error("slug", `スラッグ「${slug}」はサイトのページの名前と重なるため使えません`);
   }
   if (slug && context.assemblySlugs) {
     const owner = context.assemblySlugs.get(slug);

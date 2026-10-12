@@ -18,6 +18,7 @@ import { getErrorMessage } from "@/lib/utils/get-error-message";
 import {
   ASSEMBLY_CSV_KINDS,
   type AssemblyCsvKind,
+  type CommitCsvResult,
   type CsvPreview,
 } from "../../shared/types";
 import { buildPreviewRows } from "../../shared/utils/build-csv-preview";
@@ -104,12 +105,6 @@ export async function uploadCsv(
     };
   }
 }
-
-export type CommitCsvResult =
-  | { success: true; insertCount: number; updateCount: number }
-  | { error: string }
-  /** 議会にダミーデータが残っている。消してよいか確認してから deleteDummyData: true で送り直す */
-  | { needsDummyDeletion: true };
 
 /** 確認画面の内容を DB に反映する（1つのトランザクションで全行） */
 export async function commitCsvImport(

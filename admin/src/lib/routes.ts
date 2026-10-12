@@ -17,6 +17,8 @@ export const routes = {
   interviews: () => "/interviews" as const,
   interviewOpinionBackfill: () => "/interview-opinion-backfill" as const,
   userTopicAnalysisAll: () => "/user-topic-analysis" as const,
+  /** 議会マスタの CSV 取り込み（全体管理者のみ） */
+  assemblyMasterImport: () => "/assemblies/import" as const,
 
   // ── 議会配下 ──────────────────────────────────────
   assemblyBills: (assembly: string) => `/${assembly}/bills` as const,

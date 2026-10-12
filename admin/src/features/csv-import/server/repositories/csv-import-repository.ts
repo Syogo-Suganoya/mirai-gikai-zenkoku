@@ -1,7 +1,7 @@
 import "server-only";
 
 import { createDb, type Json } from "@mirai-gikai/db";
-import { and, desc, eq, sql } from "@mirai-gikai/db/orm";
+import { and, desc, eq, isNull, sql } from "@mirai-gikai/db/orm";
 import {
   assembly_factions,
   csv_import_jobs,
@@ -12,9 +12,17 @@ import type {
   CsvIssue,
 } from "@mirai-gikai/shared/csv-import/types";
 
+/** 議会の取り込みか、議会マスタの取り込み（assembly_id が null）か */
+function jobScope(assemblyId: string | null) {
+  return assemblyId === null
+    ? isNull(csv_import_jobs.assembly_id)
+    : eq(csv_import_jobs.assembly_id, assemblyId);
+}
+
 export async function insertValidatedJob(params: {
   id: string;
-  assemblyId: string;
+  /** 議会マスタの取り込みは null */
+  assemblyId: string | null;
   kind: CsvImportKind;
   fileName: string;
   filePath: string;
@@ -48,14 +56,17 @@ export async function insertValidatedJob(params: {
     });
 }
 
-export async function findValidatedJob(jobId: string, assemblyId: string) {
+export async function findValidatedJob(
+  jobId: string,
+  assemblyId: string | null
+) {
   const [row] = await createDb()
     .select()
     .from(csv_import_jobs)
     .where(
       and(
         eq(csv_import_jobs.id, jobId),
-        eq(csv_import_jobs.assembly_id, assemblyId),
+        jobScope(assemblyId),
         eq(csv_import_jobs.status, "validated")
       )
     );
@@ -97,7 +108,10 @@ export async function markJobStatus(
     .where(eq(csv_import_jobs.id, jobId));
 }
 
-export async function findJobsByAssembly(assemblyId: string, limit = 30) {
+export async function findJobsByAssembly(
+  assemblyId: string | null,
+  limit = 30
+) {
   return createDb()
     .select({
       id: csv_import_jobs.id,
@@ -114,7 +128,7 @@ export async function findJobsByAssembly(assemblyId: string, limit = 30) {
     })
     .from(csv_import_jobs)
     .innerJoin(users, eq(users.id, csv_import_jobs.created_by))
-    .where(eq(csv_import_jobs.assembly_id, assemblyId))
+    .where(jobScope(assemblyId))
     .orderBy(desc(csv_import_jobs.created_at))
     .limit(limit);
 }

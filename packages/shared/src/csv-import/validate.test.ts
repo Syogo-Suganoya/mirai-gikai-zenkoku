@@ -40,6 +40,15 @@ describe("validateRows: 議会マスタ", () => {
     expect(result.records).toEqual([]);
     expect(result.errors.map((e) => e.column)).toEqual(["団体コード", "スラッグ"]);
   });
+
+  it("サイトの固定のページと同じスラッグは使えない", () => {
+    const result = validate(
+      "assemblies",
+      "団体コード,議会名,種類,都道府県コード,スラッグ\n401307,福岡市議会,市,40,cities\n"
+    );
+    expect(result.records).toEqual([]);
+    expect(result.errors[0].message).toContain("サイトのページの名前と重なる");
+  });
 });
 
 describe("validateRows: 議案", () => {

@@ -17,7 +17,8 @@ import { validateRows } from "@mirai-gikai/shared/csv-import/validate";
  */
 export async function validateCsvFile(
   kind: CsvImportKind,
-  assemblyId: string,
+  /** 議会マスタの取り込みは null */
+  assemblyId: string | null,
   bytes: Uint8Array
 ) {
   const db = createDb();

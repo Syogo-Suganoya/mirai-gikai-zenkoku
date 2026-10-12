@@ -68,17 +68,7 @@ export const routes = {
 } as const;
 
 /**
- * 議会のスラッグに使えない名前（議会ごとのページの `/[assembly]` と静的なページが衝突しないように）。
- * admin で議会を登録するときにもこの一覧で確かめる。
+ * 議会のスラッグに使えない名前（議会ごとのページの `/[assembly]` と固定のページが衝突しないように）。
+ * admin の名前も含めて packages/shared で持つ。
  */
-export const RESERVED_ASSEMBLY_SLUGS = [
-  "api",
-  "cities",
-  "dev",
-  "developers",
-  "preview",
-  "privacy",
-  "report",
-  "terms",
-  "towns",
-] as const;
+export { RESERVED_ASSEMBLY_SLUGS } from "@mirai-gikai/shared/assemblies/reserved-slugs";

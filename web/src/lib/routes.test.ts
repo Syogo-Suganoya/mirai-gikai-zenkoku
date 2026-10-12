@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { isReservedAssemblySlug } from "@mirai-gikai/shared/assemblies/reserved-slugs";
 import { describe, expect, it } from "vitest";
 import { isDevRoute } from "../middleware";
 import { routes } from "./routes";
@@ -108,6 +109,22 @@ describe("routes", () => {
     if (missing.length > 0) {
       expect.fail(
         `page.tsx が存在するが routes.ts に未定義のルート:\n${missing.map((r) => `  - ${r}`).join("\n")}`
+      );
+    }
+  });
+  it("固定のページの先頭の名前が、議会のスラッグに使えない名前に入っている", () => {
+    // 議会ごとのページは /[assembly]/... なので、同じ名前の議会を作ると固定のページと衝突する
+    const topSegments = [
+      ...new Set(
+        appRoutes
+          .map((r) => r.split("/")[1])
+          .filter((segment) => segment && !segment.startsWith("["))
+      ),
+    ];
+    const missing = topSegments.filter((s) => !isReservedAssemblySlug(s));
+    if (missing.length > 0) {
+      expect.fail(
+        `packages/shared/src/assemblies/reserved-slugs.ts に足してください:\n${missing.map((s) => `  - ${s}`).join("\n")}`
       );
     }
   });

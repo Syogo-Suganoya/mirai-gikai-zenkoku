@@ -28,14 +28,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DummyDeletionDialog } from "@/features/assemblies/client/components/dummy-deletion-dialog";
-import { routes } from "@/lib/routes";
-import {
-  cancelCsvImport,
-  commitCsvImport,
-  uploadCsv,
-} from "../../server/actions/csv-import-actions";
 import type {
-  AssemblyCsvKind,
+  CsvImportActions,
+  CsvImportKind,
   CsvIssue,
   CsvPreview,
   CsvPreviewRow,
@@ -45,7 +40,9 @@ import {
   PREVIEW_ROW_LIMIT,
 } from "../../shared/utils/build-csv-preview";
 
-const KIND_DESCRIPTIONS: Record<AssemblyCsvKind, string> = {
+const KIND_DESCRIPTIONS: Record<CsvImportKind, string> = {
+  assemblies:
+    "議会そのもの（議会名・種類・都道府県・公式サイト）。目印は団体コード。新しい議会は設定を既定のまま作ります",
   bills:
     "会期ごとの議案一覧。目印は「会期キー × 議案番号」。新しい議案は下書きで入ります",
   results:
@@ -66,18 +63,26 @@ function downloadCsv(fileName: string, rows: string[][]) {
   URL.revokeObjectURL(url);
 }
 
+/**
+ * CSV 取り込み（種類の選択 → ファイル → 確認 → 確定）。議会の取り込みと議会マスタの取り込みで使う。
+ * Server Action は呼び出し側で議会を束ねて渡す（actions）。
+ */
 export function CsvImportClient({
-  assemblySlug,
   assemblyName,
   kinds,
+  templateHref,
+  actions,
 }: {
-  assemblySlug: string;
-  assemblyName: string;
+  /** ダミー削除の確認に出す議会名（議会マスタの取り込みでは null） */
+  assemblyName: string | null;
   /** この人が取り込める種類 */
-  kinds: AssemblyCsvKind[];
+  kinds: CsvImportKind[];
+  /** テンプレート CSV の URL（?kind= を足して使う） */
+  templateHref: string;
+  actions: CsvImportActions;
 }) {
   const router = useRouter();
-  const [kind, setKind] = useState<AssemblyCsvKind>(kinds[0]);
+  const [kind, setKind] = useState<CsvImportKind>(kinds[0]);
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<CsvPreview | null>(null);
   const [isBusy, setIsBusy] = useState(false);
@@ -98,7 +103,7 @@ export function CsvImportClient({
       const formData = new FormData();
       formData.set("kind", kind);
       formData.set("file", file);
-      const result = await uploadCsv(assemblySlug, formData);
+      const result = await actions.upload(formData);
       if ("error" in result) {
         toast.error(result.error);
       } else {
@@ -114,9 +119,7 @@ export function CsvImportClient({
     if (!preview) return;
     setIsBusy(true);
     try {
-      const result = await commitCsvImport(assemblySlug, preview.jobId, {
-        deleteDummyData,
-      });
+      const result = await actions.commit(preview.jobId, { deleteDummyData });
       if ("needsDummyDeletion" in result) {
         setConfirmingDummy(true);
       } else if ("error" in result) {
@@ -136,7 +139,7 @@ export function CsvImportClient({
   };
 
   const handleCancel = async () => {
-    if (preview) await cancelCsvImport(assemblySlug, preview.jobId);
+    if (preview) await actions.cancel(preview.jobId);
     reset();
     router.refresh();
   };
@@ -229,7 +232,7 @@ export function CsvImportClient({
 
         <DummyDeletionDialog
           open={confirmingDummy}
-          assemblyName={assemblyName}
+          assemblyName={assemblyName ?? ""}
           actionLabel="この CSV を取り込みます"
           onCancel={() => setConfirmingDummy(false)}
           onConfirm={() => {
@@ -248,7 +251,7 @@ export function CsvImportClient({
           <Label htmlFor="csv-kind">種類</Label>
           <Select
             value={kind}
-            onValueChange={(value) => setKind(value as AssemblyCsvKind)}
+            onValueChange={(value) => setKind(value as CsvImportKind)}
           >
             <SelectTrigger id="csv-kind">
               <SelectValue />
@@ -264,9 +267,7 @@ export function CsvImportClient({
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <Button variant="outline" asChild>
-            <a
-              href={`${routes.assemblyImport(assemblySlug)}/template?kind=${kind}`}
-            >
+            <a href={`${templateHref}?kind=${kind}`}>
               <Download className="mr-1 h-4 w-4" />
               テンプレート CSV
             </a>

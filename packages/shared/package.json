@@ -132,6 +132,10 @@
       "types": "./src/prefectures/japan-map.ts",
       "default": "./src/prefectures/japan-map.ts"
     },
+    "./assemblies/*": {
+      "types": "./src/assemblies/*.ts",
+      "default": "./src/assemblies/*.ts"
+    },
     "./bill-results/*": {
       "types": "./src/bill-results/*.ts",
       "default": "./src/bill-results/*.ts"
