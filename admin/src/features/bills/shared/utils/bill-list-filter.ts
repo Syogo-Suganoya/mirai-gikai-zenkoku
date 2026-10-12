@@ -2,11 +2,20 @@ import type { Bill, BillPublishStatus } from "../types";
 
 export type BillPublishLevel = Bill["publish_level"];
 
-/** 議案一覧の絞り込み（URL の ?session=&publish=&level=） */
+/** ダミーかどうかでの絞り込み（設計 v3 8.5.3節） */
+export type BillDataKind = "real" | "dummy";
+
+/** 議案一覧の絞り込み（URL の ?session=&publish=&level=&data=） */
 export type BillListFilter = {
   sessionId: string | null;
   publishStatus: BillPublishStatus | null;
   publishLevel: BillPublishLevel | null;
+  dataKind: BillDataKind | null;
+};
+
+export const BILL_DATA_KIND_LABELS: Record<BillDataKind, string> = {
+  real: "実データだけ",
+  dummy: "ダミーだけ",
 };
 
 /** 公開状態の表示名（公開状態のバッジと同じ） */
@@ -22,6 +31,7 @@ const PUBLISH_STATUSES: readonly BillPublishStatus[] = [
   "published",
 ];
 const PUBLISH_LEVELS: readonly BillPublishLevel[] = ["title_only", "explained"];
+const DATA_KINDS: readonly BillDataKind[] = ["real", "dummy"];
 
 function pick<T extends string>(
   value: string | undefined,
@@ -35,16 +45,21 @@ export function parseBillListFilter(params: {
   session?: string;
   publish?: string;
   level?: string;
+  data?: string;
 }): BillListFilter {
   return {
     sessionId: params.session || null,
     publishStatus: pick(params.publish, PUBLISH_STATUSES),
     publishLevel: pick(params.level, PUBLISH_LEVELS),
+    dataKind: pick(params.data, DATA_KINDS),
   };
 }
 
 export function filterBills<
-  T extends Pick<Bill, "session_id" | "publish_status" | "publish_level">,
+  T extends Pick<
+    Bill,
+    "session_id" | "publish_status" | "publish_level" | "is_dummy"
+  >,
 >(bills: readonly T[], filter: BillListFilter): T[] {
   return bills.filter(
     (bill) =>
@@ -52,7 +67,9 @@ export function filterBills<
       (filter.publishStatus === null ||
         bill.publish_status === filter.publishStatus) &&
       (filter.publishLevel === null ||
-        bill.publish_level === filter.publishLevel)
+        bill.publish_level === filter.publishLevel) &&
+      (filter.dataKind === null ||
+        bill.is_dummy === (filter.dataKind === "dummy"))
   );
 }
 
@@ -60,6 +77,7 @@ export function isFilterActive(filter: BillListFilter): boolean {
   return (
     filter.sessionId !== null ||
     filter.publishStatus !== null ||
-    filter.publishLevel !== null
+    filter.publishLevel !== null ||
+    filter.dataKind !== null
   );
 }

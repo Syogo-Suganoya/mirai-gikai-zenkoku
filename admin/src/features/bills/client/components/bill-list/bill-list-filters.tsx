@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/select";
 import { routes } from "@/lib/routes";
 import {
+  BILL_DATA_KIND_LABELS,
   BILL_PUBLISH_STATUS_LABELS,
   type BillListFilter,
   isFilterActive,
@@ -36,7 +37,10 @@ export function BillListFilters({
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const update = (key: "session" | "publish" | "level", value: string) => {
+  const update = (
+    key: "session" | "publish" | "level" | "data",
+    value: string
+  ) => {
     const params = new URLSearchParams(searchParams.toString());
     if (value === ALL) params.delete(key);
     else params.set(key, value);
@@ -47,7 +51,8 @@ export function BillListFilters({
 
   const clear = () => {
     const params = new URLSearchParams(searchParams.toString());
-    for (const key of ["session", "publish", "level"]) params.delete(key);
+    for (const key of ["session", "publish", "level", "data"])
+      params.delete(key);
     const query = params.toString();
     const base = routes.assemblyBills(assemblySlug);
     router.push((query ? `${base}?${query}` : base) as Route);
@@ -97,6 +102,22 @@ export function BillListFilters({
         <SelectContent>
           <SelectItem value={ALL}>すべての掲載</SelectItem>
           {Object.entries(BILL_PUBLISH_LEVEL_LABELS).map(([value, label]) => (
+            <SelectItem key={value} value={value}>
+              {label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      <Select
+        value={filter.dataKind ?? ALL}
+        onValueChange={(value) => update("data", value)}
+      >
+        <SelectTrigger className="w-40" aria-label="ダミー">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value={ALL}>実データとダミー</SelectItem>
+          {Object.entries(BILL_DATA_KIND_LABELS).map(([value, label]) => (
             <SelectItem key={value} value={value}>
               {label}
             </SelectItem>

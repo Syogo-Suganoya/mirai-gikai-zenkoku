@@ -12,6 +12,7 @@ interface AssemblyBillsPageProps {
     session?: string;
     publish?: string;
     level?: string;
+    data?: string;
   }>;
 }
 

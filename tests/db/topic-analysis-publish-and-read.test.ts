@@ -17,8 +17,15 @@ import {
   saveTopicsAndAssignments,
   setVersionPublished,
 } from "@mirai-gikai/topic-analysis-core/repository";
-import { afterEach, beforeAll, describe, expect, it } from "vitest";
-import { createTestBill, createTestUser, db, type TestUser } from "./utils";
+import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
+import {
+  cleanupTestBill,
+  cleanupTestUser,
+  createTestBill,
+  createTestUser,
+  db,
+  type TestUser,
+} from "./utils";
 
 /** session + report + interview_opinion を作り、opinionId を返す。 */
 async function createReportWithOpinions(opts: {
@@ -92,6 +99,11 @@ describe("publish / 公開読み取り 統合テスト", () => {
       .returning();
     if (!config) throw new Error("config insert failed");
     configId = config.id;
+  });
+
+  afterAll(async () => {
+    await cleanupTestBill(billId);
+    await cleanupTestUser(testUser.id);
   });
 
   afterEach(async () => {
