@@ -1,0 +1,77 @@
+import "server-only";
+
+import type { LanguageModel } from "ai";
+import { generateInitialQuestion } from "@/features/interview-session/server/services/generate-initial-question";
+import { getCurrentVisitor } from "@/lib/visitor/server";
+import type { InterviewMessage, InterviewSession } from "../../shared/types";
+import {
+  createInterviewSessionRecord,
+  findActiveInterviewSession,
+  findInterviewMessagesBySessionId,
+} from "../repositories/interview-session-repository";
+import type { GetUserFn } from "../utils/verify-session-ownership";
+
+type InitializeInterviewChatDeps = {
+  getUser?: GetUserFn;
+  model?: LanguageModel;
+};
+
+type InitializeInterviewChatResult = {
+  session: InterviewSession;
+  messages: InterviewMessage[];
+};
+
+/**
+ * インタビューチャットの初期化処理
+ * セッション取得/作成、メッセージ履歴取得、最初の質問生成を行う
+ */
+export async function initializeInterviewChat(
+  billId: string,
+  interviewConfigId: string,
+  deps?: InitializeInterviewChatDeps
+): Promise<InitializeInterviewChatResult> {
+  // 認証
+  const getUser = deps?.getUser ?? getCurrentVisitor;
+  const {
+    data: { user },
+    error: getUserError,
+  } = await getUser();
+
+  if (getUserError || !user) {
+    throw new Error(
+      `Failed to get user: ${getUserError?.message || "User not found"}`
+    );
+  }
+
+  // セッション取得または作成
+  let session = await findActiveInterviewSession(interviewConfigId, user.id);
+  if (!session) {
+    session = await createInterviewSessionRecord({
+      interviewConfigId,
+      userId: user.id,
+    });
+  }
+
+  // メッセージ履歴を取得
+  let messages = await findInterviewMessagesBySessionId(session.id);
+
+  // メッセージ履歴が空の場合、最初の質問を生成
+  if (messages.length === 0) {
+    const initialQuestion = await generateInitialQuestion({
+      sessionId: session.id,
+      billId,
+      interviewConfigId,
+      userId: user.id,
+      deps: { model: deps?.model },
+    });
+
+    if (initialQuestion) {
+      messages = [initialQuestion];
+    }
+  }
+
+  return {
+    session,
+    messages,
+  };
+}

@@ -1,0 +1,406 @@
+import { google } from "@ai-sdk/google";
+import type { Database } from "@mirai-gikai/db";
+import {
+  convertToModelMessages,
+  type LanguageModel,
+  streamText,
+  tool,
+  type UIMessage,
+} from "ai";
+import { z } from "zod";
+import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
+import {
+  findBillContentByDifficulty,
+  findPublishedBillByKey,
+} from "@/features/bills/server/repositories/bill-repository";
+import type { BillWithContent } from "@/features/bills/shared/types";
+import {
+  SUGGEST_INTERVIEW_TOOL_NAME,
+  SUGGEST_INTERVIEW_TOOL_TYPE,
+} from "@/features/chat/shared/constants";
+import { ChatError, ChatErrorCode } from "@/features/chat/shared/types/errors";
+import { pickChatKnowledgeSource } from "@/features/chat/shared/utils/pick-chat-knowledge-source";
+import { findPublicInterviewConfigByBillId } from "@/features/interview-config/server/repositories/interview-config-repository";
+import { AI_MODELS, geminiModel } from "@/lib/ai/models";
+import { env } from "@/lib/env";
+import {
+  type CompiledPrompt,
+  createPromptProvider,
+  type PromptProvider,
+} from "@/lib/prompt";
+import { isWithinDailyCostLimit, recordChatUsage } from "./cost-tracker";
+import {
+  checkSystemDailyCostLimit,
+  checkSystemMonthlyCostLimit,
+} from "./system-cost-guard";
+
+export type ChatMessageMetadata = {
+  billContext?: BillWithContent;
+  hasInterviewConfig?: boolean;
+  pageContext?: {
+    type: "home" | "bill";
+    bills?: Array<{ id: string; name: string; summary?: string }>;
+  };
+  difficultyLevel: DifficultyLevelEnum;
+  sessionId: string;
+};
+
+type ChatRequestParams = {
+  messages: UIMessage<ChatMessageMetadata>[];
+  userId: string;
+  deps?: HandleChatDeps;
+};
+
+/** テスト時にモック注入するための外部依存 */
+export type HandleChatDeps = {
+  promptProvider?: PromptProvider;
+  model?: LanguageModel;
+};
+
+type ChatUsageMetadata =
+  Database["public"]["Tables"]["chat_usage_events"]["Insert"]["metadata"];
+
+/**
+ * チャットリクエストを処理してストリーミングレスポンスを返す
+ */
+export async function handleChatRequest({
+  messages,
+  userId,
+  deps,
+}: ChatRequestParams) {
+  const promptProvider = deps?.promptProvider ?? createPromptProvider();
+
+  // Extract context from messages
+  const context = extractChatContext(messages);
+
+  try {
+    // Check per-user cost limit before processing
+    const isWithinLimit = await isWithinDailyCostLimit(
+      userId,
+      env.chat.dailyUserCostLimitUsd
+    );
+    if (!isWithinLimit) {
+      throw new ChatError(ChatErrorCode.DAILY_COST_LIMIT_REACHED);
+    }
+
+    // Check system-wide cost limits before processing
+    await checkSystemDailyCostLimit();
+    await checkSystemMonthlyCostLimit();
+  } catch (error) {
+    if (error instanceof ChatError) {
+      throw error;
+    }
+    // コストチェックに失敗した場合はログに記録して続行
+    console.error("Cost limit check error:", error);
+  }
+
+  // Build prompt configuration
+  const { promptName, promptResult, isDummyBill } = await buildPrompt(
+    context,
+    promptProvider
+  );
+  // Model configuration
+  const model = deps?.model ?? geminiModel(AI_MODELS.chat);
+  const modelName =
+    typeof model === "string" ? model : (model.modelId ?? "unknown");
+
+  // Determine if interview suggestion should be enabled
+  const shouldSuggestInterview = await determineShouldSuggestInterview(
+    context,
+    messages
+  );
+
+  // Build system prompt with interview suggestion instructions
+  const pageType =
+    context.pageContext?.type ?? (context.billContext ? "bill" : undefined);
+  const systemPrompt =
+    buildSystemPromptWithInterviewInstructions(
+      promptResult.content,
+      shouldSuggestInterview,
+      pageType
+    ) + (isDummyBill ? DUMMY_BILL_PROMPT : "");
+
+  // Build tools configuration
+  const tools = buildTools(shouldSuggestInterview);
+
+  // Generate streaming response
+  try {
+    const result = streamText({
+      model,
+      system: systemPrompt,
+      messages: await convertToModelMessages(messages),
+      tools,
+      onFinish: async (event) => {
+        try {
+          await recordChatUsage({
+            userId,
+            sessionId: context.sessionId || undefined,
+            promptName,
+            model: modelName,
+            usage: event.totalUsage,
+            metadata: buildUsageMetadata(context, event),
+          });
+        } catch (usageError) {
+          console.error("Failed to record chat usage:", usageError);
+        }
+      },
+      experimental_telemetry: {
+        isEnabled: true,
+        functionId: promptName,
+        metadata: buildTelemetryMetadata(context, promptResult, userId),
+      },
+    });
+
+    return result.toUIMessageStreamResponse();
+  } catch (error) {
+    console.error("LLM generation error:", error);
+    throw new ChatError(
+      ChatErrorCode.LLM_GENERATION_FAILED,
+      error instanceof Error ? error.message : String(error)
+    );
+  }
+}
+
+/**
+ * メッセージから最初のメタデータを抽出してコンテキストを作成
+ */
+function extractChatContext(
+  messages: UIMessage<ChatMessageMetadata>[]
+): ChatMessageMetadata {
+  const metadata = messages[0]?.metadata;
+
+  return {
+    billContext: metadata?.billContext,
+    hasInterviewConfig: metadata?.hasInterviewConfig,
+    pageContext: metadata?.pageContext,
+    difficultyLevel: (metadata?.difficultyLevel ||
+      "normal") as DifficultyLevelEnum,
+    sessionId: metadata?.sessionId || "",
+  };
+}
+
+/**
+ * コンテキストに基づいてプロンプトを組み立てる
+ */
+async function buildPrompt(
+  context: ChatMessageMetadata,
+  promptProvider: PromptProvider
+) {
+  // Determine prompt name
+  const promptName =
+    context.pageContext?.type === "home"
+      ? "top-chat-system"
+      : `bill-chat-system-${context.difficultyLevel}`;
+
+  // Prepare prompt variables
+  // bill 関連の変数はクライアント側のメタデータを信頼せず、必ずサーバー側で再取得した
+  // 公開済みデータのみから組み立てる（管理画面トグルの強制と非公開ナレッジ流出防止）。
+  // 公開済み bill が引けない場合は bill コンテキスト自体を空にする。
+  let variables: Record<string, string>;
+  let isDummyBill = false;
+  if (context.pageContext?.type === "home") {
+    variables = {
+      billSummary: JSON.stringify(context.pageContext.bills ?? ""),
+    };
+  } else {
+    const billId = context.billContext?.id;
+    const [serverBill, serverContent] = billId
+      ? await Promise.all([
+          findPublishedBillByKey(billId),
+          findBillContentByDifficulty(billId, context.difficultyLevel),
+        ])
+      : [null, null];
+    variables = {
+      billName: serverBill?.name ?? "",
+      billTitle: serverContent?.title ?? "",
+      billSummary: serverContent?.summary ?? "",
+      billContent: serverContent?.content ?? "",
+      knowledgeSource: pickChatKnowledgeSource(serverBill),
+    };
+    isDummyBill = serverBill?.is_dummy ?? false;
+  }
+
+  // Fetch prompt from Langfuse
+  try {
+    const promptResult = await promptProvider.getPrompt(promptName, variables);
+    return { promptName, promptResult, isDummyBill };
+  } catch (error) {
+    console.error("Prompt fetch error:", error);
+    throw new ChatError(
+      ChatErrorCode.PROMPT_FETCH_FAILED,
+      error instanceof Error ? error.message : String(error)
+    );
+  }
+}
+
+/**
+ * テレメトリメタデータを構築
+ */
+function buildTelemetryMetadata(
+  context: ChatMessageMetadata,
+  promptResult: CompiledPrompt,
+  userId: string
+) {
+  return {
+    langfusePrompt: promptResult.metadata,
+    billId: context.billContext?.id || "",
+    pageType: context.pageContext?.type || "bill",
+    difficultyLevel: context.difficultyLevel,
+    userId,
+    sessionId: context.sessionId,
+  };
+}
+
+function buildUsageMetadata(
+  context: ChatMessageMetadata,
+  finishEvent: { finishReason?: unknown; steps?: unknown[] }
+): ChatUsageMetadata {
+  const finishReason =
+    typeof finishEvent.finishReason === "string"
+      ? finishEvent.finishReason
+      : null;
+  const stepCount = Array.isArray(finishEvent.steps)
+    ? finishEvent.steps.length
+    : 0;
+
+  return {
+    pageType: context.pageContext?.type ?? null,
+    difficultyLevel: context.difficultyLevel,
+    billId: context.billContext?.id ?? null,
+    finishReason,
+    stepCount,
+  };
+}
+
+/**
+ * ダミーの議案（表示確認用の架空の議案）のときに足す指示（8.5.3節）。
+ * スクリーンショットや共有で実在の議案と取り違えられないよう、回答の冒頭で必ず伝えさせる。
+ */
+const DUMMY_BILL_PROMPT = `
+
+## この議案は架空のものです
+この議案は、画面の表示を確認するために作った架空の議案（ダミー）です。実在の議案・議決結果ではありません。
+- すべての回答の冒頭で「この議案は表示確認用の架空のものです」と伝えてください。
+- 議案の内容・金額・日程・議論について、事実であるかのように説明しないでください。
+- 一般的な議会の仕組みについての質問には答えてかまいません。
+`;
+
+const INTERVIEW_AWARENESS_BASE = `
+
+## AIインタビュー機能について
+みらい議会には「AIインタビュー」機能があります。これは議案ごとに提供される機能で、ユーザーがAIインタビュアーと対話形式で議案に対する意見や知見を共有できる仕組みです。インタビュー結果は分析・レポート化され、議会での議論に活用されます。
+`;
+
+const INTERVIEW_AWARENESS_PROMPT_BILL = `${INTERVIEW_AWARENESS_BASE}
+この議案のインタビュー機能が現在利用可能かどうかは状況によって異なります。インタビューについて質問された場合は、この機能の存在を説明した上で、議案詳細ページでインタビューへの案内が表示されているか確認するよう案内してください。
+`;
+
+const INTERVIEW_AWARENESS_PROMPT_HOME = `${INTERVIEW_AWARENESS_BASE}
+インタビューについて質問された場合は、この機能の存在を説明した上で、利用可否は議案ごとに異なるため、興味のある議案の詳細ページでインタビューへの案内が表示されているか確認するよう案内してください。
+`;
+
+const INTERVIEW_SUGGESTION_PROMPT = `
+
+## AIインタビュー提案について
+この議案にはAIインタビュー機能があります。以下の条件に該当する場合、通常のテキスト応答と併せて suggest_interview ツールを呼び出してください。
+ただし、1つの会話の中で suggest_interview ツールを呼び出すのは1回のみとしてください。
+
+### suggest_interview を呼び出す条件:
+- ユーザーがこの議案の当事者や関係者であることがわかった場合
+- ユーザーがこの議案について専門的な知識を持っていると判断できる場合
+- ユーザーがこの議案に対して具体的な提言や意見を述べた場合
+- ユーザーがインタビューや意見提出について質問した場合
+- ユーザーが自分の意見を共有したい、政策に反映してほしいと表明した場合
+
+### 重要:
+- suggest_interview ツールの呼び出しは、通常のテキスト応答と同時に行ってください。ツールだけを呼び出してテキスト応答を省略しないでください。
+- ツールの呼び出しは会話全体で最大1回です。既に呼び出し済みの場合は再度呼び出さないでください。
+`;
+
+/**
+ * インタビュー提案を有効にすべきか判定
+ *
+ * 以下のすべてを満たす場合にtrueを返す:
+ * - 議案ページである
+ * - サーバー側でインタビュー設定が公開状態であることを確認
+ * - 会話中にまだsuggest_interviewツールが呼び出されていない
+ *
+ * NOTE: インタビュー回答済みでも導線を表示する（再回答の促進のため）
+ */
+async function determineShouldSuggestInterview(
+  context: ChatMessageMetadata,
+  messages: UIMessage<ChatMessageMetadata>[]
+): Promise<boolean> {
+  if (!context.billContext) {
+    return false;
+  }
+
+  if (hasExistingSuggestInterview(messages)) {
+    return false;
+  }
+
+  // サーバー側でインタビュー設定の存在を検証（クライアント側のメタデータを信頼しない）
+  const interviewConfig = await findPublicInterviewConfigByBillId(
+    context.billContext.id
+  );
+  return !!interviewConfig;
+}
+
+/**
+ * 会話履歴にsuggest_interviewツール呼び出しが既に存在するか判定
+ */
+function hasExistingSuggestInterview(
+  messages: UIMessage<ChatMessageMetadata>[]
+): boolean {
+  return messages.some(
+    (msg) =>
+      msg.role === "assistant" &&
+      msg.parts.some(
+        (part) =>
+          "toolCallId" in part && part.type === SUGGEST_INTERVIEW_TOOL_TYPE
+      )
+  );
+}
+
+/**
+ * インタビュー提案の指示をシステムプロンプトに追加
+ */
+function buildSystemPromptWithInterviewInstructions(
+  basePrompt: string,
+  shouldSuggestInterview: boolean,
+  pageType: "home" | "bill" | undefined
+): string {
+  if (pageType === "home") {
+    return basePrompt + INTERVIEW_AWARENESS_PROMPT_HOME;
+  }
+  if (pageType !== "bill") {
+    return basePrompt;
+  }
+  let prompt = basePrompt + INTERVIEW_AWARENESS_PROMPT_BILL;
+  if (shouldSuggestInterview) {
+    prompt += INTERVIEW_SUGGESTION_PROMPT;
+  }
+  return prompt;
+}
+
+/**
+ * チャットで使用するツール一覧を構築
+ */
+function buildTools(shouldSuggestInterview: boolean) {
+  // biome-ignore lint/suspicious/noExplicitAny: provider tool の型がツールごとに異なるため
+  const tools: Record<string, any> = {
+    // Gemini の Google 検索グラウンディング（本家の OpenAI web_search の置き換え）
+    google_search: google.tools.googleSearch({}),
+  };
+
+  if (shouldSuggestInterview) {
+    tools[SUGGEST_INTERVIEW_TOOL_NAME] = tool({
+      description:
+        "ユーザーが議案の当事者・有識者であると判断された場合、またはインタビューについて聞かれた場合に呼び出す。通常のテキスト応答と同時に呼び出すこと。",
+      inputSchema: z.object({}),
+      execute: async () => ({ suggested: true }),
+    });
+  }
+
+  return tools;
+}

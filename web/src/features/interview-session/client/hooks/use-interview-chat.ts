@@ -1,0 +1,270 @@
+"use client";
+
+import { experimental_useObject as useObject } from "@ai-sdk/react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import type { PromptInputMessage } from "@/components/ai-elements/prompt-input";
+import {
+  type InterviewStage,
+  interviewChatResponseSchema,
+} from "@/features/interview-session/shared/schemas";
+import { validateQuestionId } from "@/features/interview-session/shared/utils/validate-question-id";
+import {
+  buildMessagesForApi,
+  type ConversationMessage,
+  convertPartialReport,
+} from "../utils/message-utils";
+import { useInterviewRetry } from "./use-interview-retry";
+import { type InitialMessage, useParsedMessages } from "./use-parsed-messages";
+import { useQuickReplies } from "./use-quick-replies";
+
+interface UseInterviewChatProps {
+  billId: string;
+  initialMessages: InitialMessage[];
+  /** プレビュー画面から表示している場合のみ渡す（API側で検証される） */
+  previewToken?: string;
+}
+
+export function useInterviewChat({
+  billId,
+  initialMessages,
+  previewToken,
+}: UseInterviewChatProps) {
+  // 初期メッセージのパース
+  const { parsedInitialMessages, initialStage } =
+    useParsedMessages(initialMessages);
+
+  // 基本状態
+  const [input, setInput] = useState("");
+  const [stage, setStage] = useState<InterviewStage>(initialStage);
+  const [conversationMessages, setConversationMessages] = useState<
+    ConversationMessage[]
+  >([]);
+
+  // onFinishコールバック内で最新の値を参照するためのref
+  const conversationMessagesRef = useRef<ConversationMessage[]>([]);
+  conversationMessagesRef.current = conversationMessages;
+  const stageRef = useRef<InterviewStage>(initialStage);
+  stageRef.current = stage;
+
+  // リトライロジック
+  const retry = useInterviewRetry();
+
+  // chat→summary自動遷移用の保留リクエスト
+  // onFinish内で直接submit()を呼ぶと再入になるため、useEffectで遅延実行する
+  const [pendingSummaryRequest, setPendingSummaryRequest] = useState<{
+    messages: { role: string; content: string }[];
+    billId: string;
+    currentStage: InterviewStage;
+    previewToken?: string;
+  } | null>(null);
+
+  // useObjectフックを使用（streamObjectの結果を受け取る）
+  const { object, submit, isLoading, error } = useObject({
+    api: "/api/interview/chat",
+    schema: interviewChatResponseSchema,
+    onFinish: ({ object: finishedObject, error: finishedError }) => {
+      if (finishedError) {
+        // リトライ処理を委譲
+        const handled = retry.handleError(finishedError, submit);
+        if (handled) return; // 自動リトライ実行済み
+        return; // 手動リトライ待ち
+      }
+
+      // 成功時はリトライをリセット
+      retry.resetRetry();
+
+      if (finishedObject) {
+        const {
+          text,
+          report,
+          quick_replies,
+          question_id,
+          topic_title,
+          next_stage,
+        } = finishedObject;
+        const topicTitle = topic_title ?? null;
+
+        // 既出の questionId を検出して無効化（深掘り時に前の質問IDが残る問題を防止）
+        const validated = validateQuestionId({
+          questionId: question_id ?? null,
+          quickReplies: Array.isArray(quick_replies) ? quick_replies : [],
+          previousMessages: [
+            ...parsedInitialMessages,
+            ...conversationMessagesRef.current,
+          ],
+        });
+
+        // レスポンスからnext_stageを取得してステージを更新
+        if (next_stage) {
+          setStage(next_stage);
+        }
+
+        // summary→chat遷移時はレポートを含めない（LLMがスキーマ上生成しても無視）
+        const shouldIncludeReport = next_stage !== "chat";
+
+        const newAssistantMessage: ConversationMessage = {
+          id: `assistant-${Date.now()}`,
+          role: "assistant",
+          content: text ?? "",
+          report: shouldIncludeReport ? convertPartialReport(report) : null,
+          quickReplies: validated.quickReplies,
+          questionId: validated.questionId,
+          topicTitle,
+        };
+
+        setConversationMessages((prev) => [...prev, newAssistantMessage]);
+
+        // chat→summaryへの遷移時のみ、自動でサマリーリクエストを予約
+        // （summaryステージ中にnext_stage="summary"が返る場合はループ防止のため送信しない）
+        if (next_stage === "summary" && stageRef.current === "chat") {
+          const allMessages = buildMessagesForApi(parsedInitialMessages, [
+            ...conversationMessagesRef.current,
+            newAssistantMessage,
+          ]);
+          setPendingSummaryRequest({
+            messages: allMessages,
+            billId,
+            currentStage: "summary" as InterviewStage,
+            previewToken,
+          });
+        }
+      }
+    },
+  });
+
+  // chat→summary自動遷移: onFinishで予約されたリクエストをuseEffectで送信
+  useEffect(() => {
+    if (pendingSummaryRequest) {
+      retry.saveRequestParams(pendingSummaryRequest);
+      submit(pendingSummaryRequest);
+      setPendingSummaryRequest(null);
+    }
+  }, [pendingSummaryRequest, retry.saveRequestParams, submit]);
+
+  // ローディング状態
+  const isChatLoading = isLoading;
+
+  // 初期メッセージと会話履歴を統合
+  const messages = [...parsedInitialMessages, ...conversationMessages];
+
+  // クイックリプライ
+  const currentQuickReplies = useQuickReplies({
+    messages,
+    isLoading: isChatLoading,
+  });
+
+  // objectからreportを取得（chat遷移時はストリーミング中もレポート非表示）
+  const streamingReportData =
+    object?.next_stage === "chat" ? null : convertPartialReport(object?.report);
+
+  // ストリーミング中のクイックリプライ（パーシャルオブジェクトから抽出）
+  const streamingQuickReplies = useMemo(() => {
+    if (!isChatLoading || !object?.quick_replies) return [];
+    return object.quick_replies.filter(
+      (r): r is string => typeof r === "string" && r.length > 0
+    );
+  }, [isChatLoading, object?.quick_replies]);
+
+  // チャットAPI送信のヘルパー（リクエストパラメータを保存）
+  const submitChatMessage = (
+    userMessageText: string,
+    currentStage: InterviewStage,
+    nextQuestionId?: string
+  ) => {
+    const requestParams = {
+      messages: buildMessagesForApi(
+        parsedInitialMessages,
+        conversationMessages,
+        userMessageText
+      ),
+      billId,
+      currentStage,
+      nextQuestionId,
+      previewToken,
+    };
+    retry.saveRequestParams(requestParams); // 失敗時の自動リトライ用に保存
+    submit(requestParams);
+  };
+
+  // メッセージ送信
+  const handleSubmit = (message: PromptInputMessage) => {
+    const hasText = Boolean(message.text);
+    if (!hasText || isChatLoading || stage === "summary_complete") {
+      return;
+    }
+
+    const userMessageText = message.text ?? "";
+    const userMessageId = `user-${Date.now()}`;
+
+    // ユーザーメッセージを会話履歴に追加
+    setConversationMessages((prev) => [
+      ...prev,
+      {
+        id: userMessageId,
+        role: "user",
+        content: userMessageText,
+      },
+    ]);
+    setInput("");
+
+    // 現在のステージでメッセージ送信
+    submitChatMessage(userMessageText, stage);
+  };
+
+  // クイックリプライを選択した時の処理
+  const handleQuickReply = (reply: string) => {
+    handleSubmit({ text: reply });
+  };
+
+  // レポート未生成時（hasReport=false）の「インタビューを続ける」用の再開処理。
+  // handleSubmit は stage==="summary_complete" のとき送信をブロックするため、
+  // そのまま流用すると summary_complete に到達したケースでボタンが無反応になる。
+  // ここでは stage を chat に戻し、chatフェーズで再開メッセージを送ることで、
+  // レポートが作れなかった状態から確実にインタビューを継続できるようにする
+  // （LLM の next_stage 判定に依存しない）。
+  const handleResumeInterview = () => {
+    if (isChatLoading) return;
+
+    const resumeText = "もう少しインタビューを続けたいです。";
+    setConversationMessages((prev) => [
+      ...prev,
+      {
+        id: `user-${Date.now()}`,
+        role: "user",
+        content: resumeText,
+      },
+    ]);
+    setInput("");
+    setStage("chat");
+    submitChatMessage(resumeText, "chat");
+  };
+
+  // 手動リトライ関数
+  const handleRetry = () => {
+    if (!retry.canRetry) return;
+
+    // 保存されたリクエストパラメータでリトライ
+    retry.manualRetry(submit);
+  };
+
+  return {
+    // 状態
+    input,
+    setInput,
+    stage,
+    messages,
+    isLoading: isChatLoading,
+    error: error || retry.displayError,
+    object,
+    streamingReportData,
+    currentQuickReplies,
+    streamingQuickReplies,
+    canRetry: retry.canRetry,
+
+    // アクション
+    handleSubmit,
+    handleQuickReply,
+    handleRetry,
+    handleResumeInterview,
+  };
+}

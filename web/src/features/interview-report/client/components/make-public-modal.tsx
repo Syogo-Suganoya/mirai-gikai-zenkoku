@@ -1,0 +1,75 @@
+"use client";
+
+import { ArrowRight, LockOpen } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  ConsentCheckListItem,
+  OpenDataNoticeItem,
+} from "./consent-check-list-item";
+
+interface MakePublicModalProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onConfirm: () => void;
+  isSubmitting: boolean;
+}
+
+export function MakePublicModal({
+  open,
+  onOpenChange,
+  onConfirm,
+  isSubmitting,
+}: MakePublicModalProps) {
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="py-9">
+        <DialogHeader>
+          <DialogTitle className="text-lg font-bold text-primary-accent text-center leading-relaxed">
+            インタビュー内容を
+            <br />
+            公開に切り替えますか？
+          </DialogTitle>
+        </DialogHeader>
+
+        <div className="space-y-4 mt-6">
+          <ConsentCheckListItem>
+            公開を許可した場合、今後みらい議会にあなたのご意見の要約とインタビュー原文が匿名で掲載されることがあります。
+          </ConsentCheckListItem>
+          <OpenDataNoticeItem />
+          <ConsentCheckListItem>
+            さまざまな意見が公開されることで、より深い法案議論が実現できます。
+          </ConsentCheckListItem>
+          <p className="text-sm text-black">
+            非公開で提出した場合でも、ご意見は党内での政策検討に活用させていただきます。
+          </p>
+        </div>
+
+        <div className="space-y-3 mt-6">
+          <Button
+            onClick={onConfirm}
+            disabled={isSubmitting}
+            className="w-full"
+          >
+            <LockOpen className="mr-2 size-5" />
+            {isSubmitting ? "変更中..." : "公開にする"}
+            {!isSubmitting && <ArrowRight className="ml-2 size-5" />}
+          </Button>
+          <Button
+            variant="ghost"
+            onClick={() => onOpenChange(false)}
+            disabled={isSubmitting}
+            className="w-full text-gray-500"
+          >
+            非公開のまま戻る
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}

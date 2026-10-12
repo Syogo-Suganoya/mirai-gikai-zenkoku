@@ -1,0 +1,21 @@
+node_modules
+
+# misc
+.DS_Store
+.vscode
+.claude/worktrees
+*.local.json
+
+# env files
+.env
+.env.*
+!.env.example
+
+# 秘密・鍵はコミットしない
+*-key.json
+
+# R2 を設定しないローカル開発でのファイル置き場
+.storage
+# ローカル専用（コミットしない）
+.claude/launch.json
+docs/実装状況.md

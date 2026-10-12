@@ -1,0 +1,117 @@
+import { ArrowRight, Check } from "lucide-react";
+import type { Route } from "next";
+import Image from "next/image";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { routes } from "@/lib/routes";
+
+interface InterviewLandingSectionProps {
+  assemblySlug: string;
+  billKey: string;
+}
+
+function getCheckPoints(): string[] {
+  return [
+    "所要時間は約5分〜",
+    "AIがあなたのご意見を深掘り",
+    "チームみらいの政策検討に活用",
+  ];
+}
+
+function _InterviewBadge() {
+  return (
+    <div className="flex">
+      <div className="inline-flex items-center justify-center gap-2 px-3 py-1 bg-mirai-surface-tag rounded-2xl">
+        <span className="text-[11px] font-medium text-black leading-[1.09]">
+          法案の当事者・有識者の方へ
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function _CheckPoint({ text }: { text: string }) {
+  return (
+    <div className="flex items-center gap-1">
+      <Check className="size-5 text-black flex-shrink-0" />
+      <span className="text-[13px] font-medium leading-[1.8]">{text}</span>
+    </div>
+  );
+}
+
+function _CheckPointsList() {
+  const checkPoints = getCheckPoints();
+  return (
+    <div className="flex flex-col gap-2">
+      {checkPoints.map((text) => (
+        <_CheckPoint key={text} text={text} />
+      ))}
+    </div>
+  );
+}
+
+function _InterviewCTAButton({
+  assemblySlug,
+  billKey,
+}: InterviewLandingSectionProps) {
+  return (
+    <Link
+      href={routes.interviewLP(assemblySlug, billKey) as Route}
+      className="block w-full max-w-[224px]"
+    >
+      <Button className="w-full bg-mirai-gradient text-black border border-black rounded-3xl h-[42px] px-5 font-bold text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-1">
+        <span>AIインタビューを受ける</span>
+        <ArrowRight className="size-4" />
+      </Button>
+    </Link>
+  );
+}
+
+function _InterviewIllustration() {
+  return (
+    <div className="absolute right-[-16px] sm:right-6 bottom-[-32px] w-[113.6px] h-[177px] pointer-events-none">
+      <Image
+        src="/illustrations/interview-illustration.png"
+        alt=""
+        width={114}
+        height={177}
+        className="object-contain"
+      />
+    </div>
+  );
+}
+
+export function InterviewLandingSection({
+  assemblySlug,
+  billKey,
+}: InterviewLandingSectionProps) {
+  return (
+    <div className="relative w-full overflow-hidden rounded-xl bg-white p-6">
+      <_InterviewIllustration />
+
+      <div className="relative z-1 flex flex-col gap-2">
+        <_InterviewBadge />
+
+        <div className="space-y-2">
+          <h2 className="text-lg font-bold leading-[1.67]">
+            本法案についてのご意見を
+            <br className="pc:hidden" />
+            お聞かせください
+          </h2>
+
+          {/* 右下のイラストと重ならないよう、下部コンテンツに右余白を確保する */}
+          <div className="flex flex-col gap-2 pr-[100px] sm:pr-[140px]">
+            <_CheckPointsList />
+
+            <div className="pt-2">
+              <_InterviewCTAButton
+                assemblySlug={assemblySlug}
+                billKey={billKey}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

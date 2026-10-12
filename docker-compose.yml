@@ -1,0 +1,20 @@
+# ローカル開発・統合テスト用の PostgreSQL（本番は Neon）
+services:
+  db:
+    image: postgres:17
+    ports:
+      - "54322:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: mirai_gikai
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 2s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  db-data:

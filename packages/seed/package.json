@@ -1,0 +1,25 @@
+{
+  "name": "@mirai-gikai/seed",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "seed": "tsx run.ts",
+    "seed:dummy": "tsx dummy/run-dummy.ts",
+    "seed:aichi-contents": "tsx aichi/run-contents.ts",
+    "aichi:convert": "tsx aichi/convert.ts",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@mirai-gikai/db": "workspace:*",
+    "@mirai-gikai/shared": "workspace:*",
+    "csv-parse": "^6.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.5",
+    "tsx": "^4.19.1",
+    "typescript": "^5.0.0",
+    "vitest": "^3.2.4"
+  }
+}

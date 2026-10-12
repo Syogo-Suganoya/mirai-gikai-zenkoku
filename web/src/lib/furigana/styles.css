@@ -1,0 +1,28 @@
+/* ふりがな（ruby の rt）。表示・非表示は html の data-furigana で切り替える（7.1節） */
+html:not([data-furigana="on"]) .furigana-rt {
+  display: none;
+}
+
+/* ルビは選択できないようにする */
+rt {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+}
+
+/* ボタン内のルビは出さない（固定高さのボタンレイアウトが崩れるため） */
+button .furigana-rt,
+[data-slot="button"] .furigana-rt {
+  display: none;
+}
+
+/* Safari / iOS (WebKit) はルビ（rt）を本文ボックスの完全に外側へ積むため、
+   Chrome / Edge (Blink) と比べて漢字とルビの間隔が広く見える。
+   WebKit 専有の -webkit-named-image() を Safari/iOS 判定として使い、
+   ルビを下方へ 0.5em シフトして Blink の見た目に揃える */
+/* biome-ignore lint/correctness/noUnknownFunction: -webkit-named-image は WebKit 専有関数で、それ自体を Safari/iOS 判定に使っている */
+@supports (background: -webkit-named-image(i)) {
+  rt {
+    transform: translateY(0.5em);
+  }
+}
