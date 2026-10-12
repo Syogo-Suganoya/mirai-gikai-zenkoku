@@ -42,7 +42,7 @@ export default async function BillEditPage({ params }: BillEditPageProps) {
           className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900"
         >
           <ArrowLeft className="h-4 w-4" />
-          {assembly.name}の議案一覧に戻る
+          議案一覧に戻る
         </Link>
       </div>
 

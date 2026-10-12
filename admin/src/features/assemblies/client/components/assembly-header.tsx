@@ -7,13 +7,24 @@ import { usePathname } from "next/navigation";
 import { routes } from "@/lib/routes";
 import { cn } from "@/lib/utils";
 
-/** 議会の画面の見出しと、議会の中のタブ（議案・会期） */
-export function AssemblyHeader({ slug, name }: { slug: string; name: string }) {
+/**
+ * 議会の画面の見出しと、議会の中のタブ（議案・会期・CSV 取り込み）。
+ * 議案ごとの画面（/bills/[id]/...）は URL に議会が入らないので、activeTab で「議案」を選んだ状態にする。
+ */
+export function AssemblyHeader({
+  slug,
+  name,
+  activeTab,
+}: {
+  slug: string;
+  name: string;
+  activeTab?: "bills";
+}) {
   const pathname = usePathname();
   const tabs = [
-    { href: routes.assemblyBills(slug), label: "議案" },
-    { href: routes.assemblySessions(slug), label: "会期" },
-    { href: routes.assemblyImport(slug), label: "CSV 取り込み" },
+    { key: "bills", href: routes.assemblyBills(slug), label: "議案" },
+    { key: "sessions", href: routes.assemblySessions(slug), label: "会期" },
+    { key: "import", href: routes.assemblyImport(slug), label: "CSV 取り込み" },
   ];
 
   return (
@@ -28,7 +39,9 @@ export function AssemblyHeader({ slug, name }: { slug: string; name: string }) {
       <h1 className="text-2xl font-bold text-gray-900">{name}</h1>
       <nav className="flex gap-6 border-b">
         {tabs.map((tab) => {
-          const isActive = pathname.startsWith(tab.href);
+          const isActive = activeTab
+            ? tab.key === activeTab
+            : pathname.startsWith(tab.href);
           return (
             <Link
               key={tab.href}
