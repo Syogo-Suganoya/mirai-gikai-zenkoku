@@ -16,7 +16,10 @@ export default async function AdminsPage() {
 
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-2xl font-bold mb-8">担当者管理</h1>
+      <h1 className="text-2xl font-bold mb-2">アカウント管理</h1>
+      <p className="mb-8 text-sm text-gray-600">
+        管理画面のすべてのアカウントです。議会の確認者・編集者は、各議会の「担当者」タブから追加します。
+      </p>
 
       {/* 管理者追加セクション */}
       <section className="mb-8 rounded-lg border bg-white p-6">

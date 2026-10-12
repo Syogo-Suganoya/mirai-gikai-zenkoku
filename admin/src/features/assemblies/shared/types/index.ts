@@ -24,3 +24,44 @@ export type AssemblyContext = {
   settings: AssemblySettings;
   role: AssemblyAccessRole;
 };
+
+export type VoteGranularity = AssemblySettings["vote_granularity"];
+export type PublishLevel = AssemblySettings["default_publish_level"];
+
+/** 議会設定画面の入力（設計 v2 2.7節） */
+export type AssemblySettingsInput = {
+  show_ai_chat: boolean;
+  show_interview: boolean;
+  show_mirai_stance: boolean;
+  vote_granularity: VoteGranularity;
+  default_publish_level: PublishLevel;
+  /** AIインタビューを出すときに「届け先（意見を受け取る議員）がいる」と確認したか */
+  interview_recipient_confirmed: boolean;
+};
+
+/** 設定がオンでも、データが0件なら公開側には出ない。その判定に使う件数 */
+export type AssemblySettingsDataCounts = {
+  publishedBills: number;
+  publicInterviews: number;
+  publishedStances: number;
+};
+
+/** 議会の担当者（確認者・編集者）の1行 */
+export type AssemblyMember = {
+  user_id: string;
+  email: string;
+  role: AssemblyMemberRole;
+  display_name: string;
+  affiliation: string;
+  must_change_password: boolean;
+  last_login_at: string | null;
+  created_at: string;
+};
+
+/** 担当者を追加・変更するときの入力 */
+export type AssemblyMemberInput = {
+  email: string;
+  role: AssemblyMemberRole;
+  display_name: string;
+  affiliation: string;
+};

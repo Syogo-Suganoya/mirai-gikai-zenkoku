@@ -10,12 +10,13 @@ export default async function BillLayout({
   children: ReactNode;
   params: Promise<{ id: string }>;
 }) {
-  const { assembly } = await requireBillPage((await params).id);
+  const { assembly, role } = await requireBillPage((await params).id);
   return (
     <div className="space-y-6">
       <AssemblyHeader
         slug={assembly.slug}
         name={assembly.name}
+        role={role}
         activeTab="bills"
       />
       <div>{children}</div>
