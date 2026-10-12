@@ -29,6 +29,20 @@
       "when": 1791807851281,
       "tag": "0003_fix_regex_escapes",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1791811111239,
+      "tag": "0004_fix_topic_parent_fk",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1791811166787,
+      "tag": "0005_fix_empty_array_defaults",
+      "breakpoints": true
     }
   ]
 }

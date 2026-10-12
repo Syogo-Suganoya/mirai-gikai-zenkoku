@@ -2,7 +2,6 @@
 
 import { ArrowRight, Loader2 } from "lucide-react";
 import type { Route } from "next";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -13,7 +12,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { getInterviewChatLink } from "@/features/interview-config/shared/utils/interview-links";
-import { routes } from "@/lib/routes";
 
 interface InterviewConsentModalProps {
   open: boolean;
@@ -84,24 +82,7 @@ export function InterviewConsentModal({
               htmlFor="consent-agree"
               className="text-sm font-bold text-black"
             >
-              <Link
-                href={routes.terms()}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline"
-              >
-                利用規約
-              </Link>
-              と
-              <Link
-                href={routes.privacy()}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline"
-              >
-                プライバシーポリシー
-              </Link>
-              に同意する
+              上記の内容に同意する
             </label>
           </div>
         </div>

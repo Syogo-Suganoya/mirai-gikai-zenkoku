@@ -93,7 +93,7 @@ describe("expertRegistrationSchema", () => {
     }
   });
 
-  it("プライバシーポリシー未同意の場合はエラー", () => {
+  it("連絡先の取り扱いに未同意の場合はエラー", () => {
     const result = expertRegistrationSchema.safeParse({
       ...validData,
       privacyAgreed: false,
@@ -101,7 +101,7 @@ describe("expertRegistrationSchema", () => {
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error.issues[0].message).toBe(
-        "プライバシーポリシーへの同意が必要です"
+        "連絡先の取り扱いへの同意が必要です"
       );
     }
   });

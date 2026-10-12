@@ -8,10 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  ConsentCheckListItem,
-  OpenDataNoticeItem,
-} from "./consent-check-list-item";
+import { ConsentCheckListItem } from "./consent-check-list-item";
 
 interface MakePublicModalProps {
   open: boolean;
@@ -41,7 +38,6 @@ export function MakePublicModal({
           <ConsentCheckListItem>
             公開を許可した場合、今後みらい議会にあなたのご意見の要約とインタビュー原文が匿名で掲載されることがあります。
           </ConsentCheckListItem>
-          <OpenDataNoticeItem />
           <ConsentCheckListItem>
             さまざまな意見が公開されることで、より深い議案議論が実現できます。
           </ConsentCheckListItem>

@@ -14,7 +14,7 @@ export const expertRegistrationSchema = z.object({
     .min(1, "メールアドレスを入力してください")
     .email("正しいメールアドレスを入力してください"),
   privacyAgreed: z.literal(true, {
-    message: "プライバシーポリシーへの同意が必要です",
+    message: "連絡先の取り扱いへの同意が必要です",
   }),
 });
 

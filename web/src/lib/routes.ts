@@ -14,11 +14,6 @@ const enc = encodeURIComponent;
 export const routes = {
   // ── 静的ルート ──────────────────────────────────────
   home: () => "/" as const,
-  terms: () => "/terms" as const,
-  privacy: () => "/privacy" as const,
-  developers: () => "/developers" as const,
-  developersOpenDataApi: () => "/developers/open-data-api" as const,
-  interviewDataTerms: () => "/developers/interview-data-terms" as const,
 
   // ── 議会 ──────────────────────────────────────────
   assemblyTop: (assembly: string) => `/${assembly}` as const,

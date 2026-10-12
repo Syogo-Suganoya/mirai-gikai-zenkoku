@@ -2,7 +2,6 @@ import type { Route } from "next";
 import Link from "next/link";
 import { EXTERNAL_LINKS } from "@/config/external-links";
 import { NOT_OPERATED_BY_TEAM_MIRAI } from "@/config/site";
-import { routes } from "@/lib/routes";
 
 type FooterLinkItem = {
   label: string;
@@ -11,16 +10,6 @@ type FooterLinkItem = {
 };
 
 const links: FooterLinkItem[] = [
-  {
-    label: "利用規約",
-    href: routes.terms(),
-    external: false,
-  },
-  {
-    label: "プライバシーポリシー",
-    href: routes.privacy(),
-    external: false,
-  },
   {
     label: "ソースコード（GitHub）",
     href: EXTERNAL_LINKS.GITHUB_REPO,

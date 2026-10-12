@@ -315,7 +315,7 @@ export const mirai_stances = pgTable("mirai_stances", {
 	comment: text(),
 	publish_at: timestamp({ withTimezone: true, mode: 'string' }),
 	reason_summary: text(),
-	reason_points: text().array().default([""]).notNull(),
+	reason_points: text().array().default(sql`'{}'::text[]`).notNull(),
 	supplements: jsonb().$type<Json>().default([]).notNull(),
 	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 	updated_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
@@ -719,7 +719,7 @@ export const interview_opinion = pgTable("interview_opinion", {
 	richness: integer(),
 	concern: text(),
 	proposal: text(),
-	reasoning_types: text().array().default([""]).notNull(),
+	reasoning_types: text().array().default(sql`'{}'::text[]`).notNull(),
 	topic_extracted_at: timestamp({ withTimezone: true, mode: 'string' }),
 	tags_extracted_at: timestamp({ withTimezone: true, mode: 'string' }),
 	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
@@ -864,7 +864,7 @@ export const topic = pgTable("topic", {
 		}).onDelete("cascade"),
 	foreignKey({
 			columns: [table.version_id, table.parent_topic_id],
-			foreignColumns: [table.id, table.version_id],
+			foreignColumns: [table.version_id, table.id],
 			name: "topic_parent_same_version_fkey"
 		}).onDelete("cascade"),
 	unique("topic_version_id_id_key").on(table.id, table.version_id),

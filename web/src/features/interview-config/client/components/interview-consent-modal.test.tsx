@@ -27,14 +27,9 @@ describe("InterviewConsentModal", () => {
     expect(
       screen.queryByText(/第三者にオープンデータとして提供されることがあります/)
     ).toBeNull();
-    expect(
-      screen.queryByRole("link", {
-        name: "みらい議会AIインタビューデータ利用規約",
-      })
-    ).toBeNull();
   });
 
-  it("規約同意のチェックを入れるまで開始ボタンが無効", async () => {
+  it("同意のチェックを入れるまで開始ボタンが無効", async () => {
     const user = userEvent.setup();
     renderModal();
 

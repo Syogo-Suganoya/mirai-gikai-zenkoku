@@ -1,7 +1,6 @@
 "use client";
 
 import { ArrowRight } from "lucide-react";
-import Link from "next/link";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,7 +10,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { routes } from "@/lib/routes";
 import { registerExpert } from "../../server/actions/register-expert";
 import { expertRegistrationSchema } from "../../shared/utils/expert-registration-validation";
 
@@ -193,14 +191,7 @@ export function ExpertRegistrationModal({
               className="size-5 rounded-full accent-primary"
             />
             <label htmlFor="expert-privacy" className="text-xs text-gray-800">
-              <Link
-                href={routes.privacy()}
-                target="_blank"
-                className="underline"
-              >
-                プライバシーポリシー
-              </Link>
-              に同意する
+              入力した連絡先を運営者が保管し、連絡に使うことに同意する
             </label>
           </div>
           {errors.privacyAgreed && (

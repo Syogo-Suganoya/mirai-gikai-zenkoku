@@ -1,0 +1,187 @@
+import { interview_configs, interview_sessions } from "@mirai-gikai/db/schema";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import {
+  cleanupTestBill,
+  cleanupTestUser,
+  createTestBill,
+  createTestUser,
+  db,
+  rpc,
+} from "../utils";
+
+/**
+ * get_interview_metrics_by_bill の統合テスト。
+ *
+ * 検証観点:
+ * - 複数設定を跨いだ実施数・完了数の合算
+ * - completed_at の有無による完了数のカウント
+ * - 完了率（completed/conducted）の算出と丸め
+ * - 論理削除済み設定の除外
+ * - セッション0件の議案（実施0・完了率0）の扱い
+ * - 総回答時間（total_duration_seconds）の合算と発言の無い未完了セッションの除外
+ * - 1時間以上のセッションを除外した総回答時間（total_duration_seconds_under_1h）
+ * - p_bill_id によるフィルタ
+ */
+describe("get_interview_metrics_by_bill", () => {
+  // billA: config1(3件中2件完了) + config2(1件完了) => 実施4・完了3・率0.75
+  let billA: { id: string };
+  // billB: 設定はあるがセッション0件 => 実施0・完了0・率0
+  let billB: { id: string };
+  // billC: 論理削除済み設定のみ（セッションあり） => 結果に含まれない
+  let billC: { id: string };
+  // billD: 総回答時間の検証（60秒+120秒の完了2件 + 発言の無い未完了1件） => 総回答時間180秒
+  let billD: { id: string };
+  // billE: 1時間除外の検証（600秒 + 3600秒 + 5400秒の完了3件） => 全体9600秒・1時間未満600秒
+  let billE: { id: string };
+  let user: { id: string };
+
+  async function insertSession(
+    configId: string,
+    completed: boolean,
+    durationSeconds = 0
+  ) {
+    const startedAt = new Date();
+    const completedAt = completed
+      ? new Date(startedAt.getTime() + durationSeconds * 1000)
+      : null;
+    await db.insert(interview_sessions).values({
+      interview_config_id: configId,
+      user_id: user.id,
+      started_at: startedAt.toISOString(),
+      completed_at: completedAt ? completedAt.toISOString() : null,
+    });
+  }
+
+  async function insertConfig(
+    billId: string,
+    name: string,
+    status: "public" | "closed",
+    deleted: boolean
+  ): Promise<string> {
+    const [data] = await db
+      .insert(interview_configs)
+      .values({
+        bill_id: billId,
+        status,
+        name,
+        deleted_at: deleted ? new Date().toISOString() : null,
+      })
+      .returning();
+    return data.id;
+  }
+
+  beforeAll(async () => {
+    user = await createTestUser();
+    billA = await createTestBill();
+    billB = await createTestBill();
+    billC = await createTestBill();
+    billD = await createTestBill();
+    billE = await createTestBill();
+
+    // billA: 2設定を合算
+    const configA1 = await insertConfig(billA.id, "設定A1", "public", false);
+    await insertSession(configA1, true);
+    await insertSession(configA1, true);
+    await insertSession(configA1, false);
+    const configA2 = await insertConfig(billA.id, "設定A2", "closed", false);
+    await insertSession(configA2, true);
+
+    // billB: 設定はあるがセッション無し
+    await insertConfig(billB.id, "設定B", "public", false);
+
+    // billC: 論理削除済み設定（セッション有りだが除外されるべき）
+    const configC = await insertConfig(billC.id, "設定C", "closed", true);
+    await insertSession(configC, true);
+    await insertSession(configC, true);
+
+    // billD: 総回答時間の集計検証（完了60秒 + 完了120秒、発言の無い未完了1件は除外）
+    const configD = await insertConfig(billD.id, "設定D", "public", false);
+    await insertSession(configD, true, 60);
+    await insertSession(configD, true, 120);
+    await insertSession(configD, false);
+
+    // billE: 1時間以上のセッション（ちょうど1時間を含む）は under_1h から除外
+    const configE = await insertConfig(billE.id, "設定E", "public", false);
+    await insertSession(configE, true, 600);
+    await insertSession(configE, true, 3600);
+    await insertSession(configE, true, 5400);
+  });
+
+  afterAll(async () => {
+    await cleanupTestBill(billA.id);
+    await cleanupTestBill(billB.id);
+    await cleanupTestBill(billC.id);
+    await cleanupTestBill(billD.id);
+    await cleanupTestBill(billE.id);
+    await cleanupTestUser(user.id);
+  });
+
+  it("複数設定を合算し実施数・完了数・完了率を算出する", async () => {
+    const data = await rpc("get_interview_metrics_by_bill", {
+      p_bill_id: billA.id,
+    });
+    expect(data).toHaveLength(1);
+    const row = data[0];
+    expect(row.bill_id).toBe(billA.id);
+    expect(Number(row.conducted_count)).toBe(4);
+    expect(Number(row.completed_count)).toBe(3);
+    expect(Number(row.completion_rate)).toBeCloseTo(0.75, 3);
+    // 完了セッションは started_at と completed_at が同時刻のため所要時間0
+    expect(Number(row.total_duration_seconds)).toBe(0);
+  });
+
+  it("セッション0件の議案は実施0・完了率0で返す", async () => {
+    const data = await rpc("get_interview_metrics_by_bill", {
+      p_bill_id: billB.id,
+    });
+    expect(data).toHaveLength(1);
+    const row = data[0];
+    expect(Number(row.conducted_count)).toBe(0);
+    expect(Number(row.completed_count)).toBe(0);
+    expect(Number(row.completion_rate)).toBe(0);
+    expect(Number(row.total_duration_seconds)).toBe(0);
+    expect(Number(row.total_duration_seconds_under_1h)).toBe(0);
+  });
+
+  it("総回答時間（total_duration_seconds）を完了セッションの所要時間の合計として返す", async () => {
+    const data = await rpc("get_interview_metrics_by_bill", {
+      p_bill_id: billD.id,
+    });
+    expect(data).toHaveLength(1);
+    const row = data[0];
+    expect(Number(row.conducted_count)).toBe(3);
+    expect(Number(row.completed_count)).toBe(2);
+    // 60秒 + 120秒。発言の無い未完了セッションは集計対象外
+    expect(Number(row.total_duration_seconds)).toBe(180);
+    expect(Number(row.total_duration_seconds_under_1h)).toBe(180);
+  });
+
+  it("total_duration_seconds_under_1h は所要時間1時間以上のセッションを除外して合算する", async () => {
+    const data = await rpc("get_interview_metrics_by_bill", {
+      p_bill_id: billE.id,
+    });
+    expect(data).toHaveLength(1);
+    const row = data[0];
+    // 600 + 3600 + 5400
+    expect(Number(row.total_duration_seconds)).toBe(9600);
+    // 1時間未満の600秒のみ
+    expect(Number(row.total_duration_seconds_under_1h)).toBe(600);
+  });
+
+  it("論理削除済み設定のみの議案は結果に含まれない", async () => {
+    const data = await rpc("get_interview_metrics_by_bill", {
+      p_bill_id: billC.id,
+    });
+    expect(data).toHaveLength(0);
+  });
+
+  it("p_bill_id未指定なら設定を持つ全議案を返す", async () => {
+    const data = await rpc("get_interview_metrics_by_bill", {});
+    const byId = new Map(data.map((r) => [r.bill_id, r]));
+    expect(byId.has(billA.id)).toBe(true);
+    expect(byId.has(billB.id)).toBe(true);
+    // 論理削除済み設定のみの議案は含まれない
+    expect(byId.has(billC.id)).toBe(false);
+    expect(Number(byId.get(billA.id)?.conducted_count)).toBe(4);
+  });
+});

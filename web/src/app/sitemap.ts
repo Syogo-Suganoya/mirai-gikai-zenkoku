@@ -5,6 +5,9 @@ import { billDetailHref } from "@/features/bills/shared/utils/bill-href";
 import { env } from "@/lib/env";
 import { routes } from "@/lib/routes";
 
+// ビルド時には DB に接続しない（CI のビルドは DB なしで行う）。中身は loader 側でキャッシュする
+export const dynamic = "force-dynamic";
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = env.webUrl.replace(/\/$/, "");
 
