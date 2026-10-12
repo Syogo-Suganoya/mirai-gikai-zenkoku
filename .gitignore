@@ -19,3 +19,6 @@ node_modules
 # ローカル専用（コミットしない）
 .claude/launch.json
 docs/実装状況.md
+
+# R2 を設定しないローカル開発でのサムネイル置き場所
+web/public/local-storage

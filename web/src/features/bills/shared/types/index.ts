@@ -1,4 +1,11 @@
 import type { Database, Enums, FuriganaSegment, Tables } from "@mirai-gikai/db";
+import {
+  BILL_CATEGORY_LABELS,
+  BILL_RESULT_LABELS,
+  BILL_STATUS_LABELS,
+  BILL_STATUS_ORDER,
+  FACTION_VOTE_LABELS,
+} from "@mirai-gikai/shared/bills/labels";
 
 // Database types
 export type Bill = Database["public"]["Tables"]["bills"]["Row"];
@@ -86,51 +93,13 @@ export function billKey(bill: { id: string; slug: string | null }): string {
   return bill.slug ?? bill.id;
 }
 
-// ステータスのソート順（DBのstatus_order generated columnと一致させる）
-export const BILL_STATUS_ORDER: Record<BillStatusEnum, number> = {
-  decided: 0,
-  continued: 1,
-  withdrawn: 2,
-  referred_to_committee: 3,
-  introduced: 4,
-  preparing: 5,
-};
-
-export const BILL_STATUS_LABELS: Record<BillStatusEnum, string> = {
-  preparing: "準備中",
-  introduced: "提出",
-  referred_to_committee: "委員会で審査中",
-  decided: "議決済み",
-  continued: "継続審査",
-  withdrawn: "撤回",
-};
-
-export const BILL_CATEGORY_LABELS: Record<BillCategoryEnum, string> = {
-  budget: "予算",
-  ordinance: "条例",
-  personnel: "人事",
-  contract: "契約",
-  petition: "請願・陳情",
-  report: "報告",
-  other: "その他",
-};
-
-export const BILL_RESULT_LABELS: Record<BillResultEnum, string> = {
-  passed: "可決",
-  amended: "修正可決",
-  rejected: "否決",
-  continued: "継続審査",
-  withdrawn: "撤回",
-  adopted: "採択",
-  not_adopted: "不採択",
-};
-
-export const FACTION_VOTE_LABELS: Record<FactionVoteEnum, string> = {
-  for: "賛成",
-  against: "反対",
-  abstain: "棄権",
-  absent: "欠席",
-  split: "分かれた",
+// 表示名は管理画面と共通（@mirai-gikai/shared/bills/labels）
+export {
+  BILL_CATEGORY_LABELS,
+  BILL_RESULT_LABELS,
+  BILL_STATUS_LABELS,
+  BILL_STATUS_ORDER,
+  FACTION_VOTE_LABELS,
 };
 
 // ステータスを日本語ラベルに変換する関数

@@ -57,7 +57,7 @@ export const users = pgTable("users", {
 	last_login_at: timestamp({ withTimezone: true, mode: 'string' }),
 }, (table) => [
 	uniqueIndex("users_email_key").using("btree", sql`lower(email)`),
-	check("users_email_check", sql`email ~ '^[^@\s]+@[^@\s]+$'::text`),
+	check("users_email_check", sql`email ~ '^[^@\\s]+@[^@\\s]+$'::text`),
 ]);
 
 export const user_sessions = pgTable("user_sessions", {
@@ -676,7 +676,7 @@ export const interview_report = pgTable("interview_report", {
 	content_richness: jsonb().$type<Json>(),
 	total_content_richness: integer().generatedAlwaysAs(sql`
 CASE
-    WHEN ((content_richness IS NOT NULL) AND ((content_richness ->> 'total'::text) IS NOT NULL) AND ((content_richness ->> 'total'::text) ~ '^\d+$'::text)) THEN ((content_richness ->> 'total'::text))::integer
+    WHEN ((content_richness IS NOT NULL) AND ((content_richness ->> 'total'::text) IS NOT NULL) AND ((content_richness ->> 'total'::text) ~ '^\\d+$'::text)) THEN ((content_richness ->> 'total'::text))::integer
     ELSE NULL::integer
 END`),
 	moderation_score: integer(),

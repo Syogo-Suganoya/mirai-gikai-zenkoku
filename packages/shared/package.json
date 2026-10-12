@@ -135,6 +135,14 @@
     "./furigana/*": {
       "types": "./src/furigana/*.ts",
       "default": "./src/furigana/*.ts"
+    },
+    "./auth/*": {
+      "types": "./src/auth/*.ts",
+      "default": "./src/auth/*.ts"
+    },
+    "./bills/*": {
+      "types": "./src/bills/*.ts",
+      "default": "./src/bills/*.ts"
     }
   },
   "dependencies": {
