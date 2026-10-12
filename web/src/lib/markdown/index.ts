@@ -1,3 +1,5 @@
+import type { FuriganaSegment } from "@mirai-gikai/db";
+import { buildReadingDictionary } from "@mirai-gikai/shared/furigana/apply";
 import { toJsxRuntime } from "hast-util-to-jsx-runtime";
 import type { ReactElement } from "react";
 import { Fragment } from "react";
@@ -9,6 +11,7 @@ import remarkRehype from "remark-rehype";
 import { unified } from "unified";
 import { LongPressSection } from "@/features/bills/client/components/bill-detail/long-press-section";
 import { DifficultyInfoCard } from "@/features/bills/server/components/bill-detail/difficulty-info-card";
+import { rehypeFurigana } from "@/lib/furigana/rehype-furigana";
 import { rehypeEmbedYouTube } from "./rehype-embed-youtube";
 import { rehypeExternalLinks } from "./rehype-external-links";
 import { rehypeInjectElement } from "./rehype-inject-element";
@@ -32,10 +35,13 @@ const sanitizeSchema = {
 /**
  * MarkdownテキストをReact Elementに変換
  * @param markdown - Markdown形式のテキスト
- * @param options - オプション（currentLevel等）
+ * @param options.furigana - 本文の保存済みふりがな（あれば漢字に <ruby> を振る。表示は CSS で切り替え）
  * @returns React Element（部分水和対応）
  */
-export async function parseMarkdown(markdown: string): Promise<ReactElement> {
+export async function parseMarkdown(
+  markdown: string,
+  options: { furigana?: readonly FuriganaSegment[] | null } = {}
+): Promise<ReactElement> {
   // Markdown → mdast（remarkBreaksでソフト改行をbreak nodeに変換）
   const remarkProcessor = unified().use(remarkParse).use(remarkBreaks);
   const parsed = remarkProcessor.parse(markdown);
@@ -58,6 +64,8 @@ export async function parseMarkdown(markdown: string): Promise<ReactElement> {
       ],
     })
     .use(rehypeSanitize, sanitizeSchema)
+    // ruby・rt はサニタイズの後に足す（許可リストに入れなくてよい）
+    .use(rehypeFurigana, buildReadingDictionary(options.furigana))
     .use(rehypeExternalLinks)
     .use(rehypeEmbedYouTube)
     .run(mdast);

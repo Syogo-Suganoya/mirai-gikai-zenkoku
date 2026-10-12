@@ -9,6 +9,7 @@ const defaults: BillsListParams = {
   query: "",
   status: "all",
   tagId: null,
+  category: null,
   sort: "new",
   interviewOnly: false,
 };
@@ -24,6 +25,7 @@ describe("parseBillsListParams", () => {
         q: "ガソリン",
         status: "passed",
         tag: "zeikin",
+        type: "budget",
         sort: "old",
         interview: "1",
       })
@@ -31,6 +33,7 @@ describe("parseBillsListParams", () => {
       query: "ガソリン",
       status: "passed",
       tagId: "zeikin",
+      category: "budget",
       sort: "old",
       interviewOnly: true,
     });
@@ -44,6 +47,16 @@ describe("parseBillsListParams", () => {
     });
     expect(parsed.status).toBe("all");
     expect(parsed.sort).toBe("new");
+  });
+
+  it("不正な種類は「すべて」扱いにする", () => {
+    expect(parseBillsListParams({ type: "law" }).category).toBeNull();
+  });
+
+  it("種類を type としてクエリに載せる", () => {
+    expect(buildBillsListQuery(defaults, { category: "ordinance" })).toBe(
+      "?type=ordinance"
+    );
   });
 
   it("配列で来たら先頭を採る", () => {
@@ -114,6 +127,7 @@ describe("buildBillsListQuery", () => {
       query: "ガソリン",
       status: "passed",
       tagId: "zeikin",
+      category: "petition",
       sort: "old",
       interviewOnly: true,
     };

@@ -20,6 +20,10 @@ import { HomeChatClient } from "@/features/chat/client/components/home-chat-clie
 import { routes } from "@/lib/routes";
 import { BillSearchCard } from "../../client/components/bill-list/bill-search-card";
 import { BillsSortSelect } from "../../client/components/bill-list/bills-sort-select";
+import {
+  countByCategory,
+  toBillCategoryCounts,
+} from "../../shared/utils/bill-category";
 import type { BillStatusGroup } from "../../shared/utils/bill-status-group";
 import {
   BILL_STATUS_GROUP_LABELS,
@@ -90,6 +94,14 @@ export async function BillsListPage({
       count: tag.count,
     })),
   ];
+  // 種類の件数も同じく、種類以外の絞り込みを適用した母集合から数える。
+  const forCategoryCounts = filterByStatusGroup(
+    filterBills(allBills, { ...params, category: null }),
+    params.status
+  );
+  const categoryChips = toBillCategoryCounts(
+    countByCategory(forCategoryCounts)
+  );
   // typedRoutes はクエリ付きのテンプレート文字列を推論できないため、
   // リンク生成をここに集約してキャストも1箇所に閉じる。
   const href = (patch: Partial<BillsListParams>) =>
@@ -149,6 +161,24 @@ export async function BillsListPage({
               icon={STATUS_GROUP_ICONS[group]}
               label={BILL_STATUS_GROUP_LABELS[group]}
               count={statusCounts[group]}
+            />
+          ))}
+        </FilterGroup>
+
+        <FilterGroup label="種類">
+          <Chip
+            href={href({ category: null })}
+            active={params.category === null}
+            label="すべて"
+            count={forCategoryCounts.length}
+          />
+          {categoryChips.map((chip) => (
+            <Chip
+              key={chip.category}
+              href={href({ category: chip.category })}
+              active={params.category === chip.category}
+              label={chip.label}
+              count={chip.count}
             />
           ))}
         </FilterGroup>
@@ -278,6 +308,7 @@ export async function BillsListPage({
       {/* チャットはトップと同じものを出す。文脈は表示中の一覧に合わせる。 */}
       {settings.show_ai_chat && (
         <HomeChatClient
+          assemblySlug={assembly.slug}
           currentDifficulty={currentDifficulty}
           bills={bills.map((bill) => ({
             name: chatBillName(bill),

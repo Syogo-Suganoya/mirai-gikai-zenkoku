@@ -12,7 +12,9 @@ export async function BillContent({ bill }: BillContentProps) {
     return null;
   }
 
-  const content = await parseMarkdown(markdownContent);
+  const content = await parseMarkdown(markdownContent, {
+    furigana: bill.bill_content?.furigana,
+  });
 
   return (
     <div

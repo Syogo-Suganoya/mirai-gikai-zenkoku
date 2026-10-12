@@ -19,7 +19,7 @@ export function DisclosureBreadcrumb({
   const items = [
     { label: "TOP", href: routes.home() },
     {
-      label: "法案詳細",
+      label: "議案詳細",
       href: getBillDetailLink(assemblySlug, billId, previewToken),
     },
     {

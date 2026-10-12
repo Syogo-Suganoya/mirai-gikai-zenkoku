@@ -7,6 +7,7 @@ function bill(
     title?: string;
     tags?: string[];
     hasPublicInterview?: boolean;
+    category?: "budget" | "ordinance";
   } = {}
 ) {
   return {
@@ -15,11 +16,12 @@ function bill(
     bill_content: { title: overrides.title ?? `${id} のタイトル` } as never,
     tags: (overrides.tags ?? []).map((label) => ({ id: label, label })),
     hasPublicInterview: overrides.hasPublicInterview ?? false,
+    category: overrides.category ?? ("ordinance" as const),
   };
 }
 
 const ids = (bills: { id: string }[]) => bills.map((b) => b.id);
-const base = { query: "", tagId: null, interviewOnly: false };
+const base = { query: "", tagId: null, category: null, interviewOnly: false };
 
 describe("filterBills", () => {
   it("既定では絞り込まない", () => {
@@ -30,6 +32,13 @@ describe("filterBills", () => {
   it("キーワードで絞る", () => {
     const bills = [bill("a", { title: "ガソリン税" }), bill("b")];
     expect(ids(filterBills(bills, { ...base, query: "ガソリン" }))).toEqual([
+      "a",
+    ]);
+  });
+
+  it("種類で絞る", () => {
+    const bills = [bill("a", { category: "budget" }), bill("b")];
+    expect(ids(filterBills(bills, { ...base, category: "budget" }))).toEqual([
       "a",
     ]);
   });
@@ -72,6 +81,7 @@ describe("filterBills", () => {
         filterBills(bills, {
           query: "ガソリン",
           tagId: "税金",
+          category: null,
           interviewOnly: true,
         })
       )

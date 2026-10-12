@@ -167,7 +167,10 @@ export async function findPublishedBillByKey(key: string, assemblyId?: string) {
       billKeyCondition(key, assemblyId),
       eq(bills.publish_status, "published")
     ),
-    with: { assembly: { columns: { slug: true } }, bill_result: true },
+    with: {
+      assembly: { columns: { slug: true, name: true } },
+      bill_result: true,
+    },
     limit: 1,
   });
   return row ?? null;
@@ -298,6 +301,22 @@ export async function countPublishedBillsBySession(
     )
     .groupBy(bills.session_id);
   return new Map(rows.map((r) => [r.session_id, r.count]));
+}
+
+/**
+ * 種類（予算・条例など）ごとの公開済み議案数（議会トップの種類タブに出す）
+ */
+export async function countPublishedBillsByCategory(assemblyId: string) {
+  return createDb()
+    .select({ category: bills.category, count: count() })
+    .from(bills)
+    .where(
+      and(
+        eq(bills.assembly_id, assemblyId),
+        eq(bills.publish_status, "published")
+      )
+    )
+    .groupBy(bills.category);
 }
 
 // ============================================================

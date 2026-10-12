@@ -125,7 +125,7 @@ export async function TopicDetailPage({
 
   const filterLabel = topicFilterLabel(filter);
   const breadcrumbItems: BreadcrumbItem[] = [
-    { label: "法案詳細", href: routes.billDetail(assemblySlug, billKey) },
+    { label: "議案詳細", href: routes.billDetail(assemblySlug, billKey) },
     {
       label: filterLabel ? `トピック一覧（${filterLabel}）` : "トピック一覧",
       href: routes.billTopics(assemblySlug, billKey),
@@ -137,7 +137,7 @@ export async function TopicDetailPage({
     <div className="min-h-dvh bg-mirai-surface pt-24 md:pt-0">
       <Container>
         <div className="flex flex-col gap-6 pb-8 md:pt-8">
-          {/* パンくず + 法案タイトル */}
+          {/* パンくず + 議案タイトル */}
           <div className="flex flex-col gap-2">
             <Breadcrumb items={breadcrumbItems} />
             <Link

@@ -11,7 +11,7 @@ const BILL_REQUIRED_KEYS = [
   "billContent",
 ] as const;
 
-/** 法案チャットプロンプトの必須変数を検証する */
+/** 議案チャットプロンプトの必須変数を検証する */
 function validateBillVariables(v: PromptVariables, promptName: string): void {
   const missing = BILL_REQUIRED_KEYS.filter((key) => !(key in v));
   if (missing.length > 0) {
@@ -30,7 +30,7 @@ const PROMPT_BUILDERS: Record<string, (variables: PromptVariables) => string> =
           'Missing required variable "billSummary" for prompt "top-chat-system"'
         );
       }
-      return buildTopChatSystemPrompt(v.billSummary);
+      return buildTopChatSystemPrompt(v.billSummary, v.assemblyName);
     },
     "bill-chat-system-normal": (v) => {
       validateBillVariables(v, "bill-chat-system-normal");
@@ -39,7 +39,8 @@ const PROMPT_BUILDERS: Record<string, (variables: PromptVariables) => string> =
         v.billTitle,
         v.billSummary,
         v.billContent,
-        v.knowledgeSource
+        v.knowledgeSource,
+        v.assemblyName
       );
     },
     "bill-chat-system-hard": (v) => {
@@ -49,7 +50,8 @@ const PROMPT_BUILDERS: Record<string, (variables: PromptVariables) => string> =
         v.billTitle,
         v.billSummary,
         v.billContent,
-        v.knowledgeSource
+        v.knowledgeSource,
+        v.assemblyName
       );
     },
   };

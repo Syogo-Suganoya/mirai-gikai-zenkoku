@@ -28,6 +28,8 @@ interface ChatButtonProps {
   difficultyLevel: string;
   pageContext?: {
     type: "home" | "bill";
+    /** 議会トップのチャットで、どの議会の話かをサーバーに伝える */
+    assemblySlug?: string;
     bills?: Array<{
       name: string;
       summary?: string;

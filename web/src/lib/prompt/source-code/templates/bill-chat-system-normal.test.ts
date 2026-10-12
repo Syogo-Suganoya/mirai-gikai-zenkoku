@@ -22,11 +22,34 @@ describe("buildBillChatSystemNormalPrompt", () => {
     expect(result).toContain("回答の難易度：ふつう");
   });
 
-  it("みらい議会の説明が含まれる", () => {
+  it("サイトの説明と、チームみらいが運営していないことが含まれる", () => {
     const result = buildBillChatSystemNormalPrompt("a", "b", "c", "d");
 
-    expect(result).toContain("みらい議会");
-    expect(result).toContain("チームみらい");
+    expect(result).toContain("みらい議会＠全国地方議会");
+    expect(result).toContain(
+      "政党チームみらいが運営しているものではありません"
+    );
+    expect(result).not.toContain("チームみらいの概要");
+  });
+
+  it("議会名を渡すと、いま見ている議会のセクションが含まれる", () => {
+    const result = buildBillChatSystemNormalPrompt(
+      "a",
+      "b",
+      "c",
+      "d",
+      "",
+      "愛知県議会"
+    );
+
+    expect(result).toContain("いま見ている議会");
+    expect(result).toContain("愛知県議会");
+  });
+
+  it("議会名を省略するとセクションごと出ない", () => {
+    const result = buildBillChatSystemNormalPrompt("a", "b", "c", "d");
+
+    expect(result).not.toContain("いま見ている議会");
   });
 
   it("knowledgeSource を渡すと <knowledge_source> セクションが含まれる", () => {

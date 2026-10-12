@@ -20,7 +20,7 @@ export function BackToBillButton({
     from === "opinions"
       ? routes.billOpinions(assemblySlug, billKey)
       : getBillDetailLink(assemblySlug, billKey);
-  const label = from === "opinions" ? "レポート一覧に戻る" : "法案の記事に戻る";
+  const label = from === "opinions" ? "レポート一覧に戻る" : "議案の記事に戻る";
 
   return (
     <Link

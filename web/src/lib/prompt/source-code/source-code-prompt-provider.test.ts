@@ -29,6 +29,23 @@ describe("SourceCodePromptProvider", () => {
     expect(result.content).toContain("回答の難易度：ふつう");
   });
 
+  it("assemblyName を渡すと議会名がプロンプトに含まれる", async () => {
+    const top = await provider.getPrompt("top-chat-system", {
+      billSummary: "[]",
+      assemblyName: "愛知県議会",
+    });
+    const bill = await provider.getPrompt("bill-chat-system-normal", {
+      billName: "n",
+      billTitle: "t",
+      billSummary: "s",
+      billContent: "c",
+      assemblyName: "愛知県議会",
+    });
+
+    expect(top.content).toContain("愛知県議会");
+    expect(bill.content).toContain("愛知県議会");
+  });
+
   it("metadata にソースコード情報を含む", async () => {
     const result = await provider.getPrompt("top-chat-system", {
       billSummary: "test",

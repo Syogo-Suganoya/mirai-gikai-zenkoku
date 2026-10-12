@@ -8,6 +8,7 @@ import {
   type UIMessage,
 } from "ai";
 import { z } from "zod";
+import { findAssemblyBySlug } from "@/features/assemblies/server/repositories/assembly-repository";
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
 import {
   findBillContentByDifficulty,
@@ -39,6 +40,8 @@ export type ChatMessageMetadata = {
   hasInterviewConfig?: boolean;
   pageContext?: {
     type: "home" | "bill";
+    /** 議会トップのチャットの議会（名前はサーバー側で引き直す） */
+    assemblySlug?: string;
     bills?: Array<{ id: string; name: string; summary?: string }>;
   };
   difficultyLevel: DifficultyLevelEnum;
@@ -199,9 +202,14 @@ async function buildPrompt(
   let variables: Record<string, string>;
   let isDummyBill = false;
   if (context.pageContext?.type === "home") {
+    const slug = context.pageContext.assemblySlug;
+    const assembly = slug ? await findAssemblyBySlug(slug) : null;
     variables = {
+      assemblyName: assembly?.name ?? "",
       billSummary: JSON.stringify(context.pageContext.bills ?? ""),
     };
+    // ダミーの議会の一覧では、並んでいる議案が架空のものだと伝えさせる
+    isDummyBill = assembly?.hasDummy ?? false;
   } else {
     const billId = context.billContext?.id;
     const [serverBill, serverContent] = billId
@@ -211,6 +219,7 @@ async function buildPrompt(
         ])
       : [null, null];
     variables = {
+      assemblyName: serverBill?.assembly.name ?? "",
       billName: serverBill?.name ?? "",
       billTitle: serverContent?.title ?? "",
       billSummary: serverContent?.summary ?? "",
@@ -279,7 +288,7 @@ function buildUsageMetadata(
 const DUMMY_BILL_PROMPT = `
 
 ## この議案は架空のものです
-この議案は、画面の表示を確認するために作った架空の議案（ダミー）です。実在の議案・議決結果ではありません。
+この議案（議案の一覧のときは、一覧のすべての議案）は、画面の表示を確認するために作った架空の議案（ダミー）です。実在の議案・議決結果ではありません。
 - すべての回答の冒頭で「この議案は表示確認用の架空のものです」と伝えてください。
 - 議案の内容・金額・日程・議論について、事実であるかのように説明しないでください。
 - 一般的な議会の仕組みについての質問には答えてかまいません。
@@ -288,7 +297,7 @@ const DUMMY_BILL_PROMPT = `
 const INTERVIEW_AWARENESS_BASE = `
 
 ## AIインタビュー機能について
-みらい議会には「AIインタビュー」機能があります。これは議案ごとに提供される機能で、ユーザーがAIインタビュアーと対話形式で議案に対する意見や知見を共有できる仕組みです。インタビュー結果は分析・レポート化され、議会での議論に活用されます。
+このサイトには「AIインタビュー」機能があります。これは議案ごとに提供される機能で、ユーザーがAIインタビュアーと対話形式で議案に対する意見や知見を共有できる仕組みです。インタビュー結果は分析・レポート化され、議会での議論に活用されます。
 `;
 
 const INTERVIEW_AWARENESS_PROMPT_BILL = `${INTERVIEW_AWARENESS_BASE}

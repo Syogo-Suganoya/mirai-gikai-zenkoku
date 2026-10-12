@@ -45,7 +45,7 @@ export function StanceReason({ stance }: StanceReasonProps) {
         )}
       </div>
 
-      {/* 補足情報がない法案では開閉ボタン自体を出さない */}
+      {/* 補足情報がない議案では開閉ボタン自体を出さない */}
       {supplements.length > 0 && (
         <StanceSupplements>
           {supplements.map((supplement, index) => (

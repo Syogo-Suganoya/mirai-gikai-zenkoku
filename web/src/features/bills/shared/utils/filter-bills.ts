@@ -4,11 +4,11 @@ import { searchBills } from "./search-bills";
 
 type FilterableBill = Pick<
   BillWithContent,
-  "name" | "bill_content" | "tags" | "hasPublicInterview"
+  "name" | "bill_content" | "tags" | "hasPublicInterview" | "category"
 >;
 
 /**
- * ステータス以外の絞り込み（キーワード・カテゴリ・受付中）をまとめて適用する。
+ * ステータス以外の絞り込み（キーワード・カテゴリ・種類・受付中）をまとめて適用する。
  *
  * ステータスのタブに出す件数は、この結果を母集合にして数える。先に適用しないと
  * タブの数字が実際に表示される件数とずれる。
@@ -18,7 +18,10 @@ type FilterableBill = Pick<
  */
 export function filterBills<T extends FilterableBill>(
   bills: readonly T[],
-  params: Pick<BillsListParams, "query" | "tagId" | "interviewOnly">
+  params: Pick<
+    BillsListParams,
+    "query" | "tagId" | "category" | "interviewOnly"
+  >
 ): T[] {
   let filtered = searchBills(bills, params.query);
 
@@ -26,6 +29,9 @@ export function filterBills<T extends FilterableBill>(
     filtered = filtered.filter((bill) =>
       bill.tags.some((tag) => tag.id === params.tagId)
     );
+  }
+  if (params.category) {
+    filtered = filtered.filter((bill) => bill.category === params.category);
   }
   if (params.interviewOnly) {
     filtered = filtered.filter((bill) => bill.hasPublicInterview);

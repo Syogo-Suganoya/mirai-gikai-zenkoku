@@ -1,5 +1,7 @@
 import type { Route } from "next";
 import { routes } from "@/lib/routes";
+import type { BillCategoryEnum } from "../types";
+import { isBillCategory } from "./bill-category";
 import { type BillStatusGroup, isBillStatusGroup } from "./bill-status-group";
 import {
   type BillSortKey,
@@ -13,6 +15,8 @@ export type BillsListParams = {
   status: BillStatusGroup;
   /** タグ id。null は「すべて」。 */
   tagId: string | null;
+  /** 種類（予算・条例など）。null は「すべて」。 */
+  category: BillCategoryEnum | null;
   sort: BillSortKey;
   /** AIインタビュー受付中のみに絞るか。 */
   interviewOnly: boolean;
@@ -23,6 +27,7 @@ export type BillsListSearchParams = {
   q?: string | string[];
   status?: string | string[];
   tag?: string | string[];
+  type?: string | string[];
   sort?: string | string[];
   interview?: string | string[];
 };
@@ -36,6 +41,7 @@ export const DEFAULT_BILLS_LIST_PARAMS: Readonly<BillsListParams> = {
   query: "",
   status: "all",
   tagId: null,
+  category: null,
   sort: DEFAULT_BILL_SORT,
   interviewOnly: false,
 };
@@ -50,11 +56,13 @@ export function parseBillsListParams(
   const status = firstValue(searchParams.status);
   const sort = firstValue(searchParams.sort);
   const tag = firstValue(searchParams.tag)?.trim();
+  const category = firstValue(searchParams.type);
 
   return {
     query: firstValue(searchParams.q)?.trim() ?? "",
     status: isBillStatusGroup(status) ? status : "all",
     tagId: tag || null,
+    category: isBillCategory(category) ? category : null,
     sort: isBillSortKey(sort) ? sort : DEFAULT_BILL_SORT,
     interviewOnly: firstValue(searchParams.interview) === "1",
   };
@@ -74,6 +82,7 @@ export function buildBillsListQuery(
   if (next.query) params.set("q", next.query);
   if (next.status !== "all") params.set("status", next.status);
   if (next.tagId) params.set("tag", next.tagId);
+  if (next.category) params.set("type", next.category);
   if (next.sort !== DEFAULT_BILL_SORT) params.set("sort", next.sort);
   if (next.interviewOnly) params.set("interview", "1");
 

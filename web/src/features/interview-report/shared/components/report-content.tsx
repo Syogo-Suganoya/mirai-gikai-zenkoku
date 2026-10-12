@@ -112,7 +112,7 @@ export function ReportContent({
             shareMessage={share.shareMessage}
           />
         )}
-        {/* 法案の記事に戻るボタン */}
+        {/* 議案の記事に戻るボタン */}
         <BackToBillButton
           assemblySlug={assemblySlug}
           billKey={billKey}

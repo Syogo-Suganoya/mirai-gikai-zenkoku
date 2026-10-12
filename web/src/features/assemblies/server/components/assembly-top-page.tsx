@@ -8,11 +8,13 @@ import { ComingSoonSection } from "@/components/top/coming-soon-section";
 import { getDifficultyLevel } from "@/features/bill-difficulty/server/loaders/get-difficulty-level";
 import { BillDisclaimer } from "@/features/bills/client/components/bill-detail/bill-disclaimer";
 import { BillSearchOverlay } from "@/features/bills/client/components/bill-search-overlay";
+import { BillCategoryTabs } from "@/features/bills/server/components/bill-category-tabs";
 import { CategoryTabs } from "@/features/bills/server/components/category-tabs";
 import { FeaturedBillSection } from "@/features/bills/server/components/featured-bill-section";
 import { InterviewOpenBillSection } from "@/features/bills/server/components/interview-open-bill-section";
 import { PastSessionList } from "@/features/bills/server/components/past-session-list";
 import { getAssemblyBills } from "@/features/bills/server/loaders/get-assembly-bills";
+import { getBillCategoryCounts } from "@/features/bills/server/loaders/get-bill-category-counts";
 import { getBillsByFeaturedTags } from "@/features/bills/server/loaders/get-bills-by-featured-tags";
 import { getComingSoonBills } from "@/features/bills/server/loaders/get-coming-soon-bills";
 import { getFeaturedBills } from "@/features/bills/server/loaders/get-featured-bills";
@@ -70,6 +72,7 @@ export async function AssemblyTopPage({
     currentDifficulty,
     suggestableBills,
     featuredTags,
+    categoryCounts,
   ] = await Promise.all([
     focusSession
       ? getAssemblyBills(assembly.id, { sessionId: focusSession.id })
@@ -86,6 +89,7 @@ export async function AssemblyTopPage({
     getDifficultyLevel(),
     getSuggestableBills(assembly.id),
     getFeaturedTags(),
+    getBillCategoryCounts(assembly.id),
   ]);
 
   const { shownBills, featuredBillIds } = pickHomeSections({
@@ -132,6 +136,12 @@ export async function AssemblyTopPage({
 
       <Container>
         <div className="pt-4">
+          <BillCategoryTabs
+            assemblySlug={assembly.slug}
+            counts={categoryCounts}
+          />
+        </div>
+        <div className="pt-3">
           <CategoryTabs
             assemblySlug={assembly.slug}
             billsByTag={billsByTag}
@@ -221,6 +231,7 @@ export async function AssemblyTopPage({
 
       {settings.show_ai_chat && (
         <HomeChatClient
+          assemblySlug={assembly.slug}
           currentDifficulty={currentDifficulty}
           bills={chatBills.map((bill) => ({
             name: chatBillName(bill),

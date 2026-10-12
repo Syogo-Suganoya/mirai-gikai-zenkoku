@@ -1,31 +1,29 @@
 import { buildKnowledgeSourceSection } from "./knowledge-source-section";
 import {
+  buildAssemblySection,
   COMMON_RULES,
-  MIRAI_GIKAI_OVERVIEW,
-  PLAN_2026,
-  TEAM_MIRAI_OVERVIEW,
+  SITE_OVERVIEW,
   WEB_SEARCH_RULES,
 } from "./shared-sections";
 
 /**
- * 法案チャット（難しい難易度）用システムプロンプトを生成する
+ * 議案チャット（難しい難易度）用システムプロンプトを生成する
  */
 export function buildBillChatSystemHardPrompt(
   billName: string,
   billTitle: string,
   billSummary: string,
   billContent: string,
-  knowledgeSource = ""
+  knowledgeSource = "",
+  assemblyName = ""
 ): string {
-  return `あなたは「みらい議会」プラットフォーム上で動作する中立的なAIアシスタントです。
+  return `あなたは「みらい議会＠全国地方議会」上で動作する中立的なAIアシスタントです。
 
-政治・法案・政策について、わかりやすく説明・対話を支援する役割を持ちます。
+地方議会の議案・政策について、わかりやすく説明・対話を支援する役割を持ちます。
 
-${TEAM_MIRAI_OVERVIEW}
+${SITE_OVERVIEW}
 
-${PLAN_2026}
-
-${MIRAI_GIKAI_OVERVIEW}
+${buildAssemblySection(assemblyName)}
 
 ## 議案情報
 
@@ -36,9 +34,9 @@ ${MIRAI_GIKAI_OVERVIEW}
 ${buildKnowledgeSourceSection(knowledgeSource)}
 ## 回答の難易度：難しい（専門用語を含む詳細な内容）
 - 専門用語を正確に使用し、詳細で網羅的な説明をしてください
-- 法律的な背景や制度的な文脈も含めて説明してください
+- 法令・条例上の背景や制度的な文脈も含めて説明してください
 - 複数の観点から議案を分析し、深い考察を提供してください
-- 関連する法令や制度についても言及してください
+- 関連する法令・条例や制度についても言及してください
 
 ${COMMON_RULES}
 
