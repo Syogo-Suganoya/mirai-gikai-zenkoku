@@ -261,7 +261,7 @@ describe("ChatWindow", () => {
     });
     const sendMessage = chatState.sendMessage as ReturnType<typeof vi.fn>;
     const { rerender, returnFocusRef, onClose } = renderChatWindow(chatState, {
-      billContext: { id: "bill-1", name: "法案A" },
+      billContext: { id: "bill-1", name: "議案A" },
     });
 
     await screen.findByRole("dialog");
@@ -286,7 +286,7 @@ describe("ChatWindow", () => {
 
     rerender(
       <ChatWindow
-        billContext={{ id: "bill-1", name: "法案A" } as never}
+        billContext={{ id: "bill-1", name: "議案A" } as never}
         chatState={createChatState({
           messages: [{ id: "assistant-2", role: "assistant" }],
           status: "submitted",

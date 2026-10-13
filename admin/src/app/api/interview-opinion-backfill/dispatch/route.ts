@@ -4,9 +4,12 @@ import {
   resetReextractionForBill,
 } from "@mirai-gikai/topic-analysis-core/repository";
 import { requireUser } from "@/features/auth/server/lib/session";
-import { executeTopicAnalysisJob } from "@/lib/cloud-run-job";
+import { runBackfill } from "@mirai-gikai/topic-analysis-core/backfill";
+import { after } from "next/server";
 
-export const maxDuration = 60;
+// 分析は応答を返したあと（after）この関数の中で動かす。Vercel の関数の上限（Hobby は 300 秒）まで使う。
+// 意見が増えて収まらなくなったら、GitHub Actions などの別の実行環境に移す（docs/デプロイ手順.md 7.1）
+export const maxDuration = 300;
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), {
@@ -17,7 +20,7 @@ const json = (body: unknown, status = 200) =>
 /**
  * 意見再抽出バックフィルの入口（Admin 手動トリガ）。
  * リクエストボディで議案スコープ（billId）・対象範囲（scope）・使用モデル（model）を指定できる。
- * 対象レポートがあれば Cloud Run Job（backfill モード）を起動する。
+ * 対象レポートがあれば、応答のあとに再抽出を動かす（関数の上限まで。残りは次の実行で続きから）。
  */
 export async function POST(request: Request) {
   try {
@@ -59,13 +62,12 @@ export async function POST(request: Request) {
   if (!resolved.ok) {
     return json({ error: resolved.error }, 400);
   }
-  const { billId, scope, model } = resolved.params;
+  const { billId, scope } = resolved.params;
 
   try {
     // scope="all" は起動前に同期的にウォーターマークをリセットする。
     // これで pending=全件 となり、UI が即座に進捗を分母込みで把握できるため、
     // 「既に再抽出済みの議案で pending=0 を見て早期完了表示→重複起動」を防ぐ。
-    // worker 側も冪等に再リセットするが、ここでの同期リセットが起動直後の競合を消す。
     if (scope === "all" && billId) {
       await resetReextractionForBill(billId);
     }
@@ -77,22 +79,13 @@ export async function POST(request: Request) {
       return json({ started: false, pending });
     }
 
-    const args = ["--mode=backfill", `--scope=${scope}`];
-    if (billId) {
-      args.push(`--bill-id=${billId}`);
-    }
-    if (model) {
-      args.push(`--model=${model}`);
-    }
-
-    try {
-      await executeTopicAnalysisJob(args);
-    } catch (triggerError) {
-      const message =
-        triggerError instanceof Error ? triggerError.message : "trigger failed";
-      console.error("[OpinionBackfill] Failed to trigger job:", triggerError);
-      return json({ error: message }, 502);
-    }
+    after(async () => {
+      try {
+        await runBackfill(resolved.params);
+      } catch (error) {
+        console.error("[OpinionBackfill] backfill failed:", error);
+      }
+    });
 
     return json({ started: true, pending });
   } catch (error) {

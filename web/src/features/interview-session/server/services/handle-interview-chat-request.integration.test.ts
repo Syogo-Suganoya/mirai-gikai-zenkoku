@@ -74,7 +74,7 @@ async function consumeResponseStream(response: Response): Promise<string> {
 
 // interviewChatTextSchema に準拠したモックレスポンス
 const validChatResponse = JSON.stringify({
-  text: "法案についてのご意見をお聞かせください。",
+  text: "議案についてのご意見をお聞かせください。",
   quick_replies: ["賛成です", "反対です"],
   question_id: null,
   topic_title: null,
@@ -85,10 +85,10 @@ const validChatResponse = JSON.stringify({
 const validSummaryResponse = JSON.stringify({
   text: "インタビューのまとめです。ご協力ありがとうございました。",
   report: {
-    summary: "テスト法案に賛成の立場",
+    summary: "テスト議案に賛成の立場",
     stance: "for",
     role: "general_citizen",
-    role_description: "一般市民として法案に関心がある",
+    role_description: "一般市民として議案に関心がある",
     role_title: "会社員",
     opinions: [
       {
@@ -135,7 +135,7 @@ describe("handleInterviewChatRequest 統合テスト", () => {
 
       const response = await handleInterviewChatRequest({
         messages: [
-          { role: "user", content: "この法案についてどう思いますか？" },
+          { role: "user", content: "この議案についてどう思いますか？" },
         ],
         billId,
         currentStage: "chat",
@@ -160,7 +160,7 @@ describe("handleInterviewChatRequest 統合テスト", () => {
       // user: 1件 + assistant: 1件
       expect(messages).toHaveLength(2);
       expect(messages[0].role).toBe("user");
-      expect(messages[0].content).toBe("この法案についてどう思いますか？");
+      expect(messages[0].content).toBe("この議案についてどう思いますか？");
       expect(messages[1].role).toBe("assistant");
       expect(messages[1].content).toBe(validChatResponse);
     });
@@ -198,14 +198,14 @@ describe("handleInterviewChatRequest 統合テスト", () => {
       await db.insert(interview_messages).values({
         interview_session_id: sessionId,
         role: "user",
-        content: "この法案についてどう思いますか？",
+        content: "この議案についてどう思いますか？",
       });
 
       const mockModel = createStreamMock([validChatResponse]);
 
       const response = await handleInterviewChatRequest({
         messages: [
-          { role: "user", content: "この法案についてどう思いますか？" },
+          { role: "user", content: "この議案についてどう思いますか？" },
         ],
         billId,
         currentStage: "chat",

@@ -29,17 +29,17 @@ const contentRichness = {
 const validReportMessage = JSON.stringify({
   text: "インタビューのまとめです。",
   report: {
-    summary: "テスト法案に賛成の立場",
+    summary: "テスト議案に賛成の立場",
     stance: "for",
     role: "general_citizen",
-    role_description: "一般市民として法案に関心がある",
+    role_description: "一般市民として議案に関心がある",
     role_title: "会社員",
     opinions: [
       {
         title: "賛成の理由",
         content: "社会全体の利益になると考える",
         source_message_id: null,
-        contextual_quote: "（法案について）社会全体の利益になると思う",
+        contextual_quote: "（議案について）社会全体の利益になると思う",
         bill_sentiment: "期待",
       },
     ],
@@ -60,10 +60,10 @@ function buildReportMessage(
   return JSON.stringify({
     text: "インタビューのまとめです。",
     report: {
-      summary: "テスト法案に賛成の立場",
+      summary: "テスト議案に賛成の立場",
       stance: "for",
       role: "general_citizen",
-      role_description: "一般市民として法案に関心がある",
+      role_description: "一般市民として議案に関心がある",
       role_title: "会社員",
       opinions: opinions.map((o) => ({
         contextual_quote: null,
@@ -98,7 +98,7 @@ describe("completeInterviewSession 統合テスト", () => {
       {
         interview_session_id: sessionId,
         role: "user",
-        content: "この法案に賛成です",
+        content: "この議案に賛成です",
       },
       {
         interview_session_id: sessionId,
@@ -111,7 +111,7 @@ describe("completeInterviewSession 統合テスト", () => {
 
     // 戻り値を検証
     expect(report.interview_session_id).toBe(sessionId);
-    expect(report.summary).toBe("テスト法案に賛成の立場");
+    expect(report.summary).toBe("テスト議案に賛成の立場");
     expect(report.stance).toBe("for");
     expect(report.role).toBe("general_citizen");
 
@@ -122,7 +122,7 @@ describe("completeInterviewSession 統合テスト", () => {
       .where(eq(interview_report.interview_session_id, sessionId));
 
     expect(dbReport).toBeTruthy();
-    expect(dbReport?.summary).toBe("テスト法案に賛成の立場");
+    expect(dbReport?.summary).toBe("テスト議案に賛成の立場");
     expect(dbReport?.stance).toBe("for");
 
     // DB 状態を検証: セッションが completed になっていること
@@ -145,7 +145,7 @@ describe("completeInterviewSession 統合テスト", () => {
       opinion_index: 0,
       title: "賛成の理由",
       content: "社会全体の利益になると考える",
-      contextual_quote: "（法案について）社会全体の利益になると思う",
+      contextual_quote: "（議案について）社会全体の利益になると思う",
       bill_sentiment: "期待",
     });
   });
@@ -271,6 +271,6 @@ describe("completeInterviewSession 統合テスト", () => {
     ]);
 
     const report = await completeInterviewSession({ sessionId });
-    expect(report.summary).toBe("テスト法案に賛成の立場");
+    expect(report.summary).toBe("テスト議案に賛成の立場");
   });
 });

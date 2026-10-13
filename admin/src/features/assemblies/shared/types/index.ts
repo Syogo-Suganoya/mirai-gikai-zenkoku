@@ -29,8 +29,6 @@ export type AssemblySettingsInput = {
   show_mirai_stance: boolean;
   vote_granularity: VoteGranularity;
   default_publish_level: PublishLevel;
-  /** AIインタビューを出すときに「届け先（意見を受け取る議員）がいる」と確認したか */
-  interview_recipient_confirmed: boolean;
 };
 
 /** 設定がオンでも、データが0件なら公開側には出ない。その判定に使う件数 */

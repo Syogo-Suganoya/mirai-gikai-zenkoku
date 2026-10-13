@@ -11,9 +11,8 @@ const base: AssemblySettingsInput = {
   show_mirai_stance: false,
   vote_granularity: "result_only",
   default_publish_level: "title_only",
-  interview_recipient_confirmed: false,
 };
-const context = { hasMiraiMember: false, currentShowInterview: false };
+const context = { hasMiraiMember: false, hasDummyData: false };
 
 describe("validateAssemblySettings", () => {
   it("既定の設定なら null", () => {
@@ -43,24 +42,18 @@ describe("validateAssemblySettings", () => {
     ).toBeNull();
   });
 
-  it("インタビューを新しく出すときは届け先の確認が要る", () => {
-    const input = { ...base, show_interview: true };
-    expect(validateAssemblySettings(input, context)).toContain("届け先");
+  it("実データの議会ならインタビューを出せる（届け先の確認は要らない）", () => {
     expect(
-      validateAssemblySettings(
-        { ...input, interview_recipient_confirmed: true },
-        context
-      )
+      validateAssemblySettings({ ...base, show_interview: true }, context)
     ).toBeNull();
   });
 
-  it("すでに出しているインタビューは確認なしで保存できる", () => {
+  it("ダミーデータが残っている議会ではインタビューを出せない", () => {
+    const dummy = { ...context, hasDummyData: true };
     expect(
-      validateAssemblySettings(
-        { ...base, show_interview: true },
-        { ...context, currentShowInterview: true }
-      )
-    ).toBeNull();
+      validateAssemblySettings({ ...base, show_interview: true }, dummy)
+    ).toContain("ダミー");
+    expect(validateAssemblySettings(base, dummy)).toBeNull();
   });
 });
 

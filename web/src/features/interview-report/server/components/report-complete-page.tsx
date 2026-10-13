@@ -12,6 +12,7 @@ import { getInterviewMessages } from "@/features/interview-session/server/loader
 import { getAuthenticatedUser } from "@/features/interview-session/server/utils/verify-session-ownership";
 import { ExpertRegistrationSection } from "../../client/components/expert-registration-section";
 import { ReportContent } from "../../shared/components/report-content";
+import { EXPERT_REGISTRATION_ENABLED } from "@/config/interview";
 import { isExpertRegistrationTargetRole } from "../../shared/utils/expert-registration-validation";
 import { parseOpinions } from "../../shared/utils/format-utils";
 import { countCharacters } from "../../shared/utils/report-utils";
@@ -34,7 +35,8 @@ export async function ReportCompletePage({
 
   const billId = report.bill_id;
 
-  const isExpertRole = isExpertRegistrationTargetRole(report.role);
+  const isExpertRole =
+    EXPERT_REGISTRATION_ENABLED && isExpertRegistrationTargetRole(report.role);
   const authResult = await getAuthenticatedUser();
 
   // 議案・メッセージ・有識者登録状況を並列取得
@@ -74,9 +76,9 @@ export async function ReportCompletePage({
             ご協力ありがとうございました
           </h1>
 
-          {/* 活用メッセージ */}
+          {/* 意見の扱い */}
           <p className="text-sm text-gray-800">
-            いただいた声は政策検討に最大限活用します
+            公開を許可した意見は、内容の確認のあと、トピックにまとめて議案ページに掲載します
           </p>
         </div>
       </div>

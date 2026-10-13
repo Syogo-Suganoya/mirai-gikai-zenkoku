@@ -17,14 +17,14 @@ describe("CompactBillCard", () => {
       <CompactBillCard
         bill={createMockBill({
           bill_content: createMockBillContent({
-            title: "給食を無償にする法案",
+            title: "給食を無償にする議案",
           }),
         })}
       />
     );
 
     expect(
-      screen.getByRole("heading", { name: /給食を無償にする法案/ })
+      screen.getByRole("heading", { name: /給食を無償にする議案/ })
     ).toBeInTheDocument();
   });
 

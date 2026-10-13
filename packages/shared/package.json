@@ -155,6 +155,10 @@
     "./bills/*": {
       "types": "./src/bills/*.ts",
       "default": "./src/bills/*.ts"
+    },
+    "./topic-analysis/*": {
+      "types": "./src/topic-analysis/*.ts",
+      "default": "./src/topic-analysis/*.ts"
     }
   },
   "dependencies": {

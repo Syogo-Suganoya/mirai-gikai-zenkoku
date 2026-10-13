@@ -28,16 +28,15 @@ export const ANALYSIS_STEPS = {
 
 /**
  * 二重起動ガードで「実行中」とみなす version の鮮度しきい値。
- * Cloud Run の Job 実行は「受理されたが worker のコードに到達せず失敗」しうる
- * （不正イメージ・secret 欠落・quota/IAM 起動失敗・task-timeout 等）。
+ * 分析は web・admin の関数の中（応答のあと）で動くので、関数の上限（Vercel は 300 秒）で途中で止まりうる。
  * その場合 version が pending/running のまま残り、findActiveVersionByBill が
  * 永続的に「実行中」と判定して再実行をブロックしてしまう。
  * 以下の経過時間を超えた pending/running は失効（dead）とみなして再実行を許可する。
  */
-/** pending のまま起動されなかったとみなすまでの時間（worker は数秒で running にする） */
+/** pending のまま始まらなかったとみなすまでの時間（応答のあとすぐ running にする） */
 export const STALE_PENDING_MS = 5 * 60_000;
-/** running のまま完了しないとみなすまでの時間（task-timeout=3600s を超える猶予） */
-export const STALE_RUNNING_MS = 70 * 60_000;
+/** running のまま完了しないとみなすまでの時間（関数の上限 300 秒を超える猶予） */
+export const STALE_RUNNING_MS = 10 * 60_000;
 
 // ── バックフィル（backfill）──
 /** 1チャンクで再抽出するレポート数 */

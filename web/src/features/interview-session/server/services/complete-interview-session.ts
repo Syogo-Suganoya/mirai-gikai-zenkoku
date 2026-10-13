@@ -13,6 +13,7 @@ import {
   upsertInterviewReport,
 } from "../repositories/interview-session-repository";
 import { evaluateModerationScore } from "./evaluate-moderation-score";
+import { requestTopicAnalysisIfAnalyzable } from "./request-topic-analysis";
 
 type CompleteInterviewSessionParams = {
   sessionId: string;
@@ -116,6 +117,9 @@ export async function completeInterviewSession({
 
   // セッションを完了
   await updateInterviewSessionCompleted(sessionId);
+
+  // 公開された回答なら、その議案のトピックを分析し直す（完了ごと。設計の運用方針 2026-10-14）
+  requestTopicAnalysisIfAnalyzable(sessionId, report);
 
   return report;
 }

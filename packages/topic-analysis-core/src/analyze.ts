@@ -276,12 +276,54 @@ export async function runAnalysis(
   }
 }
 
+export type AnalyzeBillResult =
+  | { status: "analyzed"; versionId: string }
+  | { status: "skipped"; reason: "no_targets" | "no_new_opinions" | "running" };
+
 /**
- * 全議案に対してトピック分析を順次実行する（1 Cloud Run 実行で全議案ループ）。
- * - 有効な対象意見が0件の議案はスキップ（version を作らない）。
- * - incremental かつ「前回完了版があり新規意見が無い」議案はスキップ（無駄な再分析を避ける）。
- * - createVersion が null（実行中の版が既存＝多重起動ガード）なら skip。
- * - 1議案の失敗は全体を止めず、次の議案へ進む。
+ * 1議案のトピック分析を、version の作成から最後まで行う。
+ * - 有効な対象意見が0件ならスキップ（version を作らない）。
+ * - incremental かつ「前回完了版があり新規意見が無い」ならスキップ（無駄な再分析を避ける）。
+ * - createVersion が null（実行中の版が既存＝多重起動ガード）ならスキップ。
+ * インタビューの完了ごとの分析（analyze-bill）と、全議案の分析（analyze-all）で使う。
+ */
+export async function runAnalyzeBill(
+  billId: string,
+  strategy: AnalysisStrategy = "incremental"
+): Promise<AnalyzeBillResult> {
+  const targets = await fetchTargetOpinions(billId);
+  if (targets.length === 0) return { status: "skipped", reason: "no_targets" };
+  if (strategy === "incremental") {
+    const versions = await listVersionsByBill(billId);
+    const hasCompleted = versions.some((v) => v.status === "completed");
+    const hasNew = selectUnextractedOpinions(targets).length > 0;
+    if (hasCompleted && !hasNew) {
+      return { status: "skipped", reason: "no_new_opinions" };
+    }
+  }
+  const version = await createVersion(
+    billId,
+    "manual",
+    TOPIC_MODEL,
+    PROMPT_VERSION
+  );
+  if (!version) return { status: "skipped", reason: "running" };
+  await runAnalysis(version.id, billId, strategy);
+  return { status: "analyzed", versionId: version.id };
+}
+
+const SKIP_REASON_LABELS: Record<
+  Extract<AnalyzeBillResult, { status: "skipped" }>["reason"],
+  string
+> = {
+  no_targets: "対象意見なし",
+  no_new_opinions: "新規意見なし",
+  running: "実行中の版あり",
+};
+
+/**
+ * 全議案に対してトピック分析を順次実行する（1回の実行で全議案ループ）。
+ * 議案ごとの判定は runAnalyzeBill と同じ。1議案の失敗は全体を止めず、次の議案へ進む。
  */
 export async function runAnalyzeAll(
   strategy: AnalysisStrategy = "incremental"
@@ -303,45 +345,17 @@ export async function runAnalyzeAll(
       `[topic-analysis] analyze-all (${progress}) start 議案=${name}`
     );
     try {
-      const targets = await fetchTargetOpinions(billId);
-      if (targets.length === 0) {
+      const result = await runAnalyzeBill(billId, strategy);
+      if (result.status === "skipped") {
         skipped++;
         console.log(
-          `[topic-analysis] analyze-all (${progress}) skip 議案=${name} (対象意見なし)`
+          `[topic-analysis] analyze-all (${progress}) skip 議案=${name} (${SKIP_REASON_LABELS[result.reason]})`
         );
         continue;
       }
-      if (strategy === "incremental") {
-        const versions = await listVersionsByBill(billId);
-        const hasCompleted = versions.some((v) => v.status === "completed");
-        const hasNew = selectUnextractedOpinions(targets).length > 0;
-        // 既に分析済みで新規意見が無ければ何もしない。
-        if (hasCompleted && !hasNew) {
-          skipped++;
-          console.log(
-            `[topic-analysis] analyze-all (${progress}) skip 議案=${name} (新規意見なし)`
-          );
-          continue;
-        }
-      }
-      const version = await createVersion(
-        billId,
-        "manual",
-        TOPIC_MODEL,
-        PROMPT_VERSION
-      );
-      if (!version) {
-        // 実行中/保留中の版が既にある（one_active_version_per_bill）。
-        skipped++;
-        console.log(
-          `[topic-analysis] analyze-all (${progress}) skip 議案=${name} (実行中の版あり)`
-        );
-        continue;
-      }
-      await runAnalysis(version.id, billId, strategy);
       analyzed++;
       console.log(
-        `[topic-analysis] analyze-all (${progress}) done 議案=${name} version=${version.id}`
+        `[topic-analysis] analyze-all (${progress}) done 議案=${name} version=${result.versionId}`
       );
     } catch (error) {
       failed++;

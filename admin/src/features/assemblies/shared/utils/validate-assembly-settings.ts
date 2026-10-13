@@ -6,11 +6,11 @@ const PUBLISH_LEVELS = ["title_only", "explained"];
 /**
  * 議会設定の入力を確かめる（設計 v2 2.7節の制約）。問題が無ければ null。
  * - チームみらいのスタンスは、議員がいる議会（has_mirai_member）でだけ出せる
- * - AIインタビューを新しく出すときは、届け先の議員がいることの確認が要る
+ * - AIインタビューは、ダミーデータが残っている議会では出せない（架空の議案に住民の意見を集めない。設計 v3 8.5.3節）
  */
 export function validateAssemblySettings(
   input: AssemblySettingsInput,
-  context: { hasMiraiMember: boolean; currentShowInterview: boolean }
+  context: { hasMiraiMember: boolean; hasDummyData: boolean }
 ): string | null {
   if (!(input.vote_granularity in VOTE_GRANULARITY_LABELS)) {
     return "議決結果の粒度を選んでください";
@@ -21,12 +21,8 @@ export function validateAssemblySettings(
   if (input.show_mirai_stance && !context.hasMiraiMember) {
     return "チームみらいの議員がいない議会では、スタンスを出せません";
   }
-  if (
-    input.show_interview &&
-    !context.currentShowInterview &&
-    !input.interview_recipient_confirmed
-  ) {
-    return "AIインタビューを出すには、意見の届け先（議員）がいることを確認してください";
+  if (input.show_interview && context.hasDummyData) {
+    return "ダミーデータが残っている議会では、AIインタビューを出せません";
   }
   return null;
 }

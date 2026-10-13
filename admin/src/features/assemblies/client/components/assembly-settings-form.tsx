@@ -3,12 +3,10 @@
 import { BILL_PUBLISH_LEVEL_LABELS } from "@mirai-gikai/shared/bills/labels";
 import { VOTE_GRANULARITY_LABELS } from "@mirai-gikai/shared/csv-import/types";
 import type { ReactNode } from "react";
-import { useId, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -34,6 +32,8 @@ interface AssemblySettingsFormProps {
   assemblySlug: string;
   settings: AssemblySettings;
   hasMiraiMember: boolean;
+  /** ダミーデータが残っている議会では、AIインタビューを出せない */
+  hasDummyData: boolean;
   counts: AssemblySettingsDataCounts;
 }
 
@@ -42,16 +42,15 @@ export function AssemblySettingsForm({
   assemblySlug,
   settings,
   hasMiraiMember,
+  hasDummyData,
   counts,
 }: AssemblySettingsFormProps) {
-  const confirmId = useId();
   const [values, setValues] = useState<AssemblySettingsInput>({
     show_ai_chat: settings.show_ai_chat,
     show_interview: settings.show_interview,
     show_mirai_stance: settings.show_mirai_stance,
     vote_granularity: settings.vote_granularity,
     default_publish_level: settings.default_publish_level,
-    interview_recipient_confirmed: false,
   });
   const [isSaving, setIsSaving] = useState(false);
 
@@ -59,10 +58,6 @@ export function AssemblySettingsForm({
     key: K,
     value: AssemblySettingsInput[K]
   ) => setValues((prev) => ({ ...prev, [key]: value }));
-
-  // インタビューを新しく出すときだけ、届け先の確認を求める
-  const needsInterviewConfirm =
-    values.show_interview && !settings.show_interview;
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -72,7 +67,6 @@ export function AssemblySettingsForm({
         toast.error(result.error);
       } else {
         toast.success("議会設定を保存しました");
-        set("interview_recipient_confirmed", false);
       }
     } finally {
       setIsSaving(false);
@@ -97,7 +91,11 @@ export function AssemblySettingsForm({
 
       <SettingRow
         title="AIインタビュー"
-        description="意見の届け先（意見を受け取る議員）がいる議会だけ出してください"
+        description={
+          hasDummyData
+            ? "ダミーデータが残っている議会では出せません（架空の議案に住民の意見を集めないため）"
+            : "議案ページで住民に AI がインタビューします。公開に同意した回答は誰でも読め、AI がトピックにまとめて表示します"
+        }
         visibility={featureVisibility(
           values.show_interview,
           counts.publicInterviews
@@ -105,23 +103,10 @@ export function AssemblySettingsForm({
       >
         <Switch
           checked={values.show_interview}
+          disabled={hasDummyData}
           onCheckedChange={(checked) => set("show_interview", checked)}
         />
       </SettingRow>
-      {needsInterviewConfirm && (
-        <div className="-mt-3 flex items-start gap-3 rounded-md bg-amber-50 p-3">
-          <Checkbox
-            id={confirmId}
-            checked={values.interview_recipient_confirmed}
-            onCheckedChange={(checked) =>
-              set("interview_recipient_confirmed", checked === true)
-            }
-          />
-          <Label htmlFor={confirmId} className="text-sm text-amber-800">
-            集めた意見を受け取る議員がいることを確認しました
-          </Label>
-        </div>
-      )}
 
       <SettingRow
         title="チームみらいのスタンス"

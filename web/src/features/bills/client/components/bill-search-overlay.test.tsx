@@ -17,13 +17,13 @@ const bills = [
   {
     id: "bill-gasoline",
     name: "揮発油税等の暫定税率の廃止等に関する法律案",
-    bill_content: { title: "ガソリン税を安くする法案" },
+    bill_content: { title: "ガソリン税を安くする議案" },
     tags: [{ id: "zeikin", label: "税金" }],
   },
   {
     id: "bill-school",
     name: "学校給食法の一部を改正する法律案",
-    bill_content: { title: "給食を無償にする法案" },
+    bill_content: { title: "給食を無償にする議案" },
     tags: [{ id: "kurashi", label: "暮らし" }],
   },
 ];
@@ -83,7 +83,7 @@ describe("BillSearchOverlay", () => {
 
     const links = linkTo("/aichi-pref/bills/bill-gasoline");
     expect(links).toHaveLength(1);
-    expect(links[0]).toHaveTextContent("ガソリン税を安くする法案");
+    expect(links[0]).toHaveTextContent("ガソリン税を安くする議案");
   });
 
   // 候補は名称・タイトル・タグ名だけを見る。要約は渡していない。

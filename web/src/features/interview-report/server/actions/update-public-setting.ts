@@ -1,5 +1,6 @@
 "use server";
 
+import { requestTopicAnalysisIfAnalyzable } from "@/features/interview-session/server/services/request-topic-analysis";
 import { verifySessionOwnership } from "@/features/interview-session/server/utils/verify-session-ownership";
 import {
   findReportBySessionId,
@@ -27,6 +28,13 @@ export async function updatePublicSetting(
   try {
     const report = await findReportBySessionId(sessionId);
     await updateReportPublicSetting(report.id, isPublic);
+    // あとから公開に切り替えた回答も、トピックの分析に入れる
+    if (isPublic) {
+      requestTopicAnalysisIfAnalyzable(
+        sessionId,
+        await findReportBySessionId(sessionId)
+      );
+    }
     return { success: true };
   } catch {
     return { success: false, error: "公開設定の更新に失敗しました" };

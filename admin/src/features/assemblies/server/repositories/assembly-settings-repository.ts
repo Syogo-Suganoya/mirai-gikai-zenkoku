@@ -15,7 +15,7 @@ import type {
 
 export async function updateAssemblySettings(
   assemblyId: string,
-  input: Omit<AssemblySettingsInput, "interview_recipient_confirmed">,
+  input: AssemblySettingsInput,
   updatedBy: string
 ) {
   await createDb()

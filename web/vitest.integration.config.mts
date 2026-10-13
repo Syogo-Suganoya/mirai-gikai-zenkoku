@@ -15,6 +15,11 @@ export default defineConfig({
       },
     },
     testTimeout: 30000,
+    // 手元の .env に本物のキーがあっても、統合テストから外部 API（Gemini）を呼ばない。
+    // 呼ぶ箇所はキーが無いとすぐに失敗し、その場合の扱い（モデレーション失敗でも完了する等）を確かめる
+    env: {
+      GOOGLE_GENERATIVE_AI_API_KEY: "",
+    },
     // workspace パッケージ（@mirai-gikai/*）も vitest で変換し、server-only の差し替えを効かせる
     server: { deps: { inline: [/@mirai-gikai\//] } },
     coverage: {

@@ -3,6 +3,7 @@ import { DummyDataSection } from "@/features/assemblies/client/components/dummy-
 import { loadAssemblySettingsData } from "@/features/assemblies/server/loaders/load-assembly-settings-data";
 import { loadDummyDataCounts } from "@/features/assemblies/server/loaders/load-dummy-data-counts";
 import { requireAssemblyPage } from "@/features/assemblies/server/loaders/require-assembly";
+import { hasDummyCounts } from "@/features/assemblies/shared/utils/dummy-data-counts";
 
 export default async function AssemblySettingsPage({
   params,
@@ -23,6 +24,7 @@ export default async function AssemblySettingsPage({
         assemblySlug={assembly.slug}
         settings={settings}
         hasMiraiMember={assembly.has_mirai_member}
+        hasDummyData={hasDummyCounts(dummyCounts)}
         counts={counts}
       />
       <DummyDataSection

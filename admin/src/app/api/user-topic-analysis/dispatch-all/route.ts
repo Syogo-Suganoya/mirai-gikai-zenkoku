@@ -1,7 +1,10 @@
 import { requireUser } from "@/features/auth/server/lib/session";
-import { executeTopicAnalysisJob } from "@/lib/cloud-run-job";
+import { runAnalyzeAll } from "@mirai-gikai/topic-analysis-core/analyze";
+import { after } from "next/server";
 
-export const maxDuration = 60;
+// 分析は応答を返したあと（after）この関数の中で動かす。Vercel の関数の上限（Hobby は 300 秒）まで使う。
+// 意見が増えて収まらなくなったら、GitHub Actions などの別の実行環境に移す（docs/デプロイ手順.md 7.1）
+export const maxDuration = 300;
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), {
@@ -11,7 +14,7 @@ const json = (body: unknown, status = 200) =>
 
 /**
  * 全議案トピック分析の手動実行入口（Admin）。
- * version は worker 側で議案ごとに作成するため、ここでは Cloud Run Job を起動するだけ。
+ * version は議案ごとに runAnalyzeAll の中で作る。応答のあとに順に分析する（関数の上限まで）。
  * 既定は incremental（差分）。1 実行で全議案を順次処理する。
  */
 export async function POST(request: Request) {
@@ -45,10 +48,13 @@ export async function POST(request: Request) {
   }
 
   try {
-    await executeTopicAnalysisJob([
-      "--mode=analyze-all",
-      `--strategy=${strategy}`,
-    ]);
+    after(async () => {
+      try {
+        await runAnalyzeAll(strategy);
+      } catch (error) {
+        console.error("[UserTopicAnalysis] analyze-all failed:", error);
+      }
+    });
     return json({ started: true, strategy });
   } catch (error) {
     console.error("[UserTopicAnalysis] dispatch-all failed:", error);

@@ -63,10 +63,12 @@ export function InterviewConsentModal({
 
         <div className="flex flex-col gap-6 mt-6">
           <ul className="flex flex-col gap-3 list-disc pl-5 text-sm font-bold text-gray-800 leading-[22px]">
-            <li>回答データは党内での政策検討に利用します。</li>
+            <li>
+              インタビューの最後に、回答の公開を許可するかを選べます。公開を許可した回答は、要約と原文が匿名でこのサイトに掲載され、誰でも読めます。AIがトピックにまとめて表示します。
+            </li>
             <li>個人情報や機密情報の記載はお控えください。</li>
             <li>
-              インタビュー回答後に公開を許可するかを選択できます。公開を許可した場合、のちにみらい議会に全文が掲載される場合があります。
+              回答は期限を決めずに保存します。将来、集まった意見をチームみらいの議員などに見せることがあります。
             </li>
           </ul>
 

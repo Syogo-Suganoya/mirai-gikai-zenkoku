@@ -36,13 +36,14 @@ export function MakePublicModal({
 
         <div className="space-y-4 mt-6">
           <ConsentCheckListItem>
-            公開を許可した場合、今後みらい議会にあなたのご意見の要約とインタビュー原文が匿名で掲載されることがあります。
+            公開を許可した場合、内容の確認（不適切な表現のチェック）のあと、あなたのご意見の要約とインタビュー原文が匿名でこのサイトに掲載され、誰でも読めるようになります。AI
+            がまとめる議案のトピックにも使われます。
           </ConsentCheckListItem>
           <ConsentCheckListItem>
             さまざまな意見が公開されることで、より深い議案議論が実現できます。
           </ConsentCheckListItem>
           <p className="text-sm text-black">
-            非公開で提出した場合でも、ご意見は党内での政策検討に活用させていただきます。
+            非公開のままなら、回答はサイトに掲載せず、トピックの集計にも使いません。
           </p>
         </div>
 

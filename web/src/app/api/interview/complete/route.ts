@@ -6,6 +6,10 @@ import {
   parseOptionalBoolean,
 } from "@/features/interview-session/shared/utils/optional-boolean";
 
+// 公開された回答なら、応答のあとにトピック分析（差分）をこの関数の中で動かす（after）。
+// Vercel の関数の上限（Hobby は 300 秒）まで使う
+export const maxDuration = 300;
+
 export async function POST(req: Request) {
   const { sessionId, isPublic } = await req.json();
   const isPublicByUser = parseOptionalBoolean(isPublic);

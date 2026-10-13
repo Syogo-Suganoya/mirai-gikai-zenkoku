@@ -8,10 +8,13 @@ import {
   isStaleActiveVersion,
   updateVersionStatus,
 } from "@mirai-gikai/topic-analysis-core/repository";
+import { runAnalysis } from "@mirai-gikai/topic-analysis-core/analyze";
+import { after } from "next/server";
 import { requireUser } from "@/features/auth/server/lib/session";
-import { executeTopicAnalysisJob } from "@/lib/cloud-run-job";
 
-export const maxDuration = 60;
+// 分析は応答を返したあと（after）この関数の中で動かす。Vercel の関数の上限（Hobby は 300 秒）まで使う。
+// 意見が増えて収まらなくなったら、GitHub Actions などの別の実行環境に移す（docs/デプロイ手順.md 7.1）
+export const maxDuration = 300;
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), {
@@ -19,7 +22,7 @@ const json = (body: unknown, status = 200) =>
     headers: { "Content-Type": "application/json" },
   });
 
-/** ユーザー向けトピック分析の手動実行入口（Admin）。version 作成 → Cloud Run Job 起動。 */
+/** ユーザー向けトピック分析の手動実行入口（Admin）。version を作り、応答のあとに分析を動かす。 */
 export async function POST(request: Request) {
   try {
     await requireUser();
@@ -51,7 +54,7 @@ export async function POST(request: Request) {
 
   try {
     // 二重起動防止（§5.3）: running/pending があればスキップ。
-    // ただし Cloud Run 実行が worker 到達前に死んだ等で失効した行は failed に倒し、
+    // ただし ワークフローの実行が worker 到達前に死んだ等で失効した行は failed に倒し、
     // 再実行をブロックし続けないようにする（pending/running のままの残骸を自己回復）。
     const active = await findActiveVersionByBill(billId);
     if (active) {
@@ -79,21 +82,14 @@ export async function POST(request: Request) {
       return json({ skipped: true, reason: "running" });
     }
 
-    try {
-      await executeTopicAnalysisJob([
-        "--mode=analyze",
-        `--bill-id=${billId}`,
-        `--version-id=${version.id}`,
-        `--strategy=${strategy}`,
-      ]);
-    } catch (triggerError) {
-      // ジョブ起動に失敗した場合は version を failed にして残骸（pending のまま）を防ぐ。
-      const message =
-        triggerError instanceof Error ? triggerError.message : "trigger failed";
-      await updateVersionStatus(version.id, "failed", message);
-      console.error("[UserTopicAnalysis] Failed to trigger job:", triggerError);
-      return json({ error: message }, 502);
-    }
+    // 失敗したときは runAnalysis が version を failed にする（UI は version の状態で追う）
+    after(async () => {
+      try {
+        await runAnalysis(version.id, billId, strategy);
+      } catch (error) {
+        console.error("[UserTopicAnalysis] analysis failed:", error);
+      }
+    });
 
     return json({ versionId: version.id });
   } catch (error) {
