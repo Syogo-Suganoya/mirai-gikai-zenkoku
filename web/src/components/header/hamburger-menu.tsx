@@ -8,9 +8,14 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { AssemblyKindNav } from "@/features/assemblies/client/components/assembly-kind-nav";
+import type { AssemblyKindBySlug } from "@/features/assemblies/shared/utils/assembly-kind-links";
 import { FuriganaToggle } from "@/lib/furigana/furigana-toggle";
 
-export function HamburgerMenu() {
+export function HamburgerMenu({
+  kindBySlug,
+}: {
+  kindBySlug?: AssemblyKindBySlug;
+}) {
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -25,7 +30,10 @@ export function HamburgerMenu() {
       </PopoverTrigger>
       <PopoverContent className="w-50" align="end">
         {/* 広い画面ではヘッダーに出している */}
-        <AssemblyKindNav className="mb-3 flex-col border-b pb-3 sm:hidden" />
+        <AssemblyKindNav
+          className="mb-3 flex-col border-b pb-3 sm:hidden"
+          kindBySlug={kindBySlug}
+        />
         <FuriganaToggle />
       </PopoverContent>
     </Popover>

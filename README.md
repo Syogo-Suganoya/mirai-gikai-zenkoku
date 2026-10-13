@@ -5,6 +5,9 @@
 
 > これは政党チームみらいが運営しているものではありません。
 
+- 公開サイト: https://mirai-gikai-zenkoku.vercel.app/
+- 管理画面: https://mirai-gikai-zenkoku-59l4.vercel.app/ （管理者のみ）
+
 設計は [docs/地方議会プラットフォーム設計_v3.md](docs/地方議会プラットフォーム設計_v3.md)、開発の進め方は [CONTRIBUTING.md](CONTRIBUTING.md) にあります。
 
 ![構成図](./docs/architecture.png)

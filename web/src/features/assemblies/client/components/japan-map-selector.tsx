@@ -7,12 +7,20 @@ import {
   JAPAN_MAP_SHAPES,
   JAPAN_MAP_VIEWBOX,
 } from "@mirai-gikai/shared/prefectures/japan-map";
+import { Loader2 } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { type KeyboardEvent, type MouseEvent, useRef, useState } from "react";
+import {
+  type KeyboardEvent,
+  type MouseEvent,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 import { Button } from "@/components/ui/button";
 import { routes } from "@/lib/routes";
+import { cn } from "@/lib/utils";
 import type { AssemblySummary } from "../../shared/types";
 import {
   type PrefectureMapState,
@@ -41,16 +49,32 @@ export function JapanMapSelector({ assemblyByPrefecture }: Props) {
   const router = useRouter();
   const figureRef = useRef<HTMLElement>(null);
   const [tooltip, setTooltip] = useState<Tooltip | null>(null);
+  // 議会のページは開くのに数秒かかることがあるので、押したことが分かるように出す
+  const [opening, setOpening] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
 
-  const open = (code: string) => {
+  const hrefOf = (code: string) => {
     const assembly = assemblyByPrefecture[code];
-    if (assembly) router.push(routes.assemblyTop(assembly.slug) as Route);
+    return assembly ? (routes.assemblyTop(assembly.slug) as Route) : null;
   };
 
-  const onKeyDown = (code: string) => (event: KeyboardEvent) => {
+  const open = (code: string, name: string) => {
+    const href = hrefOf(code);
+    if (!href) return;
+    setOpening(name);
+    startTransition(() => router.push(href));
+  };
+
+  /** マウスを乗せた・フォーカスした時点で先に読み込んでおく */
+  const prefetch = (code: string) => {
+    const href = hrefOf(code);
+    if (href) router.prefetch(href);
+  };
+
+  const onKeyDown = (code: string, name: string) => (event: KeyboardEvent) => {
     if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
-      open(code);
+      open(code, name);
     }
   };
 
@@ -66,7 +90,14 @@ export function JapanMapSelector({ assemblyByPrefecture }: Props) {
 
   return (
     <div className="flex flex-col gap-6">
-      <figure ref={figureRef} className="relative flex flex-col gap-2">
+      <figure
+        ref={figureRef}
+        aria-busy={isPending}
+        className={cn(
+          "relative flex flex-col gap-2",
+          isPending && "cursor-progress"
+        )}
+      >
         <svg
           viewBox={JAPAN_MAP_VIEWBOX}
           role="group"
@@ -89,8 +120,10 @@ export function JapanMapSelector({ assemblyByPrefecture }: Props) {
                   openable ? `${prefecture.name}議会を開く` : prefecture.name
                 }
                 aria-disabled={!openable}
-                onClick={() => open(prefecture.code)}
-                onKeyDown={onKeyDown(prefecture.code)}
+                onClick={() => open(prefecture.code, prefecture.name)}
+                onKeyDown={onKeyDown(prefecture.code, prefecture.name)}
+                onMouseEnter={() => prefetch(prefecture.code)}
+                onFocus={() => prefetch(prefecture.code)}
                 onMouseMove={onMouseMove(prefecture.name)}
                 className={`stroke-white stroke-[0.6] outline-none transition-colors focus-visible:fill-primary-accent ${FILL_CLASSES[state]}`}
               />
@@ -103,6 +136,15 @@ export function JapanMapSelector({ assemblyByPrefecture }: Props) {
             className="pointer-events-none fill-none stroke-mirai-border stroke-[1.2]"
           />
         </svg>
+        {isPending && opening && (
+          <span
+            role="status"
+            className="absolute right-0 top-0 z-10 inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-bold text-mirai-text shadow"
+          >
+            <Loader2 className="size-3.5 animate-spin" aria-hidden />
+            {opening}議会を開いています…
+          </span>
+        )}
         {tooltip && (
           <span
             aria-hidden

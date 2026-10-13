@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { SiteLogo } from "@/components/brand/site-logo";
 import { SITE_NAME } from "@/config/site";
 import { AssemblyKindNav } from "@/features/assemblies/client/components/assembly-kind-nav";
+import type { AssemblyKindBySlug } from "@/features/assemblies/shared/utils/assembly-kind-links";
 import { DifficultySelector } from "@/features/bill-difficulty/client/components/difficulty-selector";
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
 import { InterviewHeaderActions } from "@/features/interview-session/client/components/interview-header-actions";
@@ -16,9 +17,13 @@ import { HamburgerMenu } from "./hamburger-menu";
 
 interface HeaderClientProps {
   difficultyLevel: DifficultyLevelEnum;
+  kindBySlug?: AssemblyKindBySlug;
 }
 
-export function HeaderClient({ difficultyLevel }: HeaderClientProps) {
+export function HeaderClient({
+  difficultyLevel,
+  kindBySlug,
+}: HeaderClientProps) {
   const pathname = usePathname();
   const showDifficultySelector = isMainPage(pathname);
   const showInterviewActions = isInterviewPage(pathname);
@@ -43,7 +48,10 @@ export function HeaderClient({ difficultyLevel }: HeaderClientProps) {
               <SiteLogo compact />
             </Link>
             {/* 狭い画面ではメニューの中に出す */}
-            <AssemblyKindNav className="ml-4 hidden sm:flex" />
+            <AssemblyKindNav
+              className="ml-4 hidden sm:flex"
+              kindBySlug={kindBySlug}
+            />
           </div>
 
           {/* Navigation */}
@@ -55,7 +63,7 @@ export function HeaderClient({ difficultyLevel }: HeaderClientProps) {
               <DifficultySelector currentLevel={difficultyLevel} />
             )}
             {showInterviewActions && <InterviewHeaderActions />}
-            <HamburgerMenu />
+            <HamburgerMenu kindBySlug={kindBySlug} />
           </nav>
         </div>
       </div>

@@ -7,9 +7,16 @@ import {
   JAPAN_MAP_SHAPES,
   JAPAN_MAP_VIEWBOX,
 } from "@mirai-gikai/shared/prefectures/japan-map";
+import { Loader2 } from "lucide-react";
 import type { Route } from "next";
 import { useRouter } from "next/navigation";
-import { type KeyboardEvent, type MouseEvent, useRef, useState } from "react";
+import {
+  type KeyboardEvent,
+  type MouseEvent,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 import { routes } from "@/lib/routes";
 import type { AssemblyListItem } from "../../shared/types";
 import {
@@ -46,11 +53,27 @@ export function AssemblyMap({
   const router = useRouter();
   const figureRef = useRef<HTMLElement>(null);
   const [tooltip, setTooltip] = useState<Tooltip | null>(null);
+  const [opening, setOpening] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
   const byCode = prefectureAssemblyByCode(assemblies);
 
-  const open = (code: string) => {
+  const hrefOf = (code: string) => {
     const assembly = byCode[code];
-    if (assembly) router.push(routes.assemblyBills(assembly.slug) as Route);
+    return assembly ? (routes.assemblyBills(assembly.slug) as Route) : null;
+  };
+
+  // 開くのに時間がかかることがあるので、押したことが分かるように出す
+  const open = (code: string) => {
+    const href = hrefOf(code);
+    if (!href) return;
+    setOpening(byCode[code]?.name ?? null);
+    startTransition(() => router.push(href));
+  };
+
+  /** マウスを乗せた・フォーカスした時点で先に読み込んでおく */
+  const prefetch = (code: string) => {
+    const href = hrefOf(code);
+    if (href) router.prefetch(href);
   };
 
   const onKeyDown = (code: string) => (event: KeyboardEvent) => {
@@ -73,7 +96,8 @@ export function AssemblyMap({
   return (
     <figure
       ref={figureRef}
-      className="relative space-y-2 rounded-md border bg-white p-4"
+      aria-busy={isPending}
+      className={`relative space-y-2 rounded-md border bg-white p-4 ${isPending ? "cursor-progress" : ""}`}
     >
       <svg
         viewBox={JAPAN_MAP_VIEWBOX}
@@ -98,6 +122,8 @@ export function AssemblyMap({
               aria-disabled={!assembly}
               onClick={() => open(prefecture.code)}
               onKeyDown={onKeyDown(prefecture.code)}
+              onMouseEnter={() => prefetch(prefecture.code)}
+              onFocus={() => prefetch(prefecture.code)}
               onMouseMove={onMouseMove(label)}
               className={`stroke-white stroke-[0.6] outline-none transition-colors focus-visible:fill-blue-800 ${FILL_CLASSES[state]}`}
             />
@@ -110,6 +136,15 @@ export function AssemblyMap({
           className="pointer-events-none fill-none stroke-gray-300 stroke-[1.2]"
         />
       </svg>
+      {isPending && opening && (
+        <span
+          role="status"
+          className="absolute right-4 top-4 z-10 inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-medium text-gray-900 shadow"
+        >
+          <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />
+          {opening}を開いています…
+        </span>
+      )}
       {tooltip && (
         <span
           aria-hidden
