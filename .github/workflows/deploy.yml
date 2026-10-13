@@ -1,0 +1,49 @@
+name: Migrate DB then Deploy
+
+# main に入ったら、Neon（本番）にマイグレーションを当ててから Vercel の web・admin をデプロイする。
+# Vercel 側は main の Git 連携デプロイを止めている（web/vercel.json・admin/vercel.json）ので、
+# マイグレーションより先に新しいコードが動くことはない。
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  migrate-and-deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # マイグレーションは Neon の直接接続（-pooler ではない URL）で当てる
+      - name: Apply migrations to Neon
+        run: pnpm --filter @mirai-gikai/db migrate
+        env:
+          DATABASE_URL: ${{ secrets.NEON_DATABASE_URL_UNPOOLED }}
+
+      - name: Trigger Vercel deploy hooks
+        run: |
+          curl -fsS -X POST "$WEB_HOOK"
+          curl -fsS -X POST "$ADMIN_HOOK"
+        env:
+          WEB_HOOK: ${{ secrets.WEB_VERCEL_DEPLOY_HOOK_URL }}
+          ADMIN_HOOK: ${{ secrets.ADMIN_VERCEL_DEPLOY_HOOK_URL }}
