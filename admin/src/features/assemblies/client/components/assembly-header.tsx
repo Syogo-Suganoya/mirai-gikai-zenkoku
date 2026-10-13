@@ -1,5 +1,10 @@
 "use client";
 
+import {
+  ASSEMBLY_KIND_LABELS,
+  type AssemblyTypeValue,
+  toAssemblyKind,
+} from "@mirai-gikai/shared/assemblies/assembly-kind";
 import { ChevronLeft } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
@@ -14,12 +19,16 @@ import { cn } from "@/lib/utils";
 export function AssemblyHeader({
   slug,
   name,
+  type,
   activeTab,
 }: {
   slug: string;
   name: string;
+  /** 戻り先の一覧（都道府県・市・区町村）を決める */
+  type: AssemblyTypeValue;
   activeTab?: "bills";
 }) {
+  const kind = toAssemblyKind(type);
   const pathname = usePathname();
   const tabs: { key: string; href: string; label: string }[] = [
     { key: "bills", href: routes.assemblyBills(slug), label: "議案" },
@@ -31,11 +40,11 @@ export function AssemblyHeader({
   return (
     <div className="space-y-3">
       <Link
-        href={routes.home()}
+        href={routes.home(kind) as Route}
         className="inline-flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900"
       >
         <ChevronLeft className="h-4 w-4" />
-        議会一覧
+        {ASSEMBLY_KIND_LABELS[kind]}議会の一覧
       </Link>
       <h1 className="text-2xl font-bold text-gray-900">{name}</h1>
       <nav className="flex gap-6 border-b">

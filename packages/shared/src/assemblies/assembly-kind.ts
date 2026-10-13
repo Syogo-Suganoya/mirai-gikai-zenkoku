@@ -21,3 +21,12 @@ export function toAssemblyKind(type: AssemblyTypeValue): AssemblyKind {
   if (type === "city") return "city";
   return "town";
 }
+
+const ASSEMBLY_KINDS: readonly AssemblyKind[] = ["prefecture", "city", "town"];
+
+/** URL の値（?kind=city など）を区分にする。知らない値・無いときは都道府県 */
+export function parseAssemblyKind(value: unknown): AssemblyKind {
+  return ASSEMBLY_KINDS.includes(value as AssemblyKind)
+    ? (value as AssemblyKind)
+    : "prefecture";
+}

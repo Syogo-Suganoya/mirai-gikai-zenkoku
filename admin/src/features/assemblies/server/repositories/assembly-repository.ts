@@ -44,6 +44,13 @@ export async function findAssembliesWithBillCounts() {
     );
 }
 
+/** すべての議会のスラッグと種類（ヘッダーの区分の表示に使う） */
+export async function findAssemblySlugTypes() {
+  return createDb()
+    .select({ slug: assemblies.slug, type: assemblies.type })
+    .from(assemblies);
+}
+
 export async function findAssemblyWithSettingsBySlug(slug: string) {
   const [row] = await createDb()
     .select({ assembly: assemblies, settings: assembly_settings })

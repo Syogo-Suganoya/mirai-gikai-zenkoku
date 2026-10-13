@@ -6,9 +6,15 @@
  * 新しいページを追加したらここにもルートを追加し、テストを通すこと。
  */
 
+import type { AssemblyKind } from "@mirai-gikai/shared/assemblies/assembly-kind";
+
 // ── 静的ルート ──────────────────────────────────────
 export const routes = {
-  home: () => "/" as const,
+  /** 議会一覧（区分ごと。都道府県はクエリなし） */
+  home: (kind?: AssemblyKind) =>
+    kind && kind !== "prefecture"
+      ? (`/?kind=${kind}` as const)
+      : ("/" as const),
   login: () => "/login" as const,
   accountPassword: () => "/account/password" as const,
   admins: () => "/admins" as const,

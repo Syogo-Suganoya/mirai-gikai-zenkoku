@@ -12,7 +12,11 @@ export default async function AssemblyLayout({
   const { assembly } = await requireAssemblyPage((await params).assembly);
   return (
     <div className="space-y-6">
-      <AssemblyHeader slug={assembly.slug} name={assembly.name} />
+      <AssemblyHeader
+        slug={assembly.slug}
+        name={assembly.name}
+        type={assembly.type}
+      />
       {children}
     </div>
   );

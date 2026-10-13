@@ -16,6 +16,7 @@ export default async function BillLayout({
       <AssemblyHeader
         slug={assembly.slug}
         name={assembly.name}
+        type={assembly.type}
         activeTab="bills"
       />
       <div>{children}</div>

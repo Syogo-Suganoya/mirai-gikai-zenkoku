@@ -19,14 +19,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { routes } from "@/lib/routes";
 import type { AssemblyListItem } from "../../shared/types";
-import {
-  assemblyPrefectureName,
-  countAssembliesByKind,
-  filterAssemblies,
-} from "../../shared/utils/filter-assemblies";
+import { filterAssemblies } from "../../shared/utils/filter-assemblies";
 
 const STATUS_LABELS: Record<AssemblyListItem["status"], string> = {
   master_only: "未着手",
@@ -34,39 +29,24 @@ const STATUS_LABELS: Record<AssemblyListItem["status"], string> = {
   public: "公開中",
 };
 
-const KINDS: AssemblyKind[] = ["prefecture", "city", "town"];
-
 /**
- * 議会の一覧（都道府県コード順）。都道府県・市・区町村で切り替え、名前で探せる。
- * 行のどこを押しても、その議会の議案一覧を開く。
+ * 1つの区分（都道府県・市・区町村。ヘッダーで切り替える）の議会の一覧。
+ * 都道府県コード順に並べ、議会名・都道府県名で探せる。行のどこを押しても、その議会の議案一覧を開く。
  */
 export function AssemblyList({
   assemblies,
+  kind,
 }: {
   assemblies: AssemblyListItem[];
+  kind: AssemblyKind;
 }) {
   const router = useRouter();
-  const [kind, setKind] = useState<AssemblyKind>("prefecture");
   const [query, setQuery] = useState("");
-  const counts = countAssembliesByKind(assemblies);
   const visible = filterAssemblies(assemblies, { kind, query });
 
   return (
     <div className="space-y-3">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <Tabs
-          value={kind}
-          onValueChange={(value) => setKind(value as AssemblyKind)}
-        >
-          <TabsList>
-            {KINDS.map((k) => (
-              <TabsTrigger key={k} value={k} className="px-3">
-                {ASSEMBLY_KIND_LABELS[k]}
-                <span className="text-xs text-gray-500">{counts[k]}</span>
-              </TabsTrigger>
-            ))}
-          </TabsList>
-        </Tabs>
+      <div className="flex justify-end">
         <div className="relative w-full sm:w-72">
           <Search
             className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
@@ -124,10 +104,6 @@ export function AssemblyList({
                       >
                         {assembly.name}
                       </Link>
-                      <div className="text-xs text-gray-500">
-                        {assemblyPrefectureName(assembly)}
-                        <span className="ml-2 font-mono">{assembly.slug}</span>
-                      </div>
                     </TableCell>
                     <TableCell>{STATUS_LABELS[assembly.status]}</TableCell>
                     <TableCell className="text-right">

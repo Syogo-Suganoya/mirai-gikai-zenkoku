@@ -28,16 +28,3 @@ export function filterAssemblies(
         assembly.slug.toLowerCase().includes(q))
   );
 }
-
-/** 区分ごとの件数（タブに出す） */
-export function countAssembliesByKind(
-  assemblies: readonly AssemblyListItem[]
-): Record<AssemblyKind, number> {
-  const counts: Record<AssemblyKind, number> = {
-    prefecture: 0,
-    city: 0,
-    town: 0,
-  };
-  for (const assembly of assemblies) counts[toAssemblyKind(assembly.type)] += 1;
-  return counts;
-}

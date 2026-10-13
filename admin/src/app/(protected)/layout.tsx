@@ -1,5 +1,6 @@
 import { Home, User } from "lucide-react";
 import type { ReactNode } from "react";
+import { loadAssemblyKindBySlug } from "@/features/assemblies/server/loaders/load-assembly-kind-by-slug";
 import { LogoutButton } from "@/features/auth/client/components/logout-button";
 import { requireUserPage } from "@/features/auth/server/lib/session";
 import { NavigationLinks } from "./layout/navigation-links";
@@ -10,6 +11,7 @@ export default async function MainLayout({
   children: ReactNode;
 }) {
   const user = await requireUserPage();
+  const kindBySlug = await loadAssemblyKindBySlug();
   return (
     <div className="min-h-dvh bg-gray-50">
       {/* Header */}
@@ -37,7 +39,7 @@ export default async function MainLayout({
           </div>
 
           {/* Navigation */}
-          <NavigationLinks />
+          <NavigationLinks kindBySlug={kindBySlug} />
         </div>
       </header>
 

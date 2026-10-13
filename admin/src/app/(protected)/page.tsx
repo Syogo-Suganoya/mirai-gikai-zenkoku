@@ -1,3 +1,7 @@
+import {
+  ASSEMBLY_KIND_LABELS,
+  parseAssemblyKind,
+} from "@mirai-gikai/shared/assemblies/assembly-kind";
 import { Upload } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
@@ -8,15 +12,22 @@ import { loadAssemblies } from "@/features/assemblies/server/loaders/load-assemb
 import { requireUserPage } from "@/features/auth/server/lib/session";
 import { routes } from "@/lib/routes";
 
-export default async function AssembliesPage() {
+export default async function AssembliesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ kind?: string | string[] }>;
+}) {
   await requireUserPage();
+  const kind = parseAssemblyKind((await searchParams).kind);
   const assemblies = await loadAssemblies();
 
   return (
     <div>
       <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">議会一覧</h1>
+          <h1 className="text-2xl font-bold text-gray-900">
+            {ASSEMBLY_KIND_LABELS[kind]}議会の一覧
+          </h1>
           <p className="mt-1 text-gray-600">
             議会を選ぶと議案・会期を管理できます
           </p>
@@ -35,10 +46,11 @@ export default async function AssembliesPage() {
       ) : (
         <div className="space-y-6">
           {/* 都道府県議会は地図からも開ける（細かい県は下の一覧から） */}
-          {assemblies.some((a) => a.type === "prefecture") && (
-            <AssemblyMap assemblies={assemblies} />
-          )}
-          <AssemblyList assemblies={assemblies} />
+          {kind === "prefecture" &&
+            assemblies.some((a) => a.type === "prefecture") && (
+              <AssemblyMap assemblies={assemblies} />
+            )}
+          <AssemblyList assemblies={assemblies} kind={kind} />
         </div>
       )}
     </div>

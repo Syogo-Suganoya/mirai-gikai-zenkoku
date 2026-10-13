@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { AssemblyListItem } from "../types";
-import { countAssembliesByKind, filterAssemblies } from "./filter-assemblies";
+import { filterAssemblies } from "./filter-assemblies";
 
 function item(
   overrides: Pick<
@@ -86,15 +86,5 @@ describe("filterAssemblies", () => {
     expect(
       filterAssemblies(assemblies, { kind: "prefecture", query: "大阪" })
     ).toEqual([]);
-  });
-});
-
-describe("countAssembliesByKind", () => {
-  it("区分ごとの件数", () => {
-    expect(countAssembliesByKind(assemblies)).toEqual({
-      prefecture: 2,
-      city: 1,
-      town: 1,
-    });
   });
 });
