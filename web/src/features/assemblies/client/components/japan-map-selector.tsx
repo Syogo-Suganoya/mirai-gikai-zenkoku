@@ -3,6 +3,7 @@
 import { PREFECTURES, REGIONS } from "@mirai-gikai/shared/prefectures";
 import {
   JAPAN_MAP_ATTRIBUTION,
+  JAPAN_MAP_OKINAWA_DIVIDER,
   JAPAN_MAP_SHAPES,
   JAPAN_MAP_VIEWBOX,
 } from "@mirai-gikai/shared/prefectures/japan-map";
@@ -95,6 +96,12 @@ export function JapanMapSelector({ assemblyByPrefecture }: Props) {
               />
             );
           })}
+          {/* 沖縄県の差し込み（左上）と本土の区切り線 */}
+          <path
+            d={JAPAN_MAP_OKINAWA_DIVIDER}
+            aria-hidden
+            className="pointer-events-none fill-none stroke-mirai-border stroke-[1.2]"
+          />
         </svg>
         {tooltip && (
           <span
