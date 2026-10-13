@@ -11,7 +11,7 @@ const navigationLinks = [
   { href: routes.tags(), label: "タグ管理" },
   { href: routes.interviews(), label: "インタビュー" },
   // 全議案トピック分析(/user-topic-analysis)は隠し機能のためヘッダーに出さない（URL直アクセスのみ）。
-  { href: routes.experts(), label: "有識者" },
+  // 有識者リスト(/experts)は、公開サイトで登録を止めている間（EXPERT_REGISTRATION_ENABLED）は出さない。
   { href: routes.admins(), label: "アカウント" },
 ];
 
