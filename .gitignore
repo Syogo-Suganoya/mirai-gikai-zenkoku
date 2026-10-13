@@ -22,3 +22,6 @@ docs/実装状況.md
 
 # R2 を設定しないローカル開発でのサムネイル置き場所
 web/public/local-storage
+
+# トピック分析の定期実行（本家の Cloud Run 用のまま。フェーズ3で GitHub Actions 向けに書き直してからコミットする）
+/worker/

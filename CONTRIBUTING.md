@@ -49,7 +49,6 @@ mirai-gikai-zenkoku/
 │   ├── topic-analysis-core/        # インタビューの意見のトピック分析
 │   └── seed/                       # データ投入（愛知県の実データ・ダミー議会・本番の初期データ・管理者の作成）
 ├── tests/db/                       # DB を使う統合テスト（DB function・リポジトリ）
-├── worker/                         # トピック分析の定期実行（作業中）
 ├── docs/                           # 設計・デプロイ手順・構成図
 └── scripts/                        # 構成図の生成など
 ```

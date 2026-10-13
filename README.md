@@ -20,7 +20,6 @@
 | `packages/topic-analysis-core/` | インタビュー意見のトピック分析 |
 | `packages/seed/` | ローカル用のデータ投入（愛知県議会の実データ・ダミー議会） |
 | `tests/db/` | DB を使う統合テスト（DB function・リポジトリ） |
-| `worker/` | トピック分析の定期実行（今後 GitHub Actions から動かす） |
 
 主な技術: Next.js 15 / TypeScript / Drizzle ORM / PostgreSQL / Vercel AI SDK（Gemini）/ Tailwind CSS / Biome / Vitest
 
