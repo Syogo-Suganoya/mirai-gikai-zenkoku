@@ -57,7 +57,7 @@ DB を作り直すときは `pnpm db:reset`（コンテナの削除 → 起動 �
 |---|---|
 | web / admin | Vercel |
 | DB | Neon（PostgreSQL） |
-| ファイル | Cloudflare R2 |
+| ファイル | Vercel Blob |
 | AI | Google Gemini API |
 | CI | GitHub Actions（`.github/workflows`） |
 

@@ -25,18 +25,43 @@ export function buildThumbnailKey(params: {
   return `${THUMBNAIL_DIR}/${prefix}${id}_${params.now}.${safeExtension(params.fileName)}`;
 }
 
+const THUMBNAIL_KEY = new RegExp(
+  `^${THUMBNAIL_DIR}/[a-zA-Z0-9_-]+\\.[a-z0-9]{1,5}$`
+);
+
 /**
- * 公開 URL からキーを取り出す。この置き場所（baseUrl 配下のサムネイル）の URL でなければ null。
+ * 公開 URL からサムネイルのキーを取り出す。この置き場所（baseUrl 配下のサムネイル）の URL でなければ null。
  * 他所の URL を渡されて任意のファイルを消さないようにする。
  */
-export function keyFromPublicUrl(url: string, baseUrl: string): string | null {
+export function thumbnailKeyFromUrl(
+  url: string,
+  baseUrl: string
+): string | null {
   const base = baseUrl.replace(/\/+$/, "");
   if (!url.startsWith(`${base}/`)) return null;
   const key = url.slice(base.length + 1);
-  const pattern = new RegExp(
-    `^${THUMBNAIL_DIR}/[a-zA-Z0-9_-]+\\.[a-z0-9]{1,5}$`
-  );
-  return pattern.test(key) ? key : null;
+  return THUMBNAIL_KEY.test(key) ? key : null;
+}
+
+/** Vercel Blob の公開ファイルのホスト（<ストア id>.public.blob.vercel-storage.com） */
+const BLOB_PUBLIC_HOST = /^[a-z0-9]+\.public\.blob\.vercel-storage\.com$/;
+
+/**
+ * Vercel Blob の公開 URL からサムネイルのキーを取り出す。Blob 以外やサムネイル以外の URL は null。
+ * ストアが自分のものかは、消すときに Blob 側がトークンで確かめる。
+ */
+export function thumbnailKeyFromBlobUrl(url: string): string | null {
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch {
+    return null;
+  }
+  if (parsed.protocol !== "https:" || !BLOB_PUBLIC_HOST.test(parsed.hostname)) {
+    return null;
+  }
+  if (parsed.search || parsed.hash) return null;
+  return thumbnailKeyFromUrl(url, parsed.origin);
 }
 
 const UUID_IN_KEY =

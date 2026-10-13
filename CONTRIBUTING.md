@@ -42,7 +42,7 @@ mirai-gikai-zenkoku/
 │   └── src/
 │       ├── app/(protected)/        # ログイン後の画面（/、/[assembly]/bills・sessions・import・settings、/bills/[id]/...）
 │       ├── features/               # assemblies・bills・bills-edit・bill-results・csv-import・sessions・auth・admins など
-│       └── lib/                    # routes.ts・R2 への保存 など
+│       └── lib/                    # routes.ts・ファイルの保存（Vercel Blob）など
 ├── packages/
 │   ├── db/                         # Drizzle のスキーマ（src/schema/tables.ts）とマイグレーション（migrations/）
 │   ├── shared/                     # web と admin で共通の処理（CSV 取り込み・ふりがな・議決結果の保存・都道府県と日本地図・AI のモデル など）

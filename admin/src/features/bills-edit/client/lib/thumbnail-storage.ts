@@ -7,7 +7,7 @@ import {
 
 export type { DeleteResult, UploadResult };
 
-/** サムネイル画像を公開ファイルの置き場所（R2）にアップロード */
+/** サムネイル画像を公開ファイルの置き場所（Vercel Blob）にアップロード */
 export async function uploadThumbnail(
   file: File,
   billId?: string,

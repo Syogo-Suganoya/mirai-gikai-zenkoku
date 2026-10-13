@@ -9,14 +9,9 @@ export const env = {
     : process.env.ADMIN_URL || "http://localhost:3001",
   webUrl: process.env.NEXT_PUBLIC_WEB_URL || "http://localhost:3000",
   revalidateSecret: process.env.REVALIDATE_SECRET,
-  // 公開ファイル（サムネイル）の置き場所。未設定ならローカル開発では web/public/local-storage を使う
-  r2: {
-    accountId: process.env.R2_ACCOUNT_ID,
-    accessKeyId: process.env.R2_ACCESS_KEY_ID,
-    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
-    bucket: process.env.R2_BUCKET,
-    publicUrl: process.env.R2_PUBLIC_URL?.replace(/\/+$/, ""),
-  },
+  // 公開ファイル（サムネイル・取り込んだ CSV）の置き場所（Vercel Blob）。
+  // Vercel でストアをプロジェクトにつなぐと自動で入る。未設定ならローカル開発では web/public/local-storage を使う
+  blobReadWriteToken: process.env.BLOB_READ_WRITE_TOKEN,
   // トピック分析・バックフィルを実行する Cloud Run Job のトリガ設定
   gcp: {
     projectId: process.env.GCP_PROJECT_ID,

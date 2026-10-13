@@ -2,7 +2,8 @@ import { describe, expect, it } from "vitest";
 import {
   billIdFromThumbnailKey,
   buildThumbnailKey,
-  keyFromPublicUrl,
+  thumbnailKeyFromBlobUrl,
+  thumbnailKeyFromUrl,
 } from "./public-file-key";
 
 describe("buildThumbnailKey", () => {
@@ -24,12 +25,12 @@ describe("buildThumbnailKey", () => {
   });
 });
 
-describe("keyFromPublicUrl", () => {
+describe("thumbnailKeyFromUrl", () => {
   const base = "https://files.example.com/";
 
   it("この置き場所のサムネイルの URL ならキーを返す", () => {
     expect(
-      keyFromPublicUrl(
+      thumbnailKeyFromUrl(
         "https://files.example.com/bill-thumbnails/share_abc_1.png",
         base
       )
@@ -38,17 +39,55 @@ describe("keyFromPublicUrl", () => {
 
   it("他所の URL やサムネイル以外のパスは null", () => {
     expect(
-      keyFromPublicUrl("https://evil.example.com/bill-thumbnails/a_1.png", base)
+      thumbnailKeyFromUrl(
+        "https://evil.example.com/bill-thumbnails/a_1.png",
+        base
+      )
     ).toBeNull();
     expect(
-      keyFromPublicUrl("https://files.example.com/other/a_1.png", base)
+      thumbnailKeyFromUrl("https://files.example.com/other/a_1.png", base)
     ).toBeNull();
     expect(
-      keyFromPublicUrl(
+      thumbnailKeyFromUrl(
         "https://files.example.com/bill-thumbnails/../secret.png",
         base
       )
     ).toBeNull();
+  });
+});
+
+describe("thumbnailKeyFromBlobUrl", () => {
+  const host = "https://abc123xyz.public.blob.vercel-storage.com";
+
+  it("Vercel Blob のサムネイルの URL ならキーを返す", () => {
+    expect(
+      thumbnailKeyFromBlobUrl(`${host}/bill-thumbnails/share_abc_1.png`)
+    ).toBe("bill-thumbnails/share_abc_1.png");
+  });
+
+  it("Blob 以外のホスト・http・サムネイル以外・クエリ付きは null", () => {
+    expect(
+      thumbnailKeyFromBlobUrl(
+        "https://evil.example.com/bill-thumbnails/share_abc_1.png"
+      )
+    ).toBeNull();
+    expect(
+      thumbnailKeyFromBlobUrl(
+        "https://abc.public.blob.vercel-storage.com.evil.com/bill-thumbnails/a_1.png"
+      )
+    ).toBeNull();
+    expect(
+      thumbnailKeyFromBlobUrl(
+        "http://abc123xyz.public.blob.vercel-storage.com/bill-thumbnails/a_1.png"
+      )
+    ).toBeNull();
+    expect(
+      thumbnailKeyFromBlobUrl(`${host}/csv-imports/aichi-pref/a.csv`)
+    ).toBeNull();
+    expect(
+      thumbnailKeyFromBlobUrl(`${host}/bill-thumbnails/a_1.png?x=1`)
+    ).toBeNull();
+    expect(thumbnailKeyFromBlobUrl("not a url")).toBeNull();
   });
 });
 

@@ -5,7 +5,6 @@ import { requireBillAction } from "@/features/bills/server/loaders/require-bill-
 import {
   billIdFromThumbnailKey,
   buildThumbnailKey,
-  keyFromPublicUrl,
 } from "@/lib/storage/public-file-key";
 
 /** 議案のサムネイルは議案があるか確かめる。議案を作る前の画像はログインだけ確かめる */
@@ -21,7 +20,7 @@ const MAX_SIZE = 5 * 1024 * 1024;
 export type UploadResult = { url?: string; error?: string };
 export type DeleteResult = { success: boolean; error?: string };
 
-/** サムネイル画像を公開ファイルの置き場所（R2）に上げる */
+/** サムネイル画像を公開ファイルの置き場所（Vercel Blob）に上げる */
 export async function uploadThumbnailAction(
   formData: FormData
 ): Promise<UploadResult> {
@@ -45,8 +44,12 @@ export async function uploadThumbnailAction(
       prefix: String(formData.get("prefix") ?? "") || undefined,
       now: Date.now(),
     });
-    await storage.put(key, new Uint8Array(await file.arrayBuffer()), file.type);
-    return { url: `${storage.baseUrl}/${key}` };
+    const url = await storage.put(
+      key,
+      new Uint8Array(await file.arrayBuffer()),
+      file.type
+    );
+    return { url };
   } catch (error) {
     console.error("Upload error:", error);
     return { error: "アップロードに失敗しました" };
@@ -58,12 +61,12 @@ export async function deleteThumbnailAction(
   url: string
 ): Promise<DeleteResult> {
   const storage = getPublicFileStorage();
-  const key = keyFromPublicUrl(url, storage.baseUrl);
+  const key = storage.thumbnailKeyFromUrl(url);
   if (!key) return { success: false, error: "削除できないファイルです" };
   await requireThumbnailAccess(billIdFromThumbnailKey(key));
 
   try {
-    await storage.remove(key);
+    await storage.remove(url);
     return { success: true };
   } catch (error) {
     console.error("Delete error:", error);

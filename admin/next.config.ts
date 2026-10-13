@@ -2,10 +2,6 @@ import type { NextConfig } from "next";
 
 const isDev = process.env.NODE_ENV === "development";
 
-const r2PublicUrl = process.env.R2_PUBLIC_URL
-  ? new URL(process.env.R2_PUBLIC_URL)
-  : null;
-
 const nextConfig: NextConfig = {
   experimental: {
     serverSourceMaps: true,
@@ -18,24 +14,18 @@ const nextConfig: NextConfig = {
   },
   images: {
     remotePatterns: [
-      // サムネイルなどの公開ファイル（Cloudflare R2 の公開 URL）
-      ...(r2PublicUrl
-        ? [
-            {
-              protocol: r2PublicUrl.protocol.replace(":", "") as
-                | "http"
-                | "https",
-              hostname: r2PublicUrl.hostname,
-            },
-          ]
-        : []),
+      // サムネイルなどの公開ファイル（Vercel Blob の公開 URL）
+      {
+        protocol: "https",
+        hostname: "*.public.blob.vercel-storage.com",
+      },
       ...(isDev
         ? [
             {
               protocol: "https" as const,
               hostname: "placehold.co",
             },
-            // R2 が無いローカル開発の置き場所（web/public/local-storage）
+            // Blob が無いローカル開発の置き場所（web/public/local-storage）
             {
               protocol: "http" as const,
               hostname: "localhost",
