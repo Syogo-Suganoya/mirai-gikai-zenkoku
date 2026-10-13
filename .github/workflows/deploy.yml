@@ -19,6 +19,22 @@ jobs:
     timeout-minutes: 15
 
     steps:
+      # Secrets が未登録・空のまま進むと、マイグレーションが分かりにくいエラーで落ちるので先に確かめる
+      - name: Check secrets
+        run: |
+          missing=0
+          for name in NEON_DATABASE_URL_UNPOOLED WEB_VERCEL_DEPLOY_HOOK_URL ADMIN_VERCEL_DEPLOY_HOOK_URL; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Secret ${name} が空です。GitHub の Settings → Environments → production で設定してください"
+              missing=1
+            fi
+          done
+          exit "$missing"
+        env:
+          NEON_DATABASE_URL_UNPOOLED: ${{ secrets.NEON_DATABASE_URL_UNPOOLED }}
+          WEB_VERCEL_DEPLOY_HOOK_URL: ${{ secrets.WEB_VERCEL_DEPLOY_HOOK_URL }}
+          ADMIN_VERCEL_DEPLOY_HOOK_URL: ${{ secrets.ADMIN_VERCEL_DEPLOY_HOOK_URL }}
+
       - name: Checkout code
         uses: actions/checkout@v5
 
@@ -41,9 +57,13 @@ jobs:
           DATABASE_URL: ${{ secrets.NEON_DATABASE_URL_UNPOOLED }}
 
       - name: Trigger Vercel deploy hooks
+        # 貼り付けたときに混ざった前後の空白・改行を取り除いてから呼ぶ
         run: |
-          curl -fsS -X POST "$WEB_HOOK"
-          curl -fsS -X POST "$ADMIN_HOOK"
+          for hook in "$WEB_HOOK" "$ADMIN_HOOK"; do
+            url="$(printf '%s' "$hook" | tr -d '[:space:]')"
+            curl -fsS -X POST "$url"
+            echo
+          done
         env:
           WEB_HOOK: ${{ secrets.WEB_VERCEL_DEPLOY_HOOK_URL }}
           ADMIN_HOOK: ${{ secrets.ADMIN_VERCEL_DEPLOY_HOOK_URL }}
