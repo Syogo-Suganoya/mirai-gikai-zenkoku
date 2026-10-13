@@ -10,7 +10,9 @@ import {
   type TestUser,
 } from "@test-utils/utils";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { MockLanguageModelV3 } from "ai/test";
 import { createGenerateMock } from "@/test-utils/mock-language-model";
+import { InitialQuestionGenerationError } from "../../shared/utils/interview-init-error";
 import type { GetUserFn } from "../utils/verify-session-ownership";
 import { initializeInterviewChat } from "./initialize-interview-chat";
 
@@ -93,5 +95,20 @@ describe("initializeInterviewChat 統合テスト", () => {
     expect(result.messages).toHaveLength(1);
     expect(result.messages[0].role).toBe("assistant");
     expect(result.messages[0].content).toBe(expectedResponse);
+  });
+
+  it("最初の質問を作れなかったら InitialQuestionGenerationError を投げる", async () => {
+    const failingModel = new MockLanguageModelV3({
+      doGenerate: async () => {
+        throw new Error("The model is overloaded.");
+      },
+    });
+
+    await expect(
+      initializeInterviewChat(billId, interviewConfigId, {
+        getUser: createGetUser(testUser.id),
+        model: failingModel,
+      })
+    ).rejects.toBeInstanceOf(InitialQuestionGenerationError);
   });
 });

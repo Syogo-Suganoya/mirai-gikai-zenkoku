@@ -20,6 +20,7 @@ import {
   SUGGEST_INTERVIEW_TOOL_TYPE,
 } from "@/features/chat/shared/constants";
 import { ChatError, ChatErrorCode } from "@/features/chat/shared/types/errors";
+import { chatStreamErrorMessage } from "@/features/chat/shared/utils/chat-stream-error-message";
 import { pickChatKnowledgeSource } from "@/features/chat/shared/utils/pick-chat-knowledge-source";
 import { findPublicInterviewConfigByBillId } from "@/features/interview-config/server/repositories/interview-config-repository";
 import { AI_MODELS, geminiModel } from "@/lib/ai/models";
@@ -154,7 +155,12 @@ export async function handleChatRequest({
       },
     });
 
-    return result.toUIMessageStreamResponse();
+    return result.toUIMessageStreamResponse({
+      onError: (error) => {
+        console.error("LLM streaming error:", error);
+        return chatStreamErrorMessage(error);
+      },
+    });
   } catch (error) {
     console.error("LLM generation error:", error);
     throw new ChatError(

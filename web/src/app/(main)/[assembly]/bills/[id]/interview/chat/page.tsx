@@ -5,6 +5,7 @@ import { requireInterviewBill } from "@/features/interview-config/server/loaders
 import { InterviewChatClient } from "@/features/interview-session/client/components/interview-chat-client";
 import { InterviewSessionErrorView } from "@/features/interview-session/client/components/interview-session-error-view";
 import { initializeInterviewChat } from "@/features/interview-session/server/loaders/initialize-interview-chat";
+import { interviewInitErrorView } from "@/features/interview-session/shared/utils/interview-init-error";
 
 export const dynamic = "force-dynamic";
 
@@ -53,6 +54,7 @@ export default async function InterviewChatPage({
     console.error("Failed to initialize interview session:", error);
     return (
       <InterviewSessionErrorView
+        {...interviewInitErrorView(error)}
         assemblySlug={bill.assembly_slug}
         billId={bill.id}
       />

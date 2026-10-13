@@ -4,6 +4,7 @@ import type { LanguageModel } from "ai";
 import { generateInitialQuestion } from "@/features/interview-session/server/services/generate-initial-question";
 import { getCurrentVisitor } from "@/lib/visitor/server";
 import type { InterviewMessage, InterviewSession } from "../../shared/types";
+import { InitialQuestionGenerationError } from "../../shared/utils/interview-init-error";
 import {
   createInterviewSessionRecord,
   findActiveInterviewSession,
@@ -65,9 +66,10 @@ export async function initializeInterviewChat(
       deps: { model: deps?.model },
     });
 
-    if (initialQuestion) {
-      messages = [initialQuestion];
+    if (!initialQuestion) {
+      throw new InitialQuestionGenerationError();
     }
+    messages = [initialQuestion];
   }
 
   return {

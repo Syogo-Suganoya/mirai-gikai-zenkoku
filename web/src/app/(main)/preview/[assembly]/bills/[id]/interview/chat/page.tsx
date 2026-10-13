@@ -6,6 +6,7 @@ import { getInterviewQuestions } from "@/features/interview-config/server/loader
 import { InterviewChatClient } from "@/features/interview-session/client/components/interview-chat-client";
 import { InterviewSessionErrorView } from "@/features/interview-session/client/components/interview-session-error-view";
 import { initializeInterviewChat } from "@/features/interview-session/server/loaders/initialize-interview-chat";
+import { interviewInitErrorView } from "@/features/interview-session/shared/utils/interview-init-error";
 
 export const dynamic = "force-dynamic";
 
@@ -74,6 +75,7 @@ export default async function InterviewPreviewChatPage({
       <>
         {banner}
         <InterviewSessionErrorView
+          {...interviewInitErrorView(error)}
           assemblySlug={assembly.slug}
           billId={bill.id}
           previewToken={token}
