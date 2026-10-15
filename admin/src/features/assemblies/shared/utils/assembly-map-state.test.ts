@@ -6,19 +6,45 @@ describe("toAssemblyMapState", () => {
     expect(toAssemblyMapState(undefined)).toBe("none");
   });
 
-  it("議案の有無と実データ・ダミーで塗り分ける", () => {
-    expect(toAssemblyMapState({ billCount: 0, dummyBillCount: 0 })).toBe(
-      "empty"
-    );
-    expect(toAssemblyMapState({ billCount: 3, dummyBillCount: 3 })).toBe(
-      "dummy"
-    );
-    expect(toAssemblyMapState({ billCount: 226, dummyBillCount: 0 })).toBe(
-      "real"
-    );
-    expect(toAssemblyMapState({ billCount: 4, dummyBillCount: 3 })).toBe(
-      "real"
-    );
+  it("公開中の議案がなければ準備中（下書きだけの議会も）", () => {
+    expect(
+      toAssemblyMapState({
+        billCount: 0,
+        publishedBillCount: 0,
+        dummyBillCount: 0,
+      })
+    ).toBe("preparing");
+    expect(
+      toAssemblyMapState({
+        billCount: 5,
+        publishedBillCount: 0,
+        dummyBillCount: 0,
+      })
+    ).toBe("preparing");
+  });
+
+  it("公開中の議案があれば、実データ・ダミーで塗り分ける", () => {
+    expect(
+      toAssemblyMapState({
+        billCount: 3,
+        publishedBillCount: 3,
+        dummyBillCount: 3,
+      })
+    ).toBe("dummy");
+    expect(
+      toAssemblyMapState({
+        billCount: 226,
+        publishedBillCount: 220,
+        dummyBillCount: 0,
+      })
+    ).toBe("real");
+    expect(
+      toAssemblyMapState({
+        billCount: 4,
+        publishedBillCount: 1,
+        dummyBillCount: 3,
+      })
+    ).toBe("real");
   });
 });
 

@@ -28,7 +28,7 @@ import {
 const FILL_CLASSES: Record<AssemblyMapState, string> = {
   real: "fill-blue-600 hover:fill-blue-800 cursor-pointer",
   dummy: "fill-blue-200 hover:fill-blue-400 cursor-pointer",
-  empty: "fill-gray-300 hover:fill-gray-400 cursor-pointer",
+  preparing: "fill-gray-300 hover:fill-gray-400 cursor-pointer",
   none: "fill-gray-100",
 };
 
@@ -36,7 +36,11 @@ const LEGENDS: { state: AssemblyMapState; className: string; label: string }[] =
   [
     { state: "real", className: "bg-blue-600", label: "実データあり" },
     { state: "dummy", className: "bg-blue-200", label: "ダミーのみ" },
-    { state: "empty", className: "bg-gray-300", label: "議案なし" },
+    {
+      state: "preparing",
+      className: "bg-gray-300",
+      label: "準備中（公開中の議案なし）",
+    },
   ];
 
 type Tooltip = { label: string; x: number; y: number };
