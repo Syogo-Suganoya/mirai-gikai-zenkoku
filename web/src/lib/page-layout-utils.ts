@@ -24,6 +24,14 @@ export function isMainPage(pathname: string): boolean {
   return parts[1] === "bills" && parts.length <= 3;
 }
 
+/**
+ * 議会選択（/）かどうかを判定。
+ * 地図の横に開会中の議会を並べるため、本文の幅を広げる。
+ */
+export function isAssemblySelectPage(pathname: string): boolean {
+  return pathname.split("/").filter(Boolean).length === 0;
+}
+
 /** インタビューチャットページかどうかを判定 */
 export function isInterviewPage(pathname: string): boolean {
   // /bills/[id]/interview/chat

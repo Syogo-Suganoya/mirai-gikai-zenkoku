@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   extractBillRouteFromPath,
+  isAssemblySelectPage,
   isInterviewPage,
   isInterviewSection,
   isMainPage,
@@ -115,5 +116,17 @@ describe("extractBillRouteFromPath", () => {
     expect(extractBillRouteFromPath("/about")).toBeNull();
     expect(extractBillRouteFromPath("/")).toBeNull();
     expect(extractBillRouteFromPath("/aichi-pref/bills")).toBeNull();
+  });
+});
+
+describe("isAssemblySelectPage", () => {
+  it("returns true for the top page", () => {
+    expect(isAssemblySelectPage("/")).toBe(true);
+    expect(isAssemblySelectPage("")).toBe(true);
+  });
+
+  it("returns false for other pages", () => {
+    expect(isAssemblySelectPage("/aichi-pref")).toBe(false);
+    expect(isAssemblySelectPage("/cities")).toBe(false);
   });
 });

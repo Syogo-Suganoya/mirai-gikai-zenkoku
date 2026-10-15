@@ -29,6 +29,8 @@ import {
 
 /** 地図の塗り */
 const FILL_CLASSES: Record<PrefectureMapState, string> = {
+  in_session:
+    "fill-mirai-in-session hover:fill-mirai-in-session-accent cursor-pointer",
   real: "fill-primary hover:fill-primary-accent cursor-pointer",
   dummy: "fill-mirai-dummy-border hover:fill-primary-accent cursor-pointer",
   none: "fill-mirai-surface-muted",
@@ -117,7 +119,9 @@ export function JapanMapSelector({ assemblyByPrefecture }: Props) {
                 role="link"
                 tabIndex={openable ? 0 : -1}
                 aria-label={
-                  openable ? `${prefecture.name}議会を開く` : prefecture.name
+                  openable
+                    ? `${prefecture.name}議会を開く${state === "in_session" ? "（開会中）" : ""}`
+                    : prefecture.name
                 }
                 aria-disabled={!openable}
                 onClick={() => open(prefecture.code, prefecture.name)}
@@ -155,6 +159,7 @@ export function JapanMapSelector({ assemblyByPrefecture }: Props) {
           </span>
         )}
         <figcaption className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-mirai-text-secondary">
+          <Legend className="bg-mirai-in-session" label="いま開会中" />
           <Legend className="bg-primary" label="議案あり" />
           <Legend
             className="bg-mirai-dummy-border"
