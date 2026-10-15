@@ -1,9 +1,13 @@
-import { Home, User } from "lucide-react";
+import { SITE_NAME } from "@mirai-gikai/shared/site/site-name";
+import { User } from "lucide-react";
+import Link from "next/link";
 import type { ReactNode } from "react";
+import { SiteLogo } from "@/components/brand/site-logo";
 import { loadAssemblyKindBySlug } from "@/features/assemblies/server/loaders/load-assembly-kind-by-slug";
 import { LogoutButton } from "@/features/auth/client/components/logout-button";
 import { requireUserPage } from "@/features/auth/server/lib/session";
-import { NavigationLinks } from "./layout/navigation-links";
+import { routes } from "@/lib/routes";
+import { AssemblyKindNav, NavigationLinks } from "./layout/navigation-links";
 
 export default async function MainLayout({
   children,
@@ -18,15 +22,19 @@ export default async function MainLayout({
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                  <Home className="h-5 w-5 text-white" />
-                </div>
-                <h1 className="text-xl font-semibold text-gray-900">
-                  みらい議会＠全国地方議会 管理画面
-                </h1>
-              </div>
+            <div className="flex items-center">
+              <Link
+                href={routes.home()}
+                className="flex items-center"
+                aria-label={`${SITE_NAME}（非公式） 管理画面 ホーム`}
+              >
+                <SiteLogo />
+              </Link>
+              {/* 狭い画面では下のメニューの行に出す */}
+              <AssemblyKindNav
+                className="ml-4 hidden sm:flex"
+                kindBySlug={kindBySlug}
+              />
             </div>
 
             <div className="flex items-center space-x-2 md:space-x-4">
@@ -39,7 +47,8 @@ export default async function MainLayout({
           </div>
 
           {/* Navigation */}
-          <NavigationLinks kindBySlug={kindBySlug} />
+          <AssemblyKindNav className="pb-2 sm:hidden" kindBySlug={kindBySlug} />
+          <NavigationLinks />
         </div>
       </header>
 

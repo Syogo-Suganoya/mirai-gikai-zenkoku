@@ -1,7 +1,9 @@
-/** サービス名（FORK_GUIDELINES.md の「みらい議会＠地域名」の形） */
-export const SITE_NAME_MAIN_PART = "みらい議会";
-export const SITE_NAME_LOCAL_PART = "＠全国地方議会";
-export const SITE_NAME = `${SITE_NAME_MAIN_PART}${SITE_NAME_LOCAL_PART}`;
+/** サービス名は管理画面と共通（packages/shared） */
+export {
+  SITE_NAME,
+  SITE_NAME_LOCAL_PART,
+  SITE_NAME_MAIN_PART,
+} from "@mirai-gikai/shared/site/site-name";
 
 /** テーマカラー（globals.css の --primary と合わせる） */
 export const THEME_COLOR = "#3567c4";

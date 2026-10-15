@@ -14,7 +14,7 @@ import {
 import { routes } from "@/lib/routes";
 import { cn } from "@/lib/utils";
 
-/** 議会一覧（区分ごと）。議会の画面でも、その議会の区分を選択中にする */
+/** 議会一覧（区分ごと） */
 const assemblyKindLinks: { kind: AssemblyKind; href: string }[] = [
   { kind: "prefecture", href: routes.home("prefecture") },
   { kind: "city", href: routes.home("city") },
@@ -29,9 +29,15 @@ const navigationLinks = [
   { href: routes.admins(), label: "アカウント" },
 ];
 
-export function NavigationLinks({
+/**
+ * 議会の区分（都道府県・市・区町村）の切り替え。公開サイトのヘッダーと同じく、タイトルの横に出す。
+ * 議会の画面でも、その議会の区分を選択中にする。
+ */
+export function AssemblyKindNav({
+  className,
   kindBySlug,
 }: {
+  className?: string;
   kindBySlug: AssemblyKindBySlug;
 }) {
   const pathname = usePathname();
@@ -42,16 +48,31 @@ export function NavigationLinks({
   );
 
   return (
+    <nav aria-label="議会の区分" className={cn("flex gap-1", className)}>
+      {assemblyKindLinks.map((link) => (
+        <Link
+          key={link.kind}
+          href={link.href as Route}
+          aria-current={activeKind === link.kind ? "true" : undefined}
+          className={cn(
+            "whitespace-nowrap rounded-full px-3 py-1.5 text-[13px] font-bold text-gray-600 transition-colors hover:bg-muted hover:text-gray-900",
+            activeKind === link.kind && "bg-muted text-gray-900"
+          )}
+        >
+          {ASSEMBLY_KIND_LABELS[link.kind]}
+        </Link>
+      ))}
+    </nav>
+  );
+}
+
+/** 議会の区分以外のメニュー（タグ管理・インタビュー・アカウント） */
+export function NavigationLinks() {
+  const pathname = usePathname();
+
+  return (
     <nav>
       <div className="flex space-x-8">
-        {assemblyKindLinks.map((link) => (
-          <NavLink
-            key={link.kind}
-            href={link.href}
-            label={ASSEMBLY_KIND_LABELS[link.kind]}
-            isActive={activeKind === link.kind}
-          />
-        ))}
         {navigationLinks.map((link) => (
           <NavLink
             key={link.href}

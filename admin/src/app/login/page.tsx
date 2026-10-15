@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { SiteLogo } from "@/components/brand/site-logo";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LoginForm } from "@/features/auth/client/components/login-form";
 import { getCurrentUser } from "@/features/auth/server/lib/session";
@@ -11,13 +12,13 @@ export default async function LoginPage() {
   return (
     <div className="min-h-dvh flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-4">
       <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
+        <CardHeader className="space-y-4">
+          <div className="flex justify-center">
+            <SiteLogo />
+          </div>
           <CardTitle className="text-2xl font-bold text-center">
             ログイン
           </CardTitle>
-          <p className="text-sm text-muted-foreground text-center">
-            みらい議会＠全国地方議会 管理画面
-          </p>
         </CardHeader>
         <CardContent>
           <LoginForm />

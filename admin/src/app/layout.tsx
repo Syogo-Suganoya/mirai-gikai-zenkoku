@@ -1,3 +1,4 @@
+import { SITE_NAME } from "@mirai-gikai/shared/site/site-name";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
@@ -19,7 +20,7 @@ const isDev = process.env.NODE_ENV === "development";
 const isStaging = process.env.VERCEL_TARGET_ENV === "staging";
 
 export const metadata: Metadata = {
-  title: "みらい議会＠全国地方議会 管理画面",
+  title: `${SITE_NAME} 管理画面`,
   description: "みらい議会の管理者向けダッシュボード",
   icons: {
     icon: isDev

@@ -124,6 +124,10 @@
       "types": "./src/ai/provider.ts",
       "default": "./src/ai/provider.ts"
     },
+    "./site/site-name": {
+      "types": "./src/site/site-name.ts",
+      "default": "./src/site/site-name.ts"
+    },
     "./prefectures": {
       "types": "./src/prefectures/prefectures.ts",
       "default": "./src/prefectures/prefectures.ts"
