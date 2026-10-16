@@ -85,6 +85,21 @@ describe("validateRows: 議案", () => {
     expect(result.errors[0]).toMatchObject({ row: 3 });
     expect(result.errors[0].message).toContain("2 行目と同じ");
   });
+
+  it("原文 URL と議会のサイトの資料 URL を別々に読む（省いた列は空）", () => {
+    const result = validate(
+      "bills",
+      "会期キー,議案番号,正式名称,種類,原文 URL,議会のサイトの資料 URL\n2026-09,第1号,a,条例,,https://example.jp/list.pdf\n2026-09,第2号,b,条例,https://example.jp/gian.pdf,\n",
+      context
+    );
+    expect(result.errors).toEqual([]);
+    expect(
+      result.records.map((r) => [r.record.source_url, r.record.materials_url])
+    ).toEqual([
+      [null, "https://example.jp/list.pdf"],
+      ["https://example.jp/gian.pdf", null],
+    ]);
+  });
 });
 
 describe("validateRows: 議決結果", () => {

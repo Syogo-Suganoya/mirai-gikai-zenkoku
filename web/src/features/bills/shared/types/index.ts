@@ -42,6 +42,7 @@ export type ComingSoonBill = {
   id: string;
   name: string; // 正式名称
   title: string | null; // わかりやすいタイトル（bill_contentsから）
+  /** 出典へのリンク（議案の原文、なければ議会のサイトの資料） */
   source_url: string | null;
 };
 

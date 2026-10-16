@@ -180,6 +180,7 @@ export async function loadExistingRecords<K extends CsvImportKind>(
         committee_name: r.committee_name,
         status: r.status,
         source_url: r.source_url,
+        materials_url: r.materials_url,
         source_pages: r.source_pages,
         tags: r.bills_tags.map((bt) => bt.tags.label),
       } satisfies BillRecord);
@@ -390,6 +391,7 @@ async function applyBills(
           committee_name: r.committee_name,
           status: r.status ?? "introduced",
           source_url: r.source_url,
+          materials_url: r.materials_url,
           source_pages: r.source_pages,
           publish_level: defaultPublishLevel,
           // 公開は議案一覧から確認者が行う
@@ -414,6 +416,7 @@ async function applyBills(
           ...(r.committee_name !== null && { committee_name: r.committee_name }),
           ...(r.status !== null && { status: r.status }),
           ...(r.source_url !== null && { source_url: r.source_url }),
+          ...(r.materials_url !== null && { materials_url: r.materials_url }),
           ...(r.source_pages !== null && { source_pages: r.source_pages }),
         })
         .where(eq(bills.id, existing.id));

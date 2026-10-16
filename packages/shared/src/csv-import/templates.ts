@@ -85,6 +85,13 @@ export const CSV_COLUMNS: Record<CsvImportKind, CsvColumn[]> = {
       note: "準備中／提出／委員会付託／議決済み／継続審査／撤回（空なら提出）",
     },
     { key: "source_url", label: "原文 URL", required: false, example: "https://..." },
+    {
+      key: "materials_url",
+      label: "議会のサイトの資料 URL",
+      required: false,
+      example: "",
+      note: "議案の一覧・議決結果など、原文ではない資料。原文 URL がないときに出典として出す",
+    },
     { key: "source_pages", label: "ページ範囲", required: false, example: "12-15" },
     {
       key: "tags",

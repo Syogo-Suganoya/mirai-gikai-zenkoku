@@ -21,6 +21,7 @@ const baseBill: Bill = {
   status: "introduced",
   status_note: null,
   source_url: null,
+  materials_url: null,
   source_file_path: null,
   source_pages: null,
   publish_level: "title_only",

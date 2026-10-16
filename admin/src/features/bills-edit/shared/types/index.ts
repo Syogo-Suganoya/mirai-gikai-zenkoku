@@ -71,6 +71,7 @@ const billBaseSchema = z.object({
   ]),
   status_note: optionalText(500, "状態の補足"),
   source_url: optionalUrl,
+  materials_url: optionalUrl,
   source_pages: optionalText(50, "ページ範囲"),
   publish_level: z.enum(["title_only", "explained"]),
   thumbnail_url: z.string().nullable().optional(),

@@ -289,6 +289,7 @@ function readBill(
     false
   );
   const source_url = r.url("source_url");
+  const materials_url = r.url("materials_url");
   const source_pages = r.text("source_pages");
 
   let tags: string[] | null = null;
@@ -323,6 +324,7 @@ function readBill(
     committee_name,
     status,
     source_url,
+    materials_url,
     source_pages,
     tags,
   };

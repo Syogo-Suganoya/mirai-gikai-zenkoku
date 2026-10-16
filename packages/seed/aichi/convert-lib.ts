@@ -127,6 +127,7 @@ export type BillCsvRow = {
   committee_name: string;
   status: string;
   source_url: string;
+  materials_url: string;
   source_pages: string;
   tags: string;
 };
@@ -154,7 +155,9 @@ export function agendaToBillRow(item: SourceAgenda): BillCsvRow {
     submitted_date: item.submittedDate ?? "",
     committee_name: normalizeCommittee(item.committee),
     status: item.result ? "議決済み" : "提出",
-    source_url: item.sourceUrl,
+    // 移行元の URL は議会の日程のページで、議案の原文ではないので「議会のサイトの資料」に入れる
+    source_url: "",
+    materials_url: item.sourceUrl,
     source_pages: "",
     tags: "",
   };
@@ -189,7 +192,9 @@ export function explainedToBillRow(bill: SourceExplainedBill): BillCsvRow {
     submitted_date: bill.submittedDate,
     committee_name: "",
     status: bill.status === "enacted" || bill.status === "rejected" ? "議決済み" : "提出",
-    source_url: bill.sourceUrl,
+    // 移行元の URL は議会の日程のページで、議案の原文ではないので「議会のサイトの資料」に入れる
+    source_url: "",
+    materials_url: bill.sourceUrl,
     source_pages: "",
     tags: bill.tags.map(stripEmoji).join(";"),
   };

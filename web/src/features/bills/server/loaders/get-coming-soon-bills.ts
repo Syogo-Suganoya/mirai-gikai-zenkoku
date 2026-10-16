@@ -3,6 +3,7 @@ import { getDifficultyLevel } from "@/features/bill-difficulty/server/loaders/ge
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
 import { CACHE_TAGS } from "@/lib/cache-tags";
 import type { ComingSoonBill } from "../../shared/types";
+import { billSourceLink } from "../../shared/utils/bill-source-link";
 import { findComingSoonBills } from "../repositories/bill-repository";
 
 /**
@@ -48,7 +49,8 @@ const _getCachedComingSoonBills = unstable_cache(
         id: bill.id,
         name: bill.name,
         title: preferred?.title || fallback?.title || null,
-        source_url: bill.source_url,
+        // 原文を優先し、なければ議会のサイトの資料へリンクする
+        source_url: billSourceLink(bill)?.href ?? null,
       };
     });
   },

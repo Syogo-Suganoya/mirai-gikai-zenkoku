@@ -81,7 +81,10 @@ export async function BillDetailLayout({
             <BillContent bill={bill} />
           ) : (
             <div className="my-8">
-              <TitleOnlyNotice sourceUrl={bill.source_url} />
+              <TitleOnlyNotice
+                hasOriginal={Boolean(bill.source_url)}
+                hasMaterials={Boolean(bill.materials_url)}
+              />
             </div>
           )}
         </Container>

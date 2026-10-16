@@ -50,6 +50,7 @@ export function BillCreateForm({
       status: "introduced",
       status_note: null,
       source_url: null,
+      materials_url: null,
       source_pages: null,
       publish_level: defaultPublishLevel,
       thumbnail_url: null,

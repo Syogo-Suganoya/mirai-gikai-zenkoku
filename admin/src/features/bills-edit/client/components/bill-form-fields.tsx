@@ -200,9 +200,16 @@ export function BillFormFields({
         <TextField
           control={control}
           name="source_url"
-          label="原文 URL"
+          label="議案の原文 URL"
           placeholder="https://..."
-          description="議会サイトの議案書のページ。公開サイトの「原文を見る」に使います"
+          description="議案書（議案の本文）の URL。公開サイトの出典に「議案の原文（議会のサイト）」として出します"
+        />
+        <TextField
+          control={control}
+          name="materials_url"
+          label="議会のサイトの資料 URL"
+          placeholder="https://..."
+          description="議案の一覧・議決結果など、原文ではない議会のサイトの資料。原文の URL がないときだけ、公開サイトの出典に「議会のサイトの資料」として出します"
         />
         <TextField
           control={control}
@@ -344,6 +351,7 @@ type TextFieldName =
   | "submitter"
   | "committee_name"
   | "source_url"
+  | "materials_url"
   | "source_pages"
   | "slug";
 

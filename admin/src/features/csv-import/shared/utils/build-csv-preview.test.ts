@@ -18,6 +18,7 @@ const bill = (n: number, name: string | null = null): BillRecord => ({
   committee_name: null,
   status: null,
   source_url: null,
+  materials_url: null,
   source_pages: null,
   tags: [],
 });

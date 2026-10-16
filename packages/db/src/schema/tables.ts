@@ -180,6 +180,7 @@ export const bills = pgTable("bills", {
 	status: bill_status_enum().default('introduced').notNull(),
 	status_note: text(),
 	source_url: text(),
+	materials_url: text(),
 	source_file_path: text(),
 	source_pages: text(),
 	publish_level: bill_publish_level_enum().default('title_only').notNull(),

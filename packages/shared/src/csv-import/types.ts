@@ -119,6 +119,8 @@ export type BillRecord = {
   /** 空なら新規は「提出」、更新は変えない */
   status: BillStatus | null;
   source_url: string | null;
+  /** 議案の一覧・議決結果など、原文ではない議会のサイトの資料 */
+  materials_url: string | null;
   source_pages: string | null;
   /** 空なら変えない */
   tags: string[] | null;

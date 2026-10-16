@@ -395,7 +395,7 @@ export async function findComingSoonBills(
   sessionId: string | null
 ) {
   return createDb().query.bills.findMany({
-    columns: { id: true, name: true, source_url: true },
+    columns: { id: true, name: true, source_url: true, materials_url: true },
     where: and(
       eq(bills.assembly_id, assemblyId),
       eq(bills.publish_status, "coming_soon"),
