@@ -2,6 +2,7 @@ import { MessageSquare } from "lucide-react";
 import type { Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { Breadcrumb, type BreadcrumbItem } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { getInterviewLPLink } from "@/features/interview-config/shared/utils/interview-links";
 import { FuriganaText } from "@/lib/furigana/furigana-text";
@@ -21,6 +22,8 @@ import { type BillWithContent, billKey } from "../../../shared/types";
 
 interface BillDetailHeaderProps {
   bill: BillWithContent;
+  /** 見出しの上に出すパン屑（議会 > 会期 > 議案番号） */
+  breadcrumbItems?: BreadcrumbItem[];
   hasInterviewConfig?: boolean;
   /** 意見数（トピック分析の total_opinions）。回答者数（人数）ではない点に注意。 */
   opinionCount?: number;
@@ -30,6 +33,7 @@ interface BillDetailHeaderProps {
 
 export async function BillDetailHeader({
   bill,
+  breadcrumbItems,
   hasInterviewConfig,
   opinionCount,
   topicCount,
@@ -59,6 +63,11 @@ export async function BillDetailHeader({
       )}
 
       <div className="px-4 pt-8 mb-3">
+        {breadcrumbItems && (
+          <div className="mb-4">
+            <Breadcrumb items={breadcrumbItems} />
+          </div>
+        )}
         <BillMeta bill={bill} className="mb-2" />
         <h1 className="text-2xl font-bold mb-3">
           {bill.is_dummy && <DummyBadge className="mr-2 align-middle" />}

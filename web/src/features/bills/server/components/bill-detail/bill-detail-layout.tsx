@@ -5,6 +5,7 @@ import { InterviewLandingSection } from "@/features/interview-config/client/comp
 import { getInterviewConfig } from "@/features/interview-config/server/loaders/get-interview-config";
 import { isInterviewEnabled } from "@/features/interview-config/shared/utils/is-interview-enabled";
 import { getPublicReportsByBillId } from "@/features/interview-report/server/loaders/get-public-reports-by-bill-id";
+import { getSessionsByAssembly } from "@/features/sessions/server/loaders/get-sessions";
 import { BillTopicsPreviewSection } from "@/features/user-topic-analysis/server/components/bill-topics-preview-section";
 import { getPublicTopicAnalysis } from "@/features/user-topic-analysis/server/loaders/get-public-topic-analysis";
 import { BillDetailClient } from "../../../client/components/bill-detail/bill-detail-client";
@@ -13,6 +14,7 @@ import { BillStatusProgress } from "../../../client/components/bill-detail/bill-
 import { MiraiStanceCard } from "../../../client/components/bill-detail/mirai-stance-card";
 import { TitleOnlyNotice } from "../../../client/components/bill-detail/title-only-notice";
 import { type BillWithContent, billKey } from "../../../shared/types";
+import { billBreadcrumbItems } from "../../../shared/utils/bill-breadcrumb";
 import { BillShareButtons } from "../share/bill-share-buttons";
 import { BillContent } from "./bill-content";
 import { BillDetailHeader } from "./bill-detail-header";
@@ -40,14 +42,17 @@ export async function BillDetailLayout({
     (bill.status === "preparing" || bill.mirai_stance);
   const isExplained = bill.publish_level === "explained" && bill.bill_content;
 
-  const [interviewConfig, publicReportsResult, topicAnalysis] =
+  const [interviewConfig, publicReportsResult, topicAnalysis, sessions] =
     await Promise.all([
       showInterview ? getInterviewConfig(bill.id) : Promise.resolve(null),
       showInterview
         ? getPublicReportsByBillId(bill.id)
         : Promise.resolve({ totalCount: 0 }),
       showInterview ? getPublicTopicAnalysis(bill.id) : Promise.resolve(null),
+      getSessionsByAssembly(assembly.id),
     ]);
+
+  const breadcrumbItems = billBreadcrumbItems(assembly, sessions, bill);
 
   return (
     <div className="container mx-auto pb-8 max-w-4xl">
@@ -64,6 +69,7 @@ export async function BillDetailLayout({
       >
         <BillDetailHeader
           bill={bill}
+          breadcrumbItems={breadcrumbItems}
           hasInterviewConfig={interviewConfig != null}
           opinionCount={topicAnalysis?.total_opinions ?? 0}
           topicCount={topicAnalysis?.topics.length ?? 0}
