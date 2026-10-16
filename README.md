@@ -8,7 +8,7 @@
 - 公開サイト: https://mirai-gikai-zenkoku.vercel.app/
 - 管理画面: https://mirai-gikai-zenkoku-59l4.vercel.app/ （管理者のみ）
 
-設計は [docs/地方議会プラットフォーム設計_v3.md](docs/地方議会プラットフォーム設計_v3.md)、開発の進め方は [CONTRIBUTING.md](CONTRIBUTING.md) にあります。
+開発の進め方は [CONTRIBUTING.md](CONTRIBUTING.md) にあります。
 
 ![構成図](./docs/architecture.png)
 
@@ -68,8 +68,6 @@ DB を作り直すときは `pnpm db:reset`（コンテナの削除 → 起動 �
 | ファイル | Vercel Blob |
 | AI | Google Gemini API |
 | CI | GitHub Actions（`.github/workflows`） |
-
-本番への出し方は [docs/デプロイ手順.md](docs/デプロイ手順.md) にまとめています。
 
 ## ライセンス
 

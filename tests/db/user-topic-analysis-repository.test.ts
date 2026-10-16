@@ -112,7 +112,7 @@ describe("user-topic-analysis repository 統合テスト", () => {
       );
   });
 
-  it("fetchTargetOpinions は管理者公開×ユーザー公開×モデレーションOKの意見だけ返す（§8）", async () => {
+  it("fetchTargetOpinions は管理者公開×ユーザー公開×モデレーションOKの意見だけ返す", async () => {
     // A: admin公開 × user公開 × ok（含まれる）
     const a = await createReportWithOpinions({
       configId,

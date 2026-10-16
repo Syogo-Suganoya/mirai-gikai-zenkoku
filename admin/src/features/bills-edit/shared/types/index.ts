@@ -27,7 +27,7 @@ const optionalUrl = z
   .optional();
 
 /**
- * 議案の入力（設計 v3 6.1節）。議会は URL で決まるので入力に含めない。
+ * 議案の入力。議会は URL で決まるので入力に含めない。
  */
 const billBaseSchema = z.object({
   session_id: z.string().uuid("会期を選択してください"),

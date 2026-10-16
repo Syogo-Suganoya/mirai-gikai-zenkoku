@@ -12,7 +12,7 @@ import type { CsvImportKind } from "@mirai-gikai/shared/csv-import/types";
 import { validateRows } from "@mirai-gikai/shared/csv-import/validate";
 
 /**
- * CSV ファイルを読み込み、検証し、既にあるデータと突き合わせる（6.2.2節の確認画面まで）。
+ * CSV ファイルを読み込み、検証し、既にあるデータと突き合わせる（確認画面まで）。
  * DB には書き込まない。
  */
 export async function validateCsvFile(

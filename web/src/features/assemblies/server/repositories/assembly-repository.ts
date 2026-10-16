@@ -35,7 +35,7 @@ export async function findAssemblyBySlug(slug: string) {
 
 /**
  * 議会ごとの公開中の議案数・ダミーの有無・開会中の会期を集計する（議会選択画面）。
- * 議案のない議会は返さない（v2 2.5節: 議案のない議会は一覧に出さない）。
+ * 議案のない議会は返さない（議会の一覧に出さない）。
  */
 export async function findAssembliesWithPublishedBills(today: string) {
   const db = createDb();

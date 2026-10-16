@@ -1,11 +1,11 @@
 import { AI_MODELS, DEFAULT_OPINION_BACKFILL_MODEL } from "@mirai-gikai/shared/ai/models";
 
 // ── 分析（analyze）──
-/** Phase1 一次抽出のバッチサイズ（§A.3: 30〜50件/バッチ） */
+/** Phase1 一次抽出のバッチサイズ（30〜50件/バッチ） */
 export const EXTRACT_BATCH_SIZE = 40;
-/** Phase3 割当のバッチサイズ（§A.2: 20件/バッチ） */
+/** Phase3 割当のバッチサイズ（20件/バッチ） */
 export const ASSIGN_BATCH_SIZE = 20;
-/** バッチ並列実行数（§A.3: 5〜10並列） */
+/** バッチ並列実行数（5〜10並列） */
 export const MAX_CONCURRENCY = 10;
 /**
  * グルーピング1回のプロンプトに載せる中トピック数の上限。

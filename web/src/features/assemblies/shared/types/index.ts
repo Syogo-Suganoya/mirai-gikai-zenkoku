@@ -7,7 +7,7 @@ export type AssemblyType = Enums<"assembly_type_enum">;
 /** 議会と議会ごとの設定（公開側の表示の出し分けに使う） */
 export type AssemblyWithSettings = Assembly & {
   settings: AssemblySettings;
-  /** この議会にダミーの議案があるか（画面上部の帯・noindex に使う。8.5.3節） */
+  /** この議会にダミーの議案があるか（画面上部の帯・noindex に使う） */
   hasDummy: boolean;
 };
 

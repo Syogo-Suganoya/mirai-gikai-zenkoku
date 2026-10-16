@@ -11,8 +11,8 @@ export type VisibleResultFields = {
 };
 
 /**
- * 粒度ごとに出す項目を決める（v2 2.2節）。
- * 「非公開」の議会は結果も出さない。データが無い項目は出さない（v2 2.7節）。
+ * 粒度ごとに出す項目を決める。
+ * 「非公開」の議会は結果も出さない。データが無い項目は出さない。
  */
 export function visibleResultFields(
   granularity: VoteGranularity,

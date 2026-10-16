@@ -4,9 +4,9 @@ import type { AssemblySettingsInput } from "../types";
 const PUBLISH_LEVELS = ["title_only", "explained"];
 
 /**
- * 議会設定の入力を確かめる（設計 v2 2.7節の制約）。問題が無ければ null。
+ * 議会設定の入力を確かめる。問題が無ければ null。
  * - チームみらいのスタンスは、議員がいる議会（has_mirai_member）でだけ出せる
- * - AIインタビューは、ダミーデータが残っている議会では出せない（架空の議案に住民の意見を集めない。設計 v3 8.5.3節）
+ * - AIインタビューは、ダミーデータが残っている議会では出せない（架空の議案に住民の意見を集めない）
  */
 export function validateAssemblySettings(
   input: AssemblySettingsInput,
@@ -29,7 +29,7 @@ export function validateAssemblySettings(
 
 export type FeatureVisibility = "shown" | "hidden_no_data" | "off";
 
-/** 設定がオンでもデータが0件なら公開側には出さない（設計 v2 2.7節） */
+/** 設定がオンでもデータが0件なら公開側には出さない */
 export function featureVisibility(
   enabled: boolean,
   dataCount: number

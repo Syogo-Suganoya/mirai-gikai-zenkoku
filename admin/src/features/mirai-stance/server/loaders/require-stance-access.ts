@@ -5,7 +5,7 @@ import { findStanceBillId } from "../repositories/mirai-stance-repository";
 
 /**
  * スタンスを変える Server Action 用。
- * チームみらいの議員がいる議会（has_mirai_member）のときだけ通す（設計 v3 3.2節）。
+ * チームみらいの議員がいる議会（has_mirai_member）のときだけ通す。
  */
 export async function requireStanceAction(target: {
   billId?: string;

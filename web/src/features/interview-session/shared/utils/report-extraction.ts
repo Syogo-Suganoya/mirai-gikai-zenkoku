@@ -15,7 +15,7 @@ const reportExtractionSchema = z.object({
  * richness / concern / proposal / reasoning_types が存在しないため、
  * 欠落フィールドを null で補完してから検証する。
  * これにより新フィールド追加前に生成された要約メッセージでも抽出が失敗せず、
- * インタビュー完了がブロックされない（§4.0）。
+ * インタビュー完了がブロックされない。
  */
 function backfillOpinionFields(parsed: unknown): unknown {
   if (

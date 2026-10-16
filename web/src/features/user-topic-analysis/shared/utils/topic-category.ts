@@ -4,7 +4,7 @@ import type { PublicOpinion, UserCategory } from "../types";
 // 純粋ロジックの正準はパッケージ側。web 既存 import 互換のため再エクスポートする。
 export { normalizeRoleTitle };
 
-/** §9 の4区分の表示ラベル。 */
+/** 4区分の表示ラベル。 */
 export const userCategoryLabels: Record<UserCategory, string> = {
   affected: "当事者",
   industry: "事業者",

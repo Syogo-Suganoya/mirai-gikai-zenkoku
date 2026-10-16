@@ -11,7 +11,7 @@ export const MAX_PERSONA_SLOTS = 10;
 /** UI 上で推奨する上限。これを超えると警告を出す想定 */
 export const RECOMMENDED_PERSONA_SLOTS = 6;
 
-/** UI のモデル選択肢として提示するモデル一覧（Gemini API を直接呼ぶ。設計 v3 4章） */
+/** UI のモデル選択肢として提示するモデル一覧（Gemini API を直接呼ぶ） */
 export const SIMULATION_MODEL_OPTIONS = (
   Object.entries(GEMINI_MODELS) as [AiModel, { label: string }][]
 ).map(([value, model]) => ({ value, label: model.label }));

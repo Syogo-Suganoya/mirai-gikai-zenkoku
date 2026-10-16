@@ -5,14 +5,14 @@ const json = (body: unknown, status = 200) =>
     status,
     headers: {
       "Content-Type": "application/json",
-      // 同意撤回・非公開化が即座に反映されるよう（§8）キャッシュしない。
+      // 同意撤回・非公開化が即座に反映されるようキャッシュしない。
       "Cache-Control": "no-store",
     },
   });
 
 /**
- * ユーザー向けトピック分析の公開読み取り API（§13 A.4）。
- * 公開中（is_published=true）version のトピック＋意見を、§8 の表示時フィルタ適用後で返す。
+ * ユーザー向けトピック分析の公開読み取り API。
+ * 公開中（is_published=true）version のトピック＋意見を、表示時フィルタ適用後で返す。
  * 公開版が無ければ 404（UI 側は「分析準備中」表示にする）。
  */
 export async function GET(

@@ -1,6 +1,6 @@
 import { FileText } from "lucide-react";
 
-/** 「件名と原文のみ」で載せている議案の案内（v2 2.1節） */
+/** 「件名と原文のみ」で載せている議案の案内 */
 export function TitleOnlyNotice({ sourceUrl }: { sourceUrl: string | null }) {
   return (
     <div className="flex gap-3 rounded-lg bg-white p-6">

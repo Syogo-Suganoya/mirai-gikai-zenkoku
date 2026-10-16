@@ -1,6 +1,6 @@
 // ── 分析（analyze）パイプライン ──
 
-/** §8 フィルタ後の分析対象意見（interview_opinion 由来） */
+/** 公開フィルタ後の分析対象意見（interview_opinion 由来） */
 export type TargetOpinion = {
   opinion_id: string;
   interview_report_id: string;

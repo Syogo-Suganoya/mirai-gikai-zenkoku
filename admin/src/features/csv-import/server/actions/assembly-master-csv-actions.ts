@@ -28,7 +28,7 @@ import { validateCsvFile } from "../services/validate-csv-file";
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
 /**
- * 議会マスタの CSV を検証して、確認画面の内容を返す（設計 v3 6.2節）。
+ * 議会マスタの CSV を検証して、確認画面の内容を返す。
  * 取り込みの記録は議会を持たない（assembly_id が null）。
  */
 export async function uploadAssemblyMasterCsv(

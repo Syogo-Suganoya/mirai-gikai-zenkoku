@@ -42,7 +42,7 @@ interface BillFormFieldsProps {
   sessions: Session[];
 }
 
-/** 議案の入力欄（設計 v3 6.1節）。作成と編集で共通 */
+/** 議案の入力欄。作成と編集で共通 */
 export function BillFormFields({
   control,
   billId,

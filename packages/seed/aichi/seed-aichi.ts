@@ -14,7 +14,7 @@ import { seedAichiContents } from "./seed-contents";
 const DATA_DIR = path.join(import.meta.dirname, "data");
 
 /**
- * 愛知県議会の初期データを入れる（8章）。
+ * 愛知県議会の初期データを入れる。
  * 議会マスタ → 会期 → 議案 → 議決結果 を CSV インポートと同じ処理で取り込み、
  * 解説付きの5件の本文を入れてから、件名と原文のみの議案も含めて公開する。
  */
@@ -30,7 +30,7 @@ export async function seedAichi(tx: Tx): Promise<string> {
     .update(assemblies)
     .set({ status: "public" })
     .where(eq(assemblies.id, assemblyId));
-  // AIチャット 出す、インタビュー 出さない（届け先が決まるまで）、スタンス 出さない、可否のみ（8.2節）
+  // AIチャット 出す、インタビュー 出さない（届け先が決まるまで）、スタンス 出さない、可否のみ
   await tx
     .update(assembly_settings)
     .set({
@@ -73,7 +73,7 @@ export async function seedAichi(tx: Tx): Promise<string> {
   const contentCount = await seedAichiContents(tx, assemblyId);
   console.log(`  解説付きの議案: ${contentCount} 件`);
 
-  // 件名と原文のみの議案は解説の確認なしで公開してよい（v2 2.1節）
+  // 件名と原文のみの議案は解説の確認なしで公開してよい
   await tx
     .update(bills)
     .set({ publish_status: "published", published_at: sql`now()` })

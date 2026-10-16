@@ -1,4 +1,4 @@
-/** 議会に残っているダミーデータの件数（設計 v3 8.5.4節） */
+/** 議会に残っているダミーデータの件数 */
 export type DummyDataCounts = {
   sessions: number;
   bills: number;

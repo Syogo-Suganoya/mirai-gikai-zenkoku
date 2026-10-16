@@ -1,6 +1,6 @@
 /**
  * インタビューチャットで選択可能なAIモデルの定義
- * Gemini API を直接呼ぶ（設計 v3 4章）ので、選べるのは @mirai-gikai/shared の GEMINI_MODELS だけ
+ * Gemini API を直接呼ぶので、選べるのは @mirai-gikai/shared の GEMINI_MODELS だけ
  */
 
 import { type AiModel, GEMINI_MODELS } from "@mirai-gikai/shared/ai/models";

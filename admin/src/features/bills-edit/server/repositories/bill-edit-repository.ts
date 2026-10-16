@@ -56,7 +56,7 @@ export async function findBillBySlug(slug: string) {
 
 /**
  * 議案を作る。議会にダミーデータが残っていれば、同意（deleteDummyData）があるときだけ
- * 消してから作る（実データとダミーを同じ議会に並べない。設計 v3 8.5.4節）。
+ * 消してから作る（実データとダミーを同じ議会に並べない）。
  * 同意がなければ DummyDataExistsError を投げる。
  */
 export async function createBillRecord(

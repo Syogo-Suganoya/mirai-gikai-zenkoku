@@ -15,7 +15,7 @@ function row(overrides: Partial<RawRespondentRow> = {}): RawRespondentRow {
 }
 
 describe("buildPublicBillRespondents", () => {
-  it("role を §9 の4区分にマップする", () => {
+  it("role を4区分にマップする", () => {
     const result = buildPublicBillRespondents([
       row({ id: "a", role: "daily_life_affected" }),
       row({ id: "b", role: "work_related" }),

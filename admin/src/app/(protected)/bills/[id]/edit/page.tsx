@@ -64,7 +64,7 @@ export default async function BillEditPage({ params }: BillEditPageProps) {
           bill={bill}
           sessions={sessions}
         />
-        {/* 報告は議決されないので結果を持たない（設計 v3 5.2節） */}
+        {/* 報告は議決されないので結果を持たない */}
         {bill.category !== "report" && (
           <BillResultForm
             billId={bill.id}
@@ -75,7 +75,7 @@ export default async function BillEditPage({ params }: BillEditPageProps) {
             today={todayInJapan()}
           />
         )}
-        {/* チームみらいのスタンスは、議員がいる議会で設定したときだけ（設計 v3 3.2節） */}
+        {/* チームみらいのスタンスは、議員がいる議会で設定したときだけ */}
         {settings.show_mirai_stance && (
           <StanceForm
             billId={bill.id}

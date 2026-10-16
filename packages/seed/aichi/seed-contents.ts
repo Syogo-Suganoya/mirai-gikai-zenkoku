@@ -9,7 +9,7 @@ import type { ExplainedContents } from "./convert-lib";
 const EXPLAINED_PATH = path.join(import.meta.dirname, "data/explained.json");
 
 /**
- * 解説付きの5件の本文（bill_contents）と参照資料を入れる（CSV の対象外。8.3節）。
+ * 解説付きの5件の本文（bill_contents）と参照資料を入れる（CSV の対象外）。
  * 議案そのものは先に CSV で取り込んでおく。
  *
  * 移行元で確認した内容でも、ここでは確認完了（is_review_completed）にしない（公開画面に「確認がまだ」と出す）。

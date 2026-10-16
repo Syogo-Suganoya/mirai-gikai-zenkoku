@@ -22,7 +22,7 @@ async function assignBatch(
   validTopicIds: Set<string>,
   batchIndex: number
 ): Promise<OpinionAssignment[]> {
-  // 改行を含む意見は1行=1意見のTSV契約を壊すため、空白に正規化してから並べる（§A.2）。
+  // 改行を含む意見は1行=1意見のTSV契約を壊すため、空白に正規化してから並べる。
   const oneLine = (s: string) => s.replace(/\s+/g, " ").trim();
   const opinionsText = opinions
     .map((o, i) => `${i + 1}\t${oneLine(o.title)} / ${oneLine(o.content)}`)
@@ -45,7 +45,7 @@ async function assignBatch(
     );
     assignmentMap = parseAssignmentTsv(text, opinions.length, validTopicIds);
   } catch (error) {
-    // バッチ失敗（リトライ後）は全件 null に倒す（意見が消えない設計・§A.2）
+    // バッチ失敗（リトライ後）は全件 null に倒す（意見が消えない設計）
     console.error(
       `[topic-analysis] assign batch=${batchIndex} failed, defaulting to null: ${
         error instanceof Error ? error.message : "unknown"
@@ -60,7 +60,7 @@ async function assignBatch(
   }));
 }
 
-/** Phase3: 全意見をバッチ分割し各意見へトピックを割当（Classify・§4.3）。 */
+/** Phase3: 全意見をバッチ分割し各意見へトピックを割当（Classify）。 */
 export async function assignOpinions(
   opinions: TargetOpinion[],
   finalTopics: FinalTopicWithId[],

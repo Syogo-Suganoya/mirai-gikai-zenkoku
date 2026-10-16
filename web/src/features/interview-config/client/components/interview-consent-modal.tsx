@@ -12,6 +12,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { getInterviewChatLink } from "@/features/interview-config/shared/utils/interview-links";
+import { routes } from "@/lib/routes";
 
 interface InterviewConsentModalProps {
   open: boolean;
@@ -71,6 +72,18 @@ export function InterviewConsentModal({
               回答は期限を決めずに保存します。将来、集まった意見をチームみらいの議員などに見せることがあります。
             </li>
           </ul>
+          <p className="text-xs text-mirai-text-secondary">
+            情報の取り扱いは
+            <a
+              href={routes.privacy()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline"
+            >
+              プライバシーポリシー
+            </a>
+            をご覧ください。
+          </p>
 
           <div className="flex items-center gap-3">
             <input

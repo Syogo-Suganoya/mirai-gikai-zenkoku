@@ -1,7 +1,7 @@
 import { TriangleAlert } from "lucide-react";
 
 /**
- * ダミーの議案がある議会のページ上部に出す帯（8.5.3節）。
+ * ダミーの議案がある議会のページ上部に出す帯。
  * 議会の設定では消せない。
  */
 export function DummyDataBanner() {

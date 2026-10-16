@@ -1,7 +1,7 @@
 import type { AssemblySummary } from "../types";
 
 /**
- * 議会選択画面の並び順。実データのある議会を先に、ダミーだけの議会を後に並べる（8.5.3節）。
+ * 議会選択画面の並び順。実データのある議会を先に、ダミーだけの議会を後に並べる。
  * 同じ区分の中では都道府県コード順、都道府県議会を市区町村議会より先にする。
  */
 export function sortAssembliesForSelect(

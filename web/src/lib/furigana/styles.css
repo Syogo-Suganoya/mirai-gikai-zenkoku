@@ -1,4 +1,4 @@
-/* ふりがな（ruby の rt）。表示・非表示は html の data-furigana で切り替える（7.1節） */
+/* ふりがな（ruby の rt）。表示・非表示は html の data-furigana で切り替える */
 html:not([data-furigana="on"]) .furigana-rt {
   display: none;
 }

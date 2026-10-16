@@ -12,7 +12,7 @@ import type {
   SavedBillResult,
 } from "../types";
 
-/** 議会設定の粒度に応じて出す入力欄（設計 v3 6.1節） */
+/** 議会設定の粒度に応じて出す入力欄 */
 export type BillResultInputFields = {
   /** 賛成数・反対数 */
   counts: boolean;

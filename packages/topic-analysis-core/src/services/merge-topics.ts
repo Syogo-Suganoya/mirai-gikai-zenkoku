@@ -8,7 +8,7 @@ import { joinSummaryPoints } from "../utils/join-summary-points";
 import { toInlineText } from "../utils/to-inline-text";
 import { buildMergePrompt } from "./prompts";
 
-/** Phase2: トピック候補を単一マージコールで統合（Reduce・§4.2）。 */
+/** Phase2: トピック候補を単一マージコールで統合（Reduce）。 */
 export async function mergeTopics(
   candidates: TopicDraft[],
   bill: BillContext

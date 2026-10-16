@@ -31,9 +31,9 @@ export async function BillDetailLayout({
   currentDifficulty,
 }: BillDetailLayoutProps) {
   const { settings } = assembly;
-  // インタビュー・リアクションは議会設定で出すときだけ。ダミーの議案には出さない（8.5.3節）
+  // インタビュー・リアクションは議会設定で出すときだけ。ダミーの議案には出さない
   const showInterview = isInterviewEnabled(settings, bill);
-  // チームみらいのスタンスは、議員がいる議会で設定したときだけ出す（v2 2.7節）
+  // チームみらいのスタンスは、議員がいる議会で設定したときだけ出す
   const showMiraiStance =
     settings.show_mirai_stance &&
     assembly.has_mirai_member &&

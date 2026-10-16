@@ -2,7 +2,7 @@
 
 > `CLAUDE.md`・`GEMINI.md` は `AGENTS.md` へのシンボリックリンクです。編集は `AGENTS.md` に行ってください。
 
-全国の地方議会向けのみらい議会です。設計は [docs/地方議会プラットフォーム設計_v3.md](docs/地方議会プラットフォーム設計_v3.md)、動かし方は [README.md](README.md) を参照してください。
+全国の地方議会向けのみらい議会です。動かし方は [README.md](README.md)、開発の進め方は [CONTRIBUTING.md](CONTRIBUTING.md) を参照してください。
 
 ## プロジェクト構成
 - `web/` は公開サイト（Next.js）。議会ごとの URL は `/[assembly]/...`。
@@ -40,4 +40,4 @@
 - 変更したら `pnpm lint`・`pnpm typecheck`・`pnpm test`・`pnpm test:integration`・`pnpm build` が通ることを確かめる（CI と同じ）。
 
 ## ドキュメント
-- 設計文書は `docs/` に置く。大きく変えるときは新しいファイルを作り、履歴をたどれるようにする。
+- リポジトリで公開するドキュメントは `README.md`・`CONTRIBUTING.md`・`docs/`（構成図）だけにする。

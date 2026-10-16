@@ -1,10 +1,10 @@
 /**
- * 移行元（mirai-gikai-nagoya）の愛知県議会のデータを、CSV インポートの形式で書き出す（8.3節）。
+ * 移行元（mirai-gikai-nagoya）の愛知県議会のデータを、CSV インポートの形式で書き出す。
  *
  *   pnpm --filter @mirai-gikai/seed aichi:convert -- <移行元リポジトリのパス>
  *
  * 書き出したファイル（aichi/data/）はリポジトリに入れ、`pnpm seed` と CSV インポート画面の両方で使う。
- * 名古屋市会のデータは移行しない（8.1節）。
+ * 名古屋市会のデータは移行しない。
  */
 
 import { readFileSync, writeFileSync } from "node:fs";

@@ -156,7 +156,7 @@ describe("公開トピック分析 読み取り（web 統合）", () => {
     if (testUser?.id) await cleanupTestUser(testUser.id);
   });
 
-  it("findPublishedAnalysis + buildPublicTopicAnalysis が §8 フィルタ後を返す", async () => {
+  it("findPublishedAnalysis + buildPublicTopicAnalysis が公開フィルタ後を返す", async () => {
     const data = await findPublishedAnalysis(publishedBillId);
     expect(data).not.toBeNull();
     if (!data) return;

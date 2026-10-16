@@ -16,7 +16,7 @@ import {
 } from "../repositories/admin-repository";
 
 /**
- * 管理者のアカウントを作り、初期パスワードを1度だけ返す（設計 v3 3.4.4節）。
+ * 管理者のアカウントを作り、初期パスワードを1度だけ返す。
  * メールは送らない。作った人が本人に渡し、本人は初回ログインで変更する。
  */
 export async function createAdmin(

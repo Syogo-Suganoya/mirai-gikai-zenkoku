@@ -1,11 +1,11 @@
-// ユーザー向けトピック分析の読み取り（公開）API のデータ契約（設計 §13 付録 A.4）。
+// ユーザー向けトピック分析の読み取り（公開）API のデータ契約。
 // web の表示と admin MCP の連携が同一の PII セーフな契約を共有する。
 // 個人を特定する識別子（user_id・email・電話等）は含めない。
 
-/** §9 の4区分。interview_report.role を 1:1 でマップする。 */
+/**4区分。interview_report.role を 1:1 でマップする。 */
 export type UserCategory = "affected" | "industry" | "expert" | "citizen";
 
-/** 公開 API が返す意見カード（§8 フィルタ後のもののみ）。 */
+/** 公開 API が返す意見カード（フィルタ後のもののみ）。 */
 export type PublicOpinion = {
   id: string;
   /** この意見の出典インタビューレポートID（レポート詳細への遷移に使う）。 */
@@ -13,7 +13,7 @@ export type PublicOpinion = {
   /**
    * 出典レポートが管理者公開済みか（is_public_by_admin）。
    * レポート詳細ページは管理者公開かつ公開件数しきい値を満たす場合のみ表示されるため、
-   * リンク表示の出し分けに使う（§8 表示判定は user 同意・モデレーションのみ）。
+   * リンク表示の出し分けに使う（表示判定は user 同意・モデレーションのみ）。
    */
   report_public: boolean;
   /** 出典レポートの作成日時（相対表示・日付表示に使う）。 */
@@ -39,7 +39,7 @@ export type PublicOpinion = {
   question_snippet: string | null;
 };
 
-/** 公開 API が返すトピック（件数・内訳は §8 フィルタ後に再計算）。 */
+/** 公開 API が返すトピック（件数・内訳は 公開フィルタ後に再計算）。 */
 export type PublicTopic = {
   id: string;
   title: string;
@@ -53,7 +53,7 @@ export type PublicTopic = {
   opinions: PublicOpinion[];
 };
 
-/** 公開 API レスポンス全体（§13 A.4）。 */
+/** 公開 API レスポンス全体。 */
 export type PublicTopicAnalysis = {
   bill_id: string;
   version: number;
@@ -64,7 +64,7 @@ export type PublicTopicAnalysis = {
 
 // ── リポジトリが返す生データ（pure 関数の入力） ──
 
-/** §8 判定に必要なレポート属性を相乗した、生の意見行。 */
+/** 公開の判定に必要なレポート属性を相乗した、生の意見行。 */
 export type RawOpinionRow = {
   id: string;
   interview_report_id: string;
@@ -128,7 +128,7 @@ export type RawRespondentRow = {
 // ── 回答者詳細（立場説明＋会話ログ／分析用） ──
 //
 // 注意: role_description と messages.content は回答者の**自由記述**であり、
-// LLM で構造化・要約されたものではない。§8 のレポート公開判定
+// LLM で構造化・要約されたものではない。レポート公開判定
 // （管理者公開×ユーザー公開）は通すが、自由記述ゆえ固有名詞等が含まれ得る。
 // それでも user_id・email・有識者登録情報（expert_registrations）等の
 // 識別子は含めない。

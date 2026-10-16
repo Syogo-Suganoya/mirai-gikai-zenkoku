@@ -2,7 +2,7 @@ import type { Bill, BillPublishStatus } from "../types";
 
 export type BillPublishLevel = Bill["publish_level"];
 
-/** ダミーかどうかでの絞り込み（設計 v3 8.5.3節） */
+/** ダミーかどうかでの絞り込み */
 export type BillDataKind = "real" | "dummy";
 
 /** 議案一覧の絞り込み（URL の ?session=&publish=&level=&data=） */

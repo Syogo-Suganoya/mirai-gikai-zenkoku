@@ -45,7 +45,7 @@ const FEATURED_ANCHOR = "featured";
 /**
  * 議会トップ（/[assembly]）。
  * 開会中の会期（なければ直近の会期）と、その議案の一覧を中心に出す。
- * 解説付きの議案を上に、件名のみの議案はまとめて下に出す（v2 3章）。
+ * 解説付きの議案を上に、件名のみの議案はまとめて下に出す。
  */
 export async function AssemblyTopPage({
   assembly,

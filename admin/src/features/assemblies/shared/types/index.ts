@@ -22,7 +22,7 @@ export type AssemblyContext = {
 export type VoteGranularity = AssemblySettings["vote_granularity"];
 export type PublishLevel = AssemblySettings["default_publish_level"];
 
-/** 議会設定画面の入力（設計 v2 2.7節） */
+/** 議会設定画面の入力 */
 export type AssemblySettingsInput = {
   show_ai_chat: boolean;
   show_interview: boolean;

@@ -24,7 +24,7 @@ async function afterChange(billId: string) {
   await invalidateWebCache([WEB_CACHE_TAGS.BILLS]);
 }
 
-/** 議決結果と会派ごとの賛否を保存する（設計 v3 6.1節） */
+/** 議決結果と会派ごとの賛否を保存する */
 export async function saveBillResult(
   billId: string,
   values: BillResultFormValues

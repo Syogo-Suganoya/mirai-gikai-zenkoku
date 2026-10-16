@@ -16,7 +16,7 @@ interface BillResultSectionProps {
 
 /**
  * 議決結果と会派ごとの賛否。議会が公開している事実なので、チームみらいの議員の有無に関係なく出す。
- * 出す項目は議会設定の粒度で決める（v2 2.2節）。
+ * 出す項目は議会設定の粒度で決める。
  */
 export async function BillResultSection({
   bill,

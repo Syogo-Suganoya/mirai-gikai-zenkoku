@@ -9,7 +9,7 @@ import type { InterviewOpinionInsert } from "./build-opinion-rows";
  * レポートの意見を interview_opinion（正規化プロジェクション）へ同期する。
  *
  * opinion_id(UUID) を安定させるため delete+insert ではなく
- * ON CONFLICT (interview_report_id, opinion_index) DO UPDATE で upsert する（§3.1）。
+ * ON CONFLICT (interview_report_id, opinion_index) DO UPDATE で upsert する。
  * 意見数が減った再生成では、新配列長以降の opinion_index を持つ行のみ削除する。
  *
  * web のインタビュー完了時 dual-write と admin の再抽出バックフィルで共通利用する。

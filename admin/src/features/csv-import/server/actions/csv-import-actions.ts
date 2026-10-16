@@ -39,7 +39,7 @@ function isAssemblyCsvKind(value: unknown): value is AssemblyCsvKind {
 
 /**
  * CSV を検証して、確認画面の内容を返す。検証済みの行は取り込みの記録（csv_import_jobs）に
- * 保存し、確定ではその行をそのまま使う（確定時に再アップロードさせない。6.2.2節）。
+ * 保存し、確定ではその行をそのまま使う（確定時に再アップロードさせない）。
  */
 export async function uploadCsv(
   assemblySlug: string,

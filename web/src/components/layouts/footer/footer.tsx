@@ -1,13 +1,15 @@
 "use client";
 
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { EXTERNAL_LINKS } from "@/config/external-links";
 import { NOT_OPERATED_BY_TEAM_MIRAI } from "@/config/site";
 import { isInterviewPage } from "@/lib/page-layout-utils";
+import { routes } from "@/lib/routes";
 
 /**
- * フッター。本家とは別の非公式サイトであることと、ソースコードの公開先だけを出す
- * （FORK_GUIDELINES.md の必須要件 5・6、推奨事項の本家へのリンク）。
+ * フッター。本家とは別の非公式サイトであることと、ソースコードの公開先
+ * （FORK_GUIDELINES.md の必須要件 5・6、推奨事項の本家へのリンク）、プライバシーポリシーを出す。
  */
 export function Footer() {
   const pathname = usePathname();
@@ -34,6 +36,10 @@ export function Footer() {
         <ExternalLink href={EXTERNAL_LINKS.UPSTREAM_REPO}>
           本家みらい議会のリポジトリ
         </ExternalLink>
+        {" ・ "}
+        <Link href={routes.privacy()} className="underline">
+          プライバシーポリシー
+        </Link>
       </p>
     </footer>
   );

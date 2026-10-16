@@ -13,7 +13,7 @@ import { after } from "next/server";
 import { requireUser } from "@/features/auth/server/lib/session";
 
 // 分析は応答を返したあと（after）この関数の中で動かす。Vercel の関数の上限（Hobby は 300 秒）まで使う。
-// 意見が増えて収まらなくなったら、GitHub Actions などの別の実行環境に移す（docs/デプロイ手順.md 7.1）
+// 意見が増えて収まらなくなったら、GitHub Actions などの別の実行環境に移す
 export const maxDuration = 300;
 
 const json = (body: unknown, status = 200) =>
@@ -53,7 +53,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    // 二重起動防止（§5.3）: running/pending があればスキップ。
+    // 二重起動防止: running/pending があればスキップ。
     // ただし ワークフローの実行が worker 到達前に死んだ等で失効した行は failed に倒し、
     // 再実行をブロックし続けないようにする（pending/running のままの残骸を自己回復）。
     const active = await findActiveVersionByBill(billId);

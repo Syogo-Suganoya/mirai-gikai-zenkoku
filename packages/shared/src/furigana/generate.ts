@@ -5,7 +5,7 @@ import { type FuriganaSegment, tokensToSegments } from "./segments";
 
 /**
  * 文章からふりがなのセグメントを作る（サーバー・スクリプト専用）。
- * 保存するときに作って DB に入れ、表示のたびには作らない（7.1節）。
+ * 保存するときに作って DB に入れ、表示のたびには作らない。
  */
 
 function dictionaryPath(): string {

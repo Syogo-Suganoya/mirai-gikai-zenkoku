@@ -16,7 +16,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     getSitemapBills(),
   ]);
 
-  // ダミーだけの議会は noindex なので載せない（8.5.3節）
+  // ダミーだけの議会は noindex なので載せない
   const assemblyUrls = assemblies
     .filter((assembly) => !assembly.dummyOnly)
     .flatMap((assembly) => [

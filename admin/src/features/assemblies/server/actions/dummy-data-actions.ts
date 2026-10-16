@@ -14,7 +14,7 @@ import {
 import { requireAssemblyAction } from "../loaders/require-assembly";
 import { deleteAssemblyDummyData } from "../repositories/dummy-data-repository";
 
-/** 議会のダミーデータを消す（設計 v3 8.5.4節） */
+/** 議会のダミーデータを消す */
 export async function removeAssemblyDummyData(
   assemblySlug: string
 ): Promise<{ success: true; message: string } | { error: string }> {

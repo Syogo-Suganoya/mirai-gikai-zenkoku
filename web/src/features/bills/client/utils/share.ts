@@ -22,7 +22,7 @@ export function createShareMessage(
   bill: Pick<BillWithContent, "name" | "bill_content" | "is_dummy">
 ): string {
   const displayTitle = bill.bill_content?.title ?? bill.name;
-  // ダミーの議案は、共有された先でも架空だと分かるようにする（8.5.3節）
+  // ダミーの議案は、共有された先でも架空だと分かるようにする
   const title =
     bill.is_dummy && !displayTitle.includes(DUMMY_MARK)
       ? `${DUMMY_MARK}${displayTitle}`

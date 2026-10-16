@@ -1,6 +1,6 @@
 /**
- * 移行元（みらい議会＠愛知・名古屋）の愛知県議会のデータを、CSV インポートの形式（6.2.3節）に
- * 変換する純粋関数（8.2節の対応づけ）。
+ * 移行元（みらい議会＠愛知・名古屋）の愛知県議会のデータを、CSV インポートの形式に
+ * 変換する純粋関数。
  */
 
 import type { FuriganaSegment } from "@mirai-gikai/db";
@@ -115,7 +115,7 @@ export function stripEmoji(label: string): string {
     .trim();
 }
 
-/** 議案 CSV の1行（列は 6.2.3節の英語名） */
+/** 議案 CSV の1行（列は英語名） */
 export type BillCsvRow = {
   session_key: string;
   bill_number: string;

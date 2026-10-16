@@ -8,7 +8,7 @@ type Props = {
   params: Promise<{ assembly: string }>;
 };
 
-/** ダミーの議案がある議会は検索エンジンに載せない（8.5.3節） */
+/** ダミーの議案がある議会は検索エンジンに載せない */
 export async function generateMetadata({
   params,
 }: Pick<Props, "params">): Promise<Metadata> {

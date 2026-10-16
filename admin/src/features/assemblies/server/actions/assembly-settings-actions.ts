@@ -14,7 +14,7 @@ import { requireAssemblyAction } from "../loaders/require-assembly";
 import { updateAssemblySettings } from "../repositories/assembly-settings-repository";
 import { countDummyData } from "../repositories/dummy-data-repository";
 
-/** 議会設定を保存する（設計 v2 2.7節） */
+/** 議会設定を保存する */
 export async function saveAssemblySettings(
   assemblySlug: string,
   input: AssemblySettingsInput

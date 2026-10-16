@@ -18,6 +18,7 @@ export const routes = {
   cityAssemblies: () => "/cities" as const,
   /** 区町村議会の一覧（現在作成中） */
   townAssemblies: () => "/towns" as const,
+  privacy: () => "/privacy" as const,
 
   // ── 議会 ──────────────────────────────────────────
   assemblyTop: (assembly: string) => `/${assembly}` as const,

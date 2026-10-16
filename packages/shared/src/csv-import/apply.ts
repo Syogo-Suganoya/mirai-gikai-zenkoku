@@ -218,10 +218,10 @@ export async function loadExistingRecords<K extends CsvImportKind>(
 }
 
 export type ApplyOptions = {
-  /** 件名のふりがなを作る関数（保存時にサーバーで作る。7.1節） */
+  /** 件名のふりがなを作る関数（保存時にサーバーで作る） */
   furigana: (text: string) => Promise<FuriganaSegment[]>;
   /**
-   * 議会にダミーデータが残っているとき、消してから取り込むことに同意したか（8.5.4節）。
+   * 議会にダミーデータが残っているとき、消してから取り込むことに同意したか。
    * 同意がなくダミーがあれば DummyDataExistsError を投げる（管理画面は確認モーダルを出して再実行する）。
    */
   deleteDummyData?: boolean;
@@ -392,7 +392,7 @@ async function applyBills(
           source_url: r.source_url,
           source_pages: r.source_pages,
           publish_level: defaultPublishLevel,
-          // 公開は議案一覧から確認者が行う（6.2.2節）
+          // 公開は議案一覧から確認者が行う
           publish_status: "draft",
         })
         .returning({ id: bills.id });
@@ -560,7 +560,7 @@ export async function applyCsvImport<K extends CsvImportKind>(
   }
 }
 
-/** 議会にダミーの会期・議案・会派があるか（実データを入れる前の確認に使う。8.5.4節） */
+/** 議会にダミーの会期・議案・会派があるか（実データを入れる前の確認に使う） */
 export async function hasDummyData(
   db: DbLike,
   assemblyId: string

@@ -1,7 +1,7 @@
 import type { BillContext, FinalTopicWithId } from "../shared/types";
 import { toInlineText } from "../utils/to-inline-text";
 
-/** fine 粒度方針（§A.1）。Phase1/2 共通。 */
+/** fine 粒度方針。Phase1/2 共通。 */
 const GRANULARITY_POLICY = `## トピック粒度の方針（fine）
 - 同じ核となる主張をしていれば、具体例・言い回し・根拠・強度が違っても積極的に同じトピックにまとめる。1件しか入らない孤立トピックは極力作らない。
 - ただし主張の方向性・対象分野・論点が明確に異なる場合は別トピックにする。粗い数個の大テーマに束ねず、論点の違いが見える中粒度を保つ。
@@ -63,7 +63,7 @@ ${candidatesText}
 上記は意見バッチごとに抽出したトピック候補です。重複・近接するトピックを統合し、議案全体で一貫した最終トピック集合にまとめてください。「その他」等の総括トピックが含まれていたら除去してください。`;
 }
 
-/** Phase3 割当プロンプト（TSV 出力・§A.2） */
+/** Phase3 割当プロンプト（TSV 出力） */
 export function buildAssignPrompt(
   bill: BillContext,
   finalTopics: FinalTopicWithId[],

@@ -154,7 +154,7 @@ describe("publish / 公開読み取り 統合テスト", () => {
     expect(await findPublishedAnalysis(billId)).toBeNull();
   });
 
-  it("公開読み取りは §8（管理者公開×公開同意×モデOK）の意見だけ返し件数も再計算", async () => {
+  it("公開読み取りは公開フィルタ（管理者公開×公開同意×モデOK）の意見だけ返し件数も再計算", async () => {
     // 管理者公開×公開同意×OK の意見1、ユーザー非公開1、管理者非公開1
     const okIds = await createReportWithOpinions({
       configId,

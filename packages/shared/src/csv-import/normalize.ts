@@ -1,5 +1,5 @@
 /**
- * CSV のセルの表記ゆれを揃える純粋関数（6.2.4節）。
+ * CSV のセルの表記ゆれを揃える純粋関数。
  * 値を解釈できないときは null を返し、エラーの文言は呼び出し側（validate）で作る。
  */
 
@@ -105,7 +105,7 @@ export type BillResultParse =
   | { kind: "result"; value: BillResult }
   | { kind: "report" };
 
-/** 表記と値の対応表（v2 2.4節「PDF の取り込みで必ず出る落とし穴」より） */
+/** 表記と値の対応表 */
 export const BILL_RESULT_ALIASES: Record<string, BillResult> = {
   可決: "passed",
   原案可決: "passed",

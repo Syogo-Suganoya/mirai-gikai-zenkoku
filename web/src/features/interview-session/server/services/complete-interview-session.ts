@@ -118,7 +118,7 @@ export async function completeInterviewSession({
   // セッションを完了
   await updateInterviewSessionCompleted(sessionId);
 
-  // 公開された回答なら、その議案のトピックを分析し直す（完了ごと。設計の運用方針 2026-10-14）
+  // 公開された回答なら、その議案のトピックを分析し直す（完了ごと）
   requestTopicAnalysisIfAnalyzable(sessionId, report);
 
   return report;

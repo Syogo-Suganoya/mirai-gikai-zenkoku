@@ -44,7 +44,7 @@ export async function updateBillContents(
           title: data.title || "",
           summary: data.summary || "",
           content: data.content || "",
-          // 本文のふりがなは保存時に作る（表示のたびには作らない。設計 v3 7.1節）
+          // 本文のふりがなは保存時に作る（表示のたびには作らない）
           furigana: await toFuriganaMultiline(data.content || ""),
         });
       }

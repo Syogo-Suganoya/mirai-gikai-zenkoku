@@ -49,7 +49,7 @@ describe("mapRoleToCategory", () => {
   });
 });
 
-describe("buildPublicTopicAnalysis（§8 表示時フィルタ）", () => {
+describe("buildPublicTopicAnalysis（表示時フィルタ）", () => {
   it("管理者非公開・ユーザー非公開・モデレーションNG/警告の意見を除外する", () => {
     const result = buildPublicTopicAnalysis(meta, [
       topic("t0", [

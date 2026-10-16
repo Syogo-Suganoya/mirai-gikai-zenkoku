@@ -7,7 +7,7 @@ interface BillSourceSectionProps {
 
 /**
  * 出典（原文へのリンク）と、解説を確認したかどうかの表示。
- * 中立性に関わる表示なので、議会の設定では消せない（v2 2.7・2.8節）。
+ * 中立性に関わる表示なので、議会の設定では消せない。
  * 確認したかどうかは、管理画面の「解説の確認完了」（is_review_completed）で決める。
  */
 export function BillSourceSection({ bill }: BillSourceSectionProps) {

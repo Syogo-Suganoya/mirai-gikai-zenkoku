@@ -1,4 +1,4 @@
-/** ふりがな表示の設定を残す Cookie（7.1節: 選んだ状態は Cookie に残す） */
+/** ふりがな表示の設定（選んだ状態）を残す Cookie */
 export const FURIGANA_COOKIE_NAME = "furigana";
 export const FURIGANA_COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 

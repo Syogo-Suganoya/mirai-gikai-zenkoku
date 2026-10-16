@@ -11,7 +11,7 @@ export const opinionSchema = z
       .string()
       .nullable()
       .describe("この意見の根拠となるユーザー発言のメッセージID"),
-    // ユーザー向けトピック分析で公開表示する文脈込み引用（§4.0）
+    // ユーザー向けトピック分析で公開表示する文脈込み引用
     contextual_quote: z
       .string()
       .nullable()

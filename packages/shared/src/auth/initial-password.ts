@@ -5,7 +5,7 @@ const ALPHABET = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 const LENGTH = 16;
 
 /**
- * 管理画面のアカウントの初期パスワードを作る（設計 v3 3.4.4節）。
+ * 管理画面のアカウントの初期パスワードを作る。
  * 全体管理者が本人に手渡しするので、読み間違えやすい文字を使わない。
  * 本人は初回ログインで変更する。
  */

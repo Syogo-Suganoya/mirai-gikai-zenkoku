@@ -411,7 +411,7 @@ function readResult(
 }
 
 /**
- * 読み込んだ行を検証・正規化する（6.2.4節の validateRows）。
+ * 読み込んだ行を検証・正規化する。
  * 必須・型・目印の重複・会期や会派の存在を確かめ、行ごとのエラーと警告を返す。
  */
 export function validateRows<K extends CsvImportKind>(

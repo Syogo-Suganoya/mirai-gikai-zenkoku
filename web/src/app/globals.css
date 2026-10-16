@@ -125,7 +125,7 @@
   --color-topic-expert: #24509f;
   --color-topic-citizen: #909090;
 
-  /* ダミーデータ（表示確認用の架空の議案）の表示。8.5.3節 */
+  /* ダミーデータ（表示確認用の架空の議案）の表示 */
   --color-mirai-dummy-bg: #fff4d6;
   --color-mirai-dummy-border: #f0b429;
   --color-mirai-dummy-text: #7a4b00;

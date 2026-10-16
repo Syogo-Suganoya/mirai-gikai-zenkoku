@@ -44,7 +44,7 @@ describe("fetchTargetOpinions ページネーション統合テスト", () => {
       .returning();
     if (!session) throw new Error("session insert failed");
 
-    // §8 フィルタ（管理者公開・ユーザー公開・モデレーションOK）を通すレポート。
+    // 公開フィルタ（管理者公開・ユーザー公開・モデレーションOK）を通すレポート。
     const [report] = await db
       .insert(interview_report)
       .values({

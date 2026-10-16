@@ -8,7 +8,7 @@ import { runBackfill } from "@mirai-gikai/topic-analysis-core/backfill";
 import { after } from "next/server";
 
 // 分析は応答を返したあと（after）この関数の中で動かす。Vercel の関数の上限（Hobby は 300 秒）まで使う。
-// 意見が増えて収まらなくなったら、GitHub Actions などの別の実行環境に移す（docs/デプロイ手順.md 7.1）
+// 意見が増えて収まらなくなったら、GitHub Actions などの別の実行環境に移す
 export const maxDuration = 300;
 
 const json = (body: unknown, status = 200) =>

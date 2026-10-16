@@ -143,7 +143,7 @@ async function groupAndSave(
 // ── 増分分析（新規意見のみ抽出し、既存トピックへ差分追加） ──
 
 /**
- * 既定動作（§7）: completed したら自動公開（旧公開版は降ろす）。公開は付帯処理なので
+ * 既定動作: completed したら自動公開（旧公開版は降ろす）。公開は付帯処理なので
  * 失敗しても version を failed に倒さない（best-effort）。未公開なら Admin 手動公開で復旧可。
  */
 async function autoPublish(versionId: string): Promise<void> {

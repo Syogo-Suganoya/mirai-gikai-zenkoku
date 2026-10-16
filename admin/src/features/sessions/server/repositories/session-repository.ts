@@ -35,7 +35,7 @@ export async function findSessionsWithBillCount(
 
 /**
  * 会期を追加する。議会にダミーデータが残っていれば、同意（deleteDummyData）があるときだけ
- * 消してから追加する（設計 v3 8.5.4節）。同意がなければ DummyDataExistsError を投げる。
+ * 消してから追加する。同意がなければ DummyDataExistsError を投げる。
  */
 export async function insertSession(
   assemblyId: string,

@@ -14,12 +14,9 @@ node_modules
 # 秘密・鍵はコミットしない
 *-key.json
 
-# R2 を設定しないローカル開発でのファイル置き場
-.storage
 # ローカル専用（コミットしない）
 .claude/launch.json
-docs/実装状況.md
 
-# R2 を設定しないローカル開発でのサムネイル置き場所
+# Vercel Blob を設定しないローカル開発でのファイル置き場（BLOB_READ_WRITE_TOKEN 未設定のとき）
 web/public/local-storage
 

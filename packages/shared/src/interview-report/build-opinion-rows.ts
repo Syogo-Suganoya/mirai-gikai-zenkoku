@@ -23,7 +23,7 @@ export type BuildOpinionRowsOptions = {
 /**
  * レポートの意見配列から interview_opinion の upsert 行を生成する純粋関数。
  * opinion_index は配列順（0始まり）で安定させ、
- * dual-write 時の ON CONFLICT (interview_report_id, opinion_index) のキーにする（§3.1）。
+ * dual-write 時の ON CONFLICT (interview_report_id, opinion_index) のキーにする。
  */
 export function buildInterviewOpinionRows(
   reportId: string,

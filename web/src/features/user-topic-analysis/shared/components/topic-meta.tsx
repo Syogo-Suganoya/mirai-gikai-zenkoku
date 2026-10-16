@@ -17,7 +17,7 @@ import { UsersThreeIcon } from "./users-three-icon";
 /** className を受け取れるアイコンコンポーネント（lucide / カスタム共通）。 */
 export type IconComponent = ComponentType<{ className?: string }>;
 
-/** §9 の4区分のアイコン（カテゴリchip・フィルタchipで共通利用）。 */
+/** 4区分のアイコン（カテゴリchip・フィルタchipで共通利用）。 */
 export const userCategoryIcons: Record<UserCategory, IconComponent> = {
   affected: House,
   industry: Briefcase,

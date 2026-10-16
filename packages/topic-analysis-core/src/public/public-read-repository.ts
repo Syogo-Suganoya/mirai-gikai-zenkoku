@@ -25,7 +25,7 @@ export type PublishedAnalysisData = {
 };
 
 /**
- * 指定 version のトピック＋意見（§8 判定に必要な interview_report 属性込み）を生データで取得する。
+ * 指定 version のトピック＋意見（判定に必要な interview_report 属性込み）を生データで取得する。
  * version の選び方（公開中 / 最新）に依存しない共通処理。フィルタ・集計は純粋関数側で行う。
  */
 async function fetchAnalysisData(

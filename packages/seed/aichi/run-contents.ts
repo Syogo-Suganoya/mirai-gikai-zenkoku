@@ -1,5 +1,5 @@
 /**
- * 愛知県議会の解説付き議案（5件）の本文を入れる（本番で CSV インポートの後に実行する。8.3節）。
+ * 愛知県議会の解説付き議案（5件）の本文を入れる（本番で CSV インポートの後に実行する）。
  *   DATABASE_URL=<接続先> pnpm --filter @mirai-gikai/seed seed:aichi-contents
  */
 import { createDb } from "@mirai-gikai/db";

@@ -64,7 +64,7 @@ interface BillResultFormProps {
   today: string;
 }
 
-/** 議決結果と会派ごとの賛否（設計 v3 6.1節）。出す欄は議会設定の粒度で決める */
+/** 議決結果と会派ごとの賛否。出す欄は議会設定の粒度で決める */
 export function BillResultForm({
   billId,
   assemblySlug,

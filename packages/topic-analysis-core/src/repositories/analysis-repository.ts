@@ -53,7 +53,7 @@ type TargetOpinionRow = {
 const TARGET_OPINIONS_PAGE_SIZE = 500;
 
 /**
- * §8 フィルタ後の分析対象意見を取得する。
+ * 公開フィルタ後の分析対象意見を取得する。
  * interview_opinion
  * → interview_report(is_public_by_admin=true, is_public_by_user=true, moderation_status='ok')
  * → interview_sessions → interview_configs(bill_id) を辿る。
@@ -200,7 +200,7 @@ export async function fetchBillContext(billId: string): Promise<BillContext> {
   };
 }
 
-/** bill 内で running/pending の version があれば返す（二重起動防止用・§5.3）。 */
+/** bill 内で running/pending の version があれば返す（二重起動防止用）。 */
 export async function findActiveVersionByBill(billId: string) {
   const [row] = await createDb()
     .select({
@@ -421,7 +421,7 @@ export async function finalizeVersion(
 }
 
 /**
- * version を公開する（§7）。「旧公開版を降ろす → 対象を公開」を DB 関数で
+ * version を公開する。「旧公開版を降ろす → 対象を公開」を DB 関数で
  * 単一トランザクション実行し、公開版が0件になる瞬間を外部から不可視にする。
  * one_published_per_bill（bill ごと公開は最大1版）も満たす。
  */
@@ -431,7 +431,7 @@ export async function publishVersion(versionId: string): Promise<void> {
   );
 }
 
-/** 公開/非公開を切り替える（Admin 手動操作・§7）。 */
+/** 公開/非公開を切り替える（Admin 手動操作）。 */
 export async function setVersionPublished(
   versionId: string,
   published: boolean

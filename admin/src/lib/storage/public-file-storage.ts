@@ -10,7 +10,7 @@ import {
 } from "./public-file-key";
 
 /**
- * 公開ファイル（サムネイル・取り込んだ CSV）の置き場所（設計 v3 2.5節）。
+ * 公開ファイル（サムネイル・取り込んだ CSV）の置き場所。
  * Vercel Blob が設定されていればそこに置く。ローカル開発で Blob が無いときは、
  * web の public/local-storage/ に置いて web から配信する（本番では使わない）。
  */

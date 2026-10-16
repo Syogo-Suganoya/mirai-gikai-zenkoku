@@ -11,7 +11,7 @@ export type SitemapBill = {
   updated_at: string;
 };
 
-/** サイトマップに載せる議案（全議会の公開済み。ダミーは除く。8.5.3節） */
+/** サイトマップに載せる議案（全議会の公開済み。ダミーは除く） */
 export const getSitemapBills = unstable_cache(
   async (): Promise<SitemapBill[]> => {
     const rows = await findAllPublishedBillKeys();
