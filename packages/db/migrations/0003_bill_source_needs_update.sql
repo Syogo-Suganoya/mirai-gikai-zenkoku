@@ -1,0 +1,1 @@
+ALTER TABLE "bills" ADD COLUMN "source_needs_update" boolean DEFAULT false NOT NULL;

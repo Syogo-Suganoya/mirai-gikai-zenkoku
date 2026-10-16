@@ -18,6 +18,7 @@ describe("parseBillListFilter", () => {
       sessionId: "s1",
       publishStatus: "draft",
       publishLevel: "title_only",
+      sourceTodo: false,
       dataKind: "dummy",
     });
   });
@@ -34,6 +35,7 @@ describe("parseBillListFilter", () => {
       sessionId: null,
       publishStatus: null,
       publishLevel: null,
+      sourceTodo: false,
       dataKind: null,
     });
     expect(isFilterActive(parseBillListFilter({}))).toBe(false);
@@ -48,6 +50,7 @@ describe("filterBills", () => {
       publish_status: "draft" as const,
       publish_level: "title_only" as const,
       is_dummy: false,
+      source_needs_update: false,
     },
     {
       id: "2",
@@ -55,6 +58,7 @@ describe("filterBills", () => {
       publish_status: "published" as const,
       publish_level: "explained" as const,
       is_dummy: false,
+      source_needs_update: true,
     },
     {
       id: "3",
@@ -62,6 +66,7 @@ describe("filterBills", () => {
       publish_status: "draft" as const,
       publish_level: "title_only" as const,
       is_dummy: true,
+      source_needs_update: false,
     },
   ];
 
@@ -80,6 +85,14 @@ describe("filterBills", () => {
     expect(
       filterBills(bills, parseBillListFilter({ data: "real" })).map((b) => b.id)
     ).toEqual(["1", "2"]);
+  });
+
+  it("出典の更新の余地あり（level=source_todo）は、フラグが立っている議案だけ", () => {
+    const filter = parseBillListFilter({ level: "source_todo" });
+    expect(filter.publishLevel).toBeNull();
+    expect(filter.sourceTodo).toBe(true);
+    expect(isFilterActive(filter)).toBe(true);
+    expect(filterBills(bills, filter).map((b) => b.id)).toEqual(["2"]);
   });
 
   it("絞り込みが無ければすべて", () => {

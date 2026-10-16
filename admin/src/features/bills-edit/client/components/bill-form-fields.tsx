@@ -217,6 +217,12 @@ export function BillFormFields({
           label="ページ範囲"
           placeholder="例: 12-15"
         />
+        <CheckboxField
+          control={control}
+          name="source_needs_update"
+          label="出典の更新の余地あり"
+          description="議案の原文が未登録など、出典をまだ良くできる議案。議案一覧に注意のアイコンが付き、「出典の更新の余地あり」で絞り込めます。原文を入れたら外してください"
+        />
       </Section>
 
       <Section title="掲載">
@@ -439,7 +445,7 @@ function CheckboxField({
   description,
 }: {
   control: Control<BillFormValues>;
-  name: "is_featured" | "is_review_completed";
+  name: "is_featured" | "is_review_completed" | "source_needs_update";
   label: string;
   description: string;
 }) {

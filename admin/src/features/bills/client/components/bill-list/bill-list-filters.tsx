@@ -17,6 +17,8 @@ import {
   BILL_PUBLISH_STATUS_LABELS,
   type BillListFilter,
   isFilterActive,
+  SOURCE_TODO_LABEL,
+  SOURCE_TODO_LEVEL,
 } from "../../../shared/utils/bill-list-filter";
 
 /** Select は空文字の値を持てないので「すべて」を表す値 */
@@ -93,10 +95,12 @@ export function BillListFilters({
         </SelectContent>
       </Select>
       <Select
-        value={filter.publishLevel ?? ALL}
+        value={
+          filter.sourceTodo ? SOURCE_TODO_LEVEL : (filter.publishLevel ?? ALL)
+        }
         onValueChange={(value) => update("level", value)}
       >
-        <SelectTrigger className="w-40" aria-label="掲載のしかた">
+        <SelectTrigger className="w-48" aria-label="掲載のしかた">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -106,6 +110,7 @@ export function BillListFilters({
               {label}
             </SelectItem>
           ))}
+          <SelectItem value={SOURCE_TODO_LEVEL}>{SOURCE_TODO_LABEL}</SelectItem>
         </SelectContent>
       </Select>
       <Select

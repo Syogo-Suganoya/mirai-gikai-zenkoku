@@ -1,6 +1,7 @@
 "use client";
 
 import { BILL_CATEGORY_LABELS } from "@mirai-gikai/shared/bills/labels";
+import { CircleAlert } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -28,6 +29,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { routes } from "@/lib/routes";
 import { bulkUpdatePublishStatus } from "../../../server/actions/bulk-update-publish-status";
 import { BILL_STATUS_CONFIG } from "../../../shared/constants/bill-config";
@@ -38,6 +44,10 @@ import type {
   BillWithSession,
 } from "../../../shared/types";
 import { getBillStatusLabel } from "../../../shared/types";
+import {
+  SOURCE_TODO_DESCRIPTION,
+  SOURCE_TODO_LABEL,
+} from "../../../shared/utils/bill-list-filter";
 import { planBulkPublishStatus } from "../../../shared/utils/plan-bulk-publish";
 import { BillActionsMenu } from "../bill-actions-menu/bill-actions-menu";
 import { PreviewButton } from "./preview-button";
@@ -255,6 +265,29 @@ export function BillListTable({
   );
 }
 
+/** 出典の更新の余地がある議案の印。ホバー・フォーカスで説明を出す */
+function SourceTodoIcon() {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          aria-label={`${SOURCE_TODO_LABEL}: ${SOURCE_TODO_DESCRIPTION}`}
+          className="h-5 w-5 cursor-help text-amber-600 hover:text-amber-700"
+        >
+          <CircleAlert className="h-4 w-4" />
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent className="max-w-xs">
+        <p className="font-bold">{SOURCE_TODO_LABEL}</p>
+        <p>{SOURCE_TODO_DESCRIPTION}</p>
+      </TooltipContent>
+    </Tooltip>
+  );
+}
+
 function StatusBadge({ status }: { status: BillStatus }) {
   const config = BILL_STATUS_CONFIG[status];
   const Icon = config.icon;
@@ -300,6 +333,7 @@ function BillRow({
             <Badge variant="outline">解説あり</Badge>
           )}
           {bill.is_dummy && <Badge variant="secondary">ダミー</Badge>}
+          {bill.source_needs_update && <SourceTodoIcon />}
         </div>
       </TableCell>
       <TableCell className="text-gray-600">

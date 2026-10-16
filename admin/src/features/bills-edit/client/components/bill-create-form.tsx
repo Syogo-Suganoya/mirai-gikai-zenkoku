@@ -51,6 +51,7 @@ export function BillCreateForm({
       status_note: null,
       source_url: null,
       materials_url: null,
+      source_needs_update: false,
       source_pages: null,
       publish_level: defaultPublishLevel,
       thumbnail_url: null,

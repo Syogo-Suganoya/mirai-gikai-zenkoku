@@ -46,6 +46,7 @@ export function BillEditForm({
       status_note: bill.status_note,
       source_url: bill.source_url,
       materials_url: bill.materials_url,
+      source_needs_update: bill.source_needs_update,
       source_pages: bill.source_pages,
       publish_level: bill.publish_level,
       thumbnail_url: bill.thumbnail_url,

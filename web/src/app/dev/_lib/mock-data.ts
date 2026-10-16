@@ -48,6 +48,7 @@ const baseBill: BillWithContent = {
   status_note: null,
   source_url: null,
   materials_url: null,
+  source_needs_update: false,
   source_file_path: null,
   source_pages: null,
   publish_level: "explained",

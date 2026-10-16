@@ -181,6 +181,7 @@ export const bills = pgTable("bills", {
 	status_note: text(),
 	source_url: text(),
 	materials_url: text(),
+	source_needs_update: boolean().default(false).notNull(),
 	source_file_path: text(),
 	source_pages: text(),
 	publish_level: bill_publish_level_enum().default('title_only').notNull(),
