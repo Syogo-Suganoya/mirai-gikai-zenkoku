@@ -8,6 +8,7 @@
     "seed:dummy": "tsx dummy/run-dummy.ts",
     "seed:initial": "tsx run-initial.ts",
     "seed:aichi-contents": "tsx aichi/run-contents.ts",
+    "furigana:backfill": "tsx backfill-furigana.ts",
     "aichi:convert": "tsx aichi/convert.ts",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
